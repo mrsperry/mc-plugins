@@ -1,0 +1,22 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.compile.nullAnalysis.mode": "automatic",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always",
+    "source.fixAll": "always"
+  },
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java",
+  },
+  "[xml]": {
+    "editor.defaultFormatter": "redhat.vscode-xml"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.insertSpaces": true,
+    "editor.autoIndent": "advanced",
+    "editor.tabSize": 2,
+    "diffEditor.ignoreTrimWhitespace": false,
+  },
+}
