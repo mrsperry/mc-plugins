@@ -1,12 +1,15 @@
-package io.github.mrsperry.commandframework;
+package com.mrjoshuasperry.commandframework;
 
 import com.google.common.collect.Sets;
-import io.github.mrsperry.commandframework.annotations.Command;
+import com.mrjoshuasperry.commandframework.annotations.Command;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
-/** A command wrapper containing all relevant information a command would need to execute. See {@link Command} for detailed descriptions of each variable */
+/**
+ * A command wrapper containing all relevant information a command would need to
+ * execute. See {@link Command} for detailed descriptions of each variable
+ */
 final class WrappedCommand {
     private final String name;
     private final Set<String> aliases;

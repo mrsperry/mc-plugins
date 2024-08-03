@@ -1,4 +1,4 @@
-package io.github.mrsperry.compressedmobs;
+package com.mrjoshuasperry.compressedmobs;
 
 import com.google.common.collect.Lists;
 

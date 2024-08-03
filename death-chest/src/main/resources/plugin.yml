@@ -1,4 +1,4 @@
-main: io.github.mrsperry.deathchest.Main
+main: com.mrjoshuasperry.deathchest.Main
 name: DeathChest
 version: 1.0.0
 authors: [dinner1111]

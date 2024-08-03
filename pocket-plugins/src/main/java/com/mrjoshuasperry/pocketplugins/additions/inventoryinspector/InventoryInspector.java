@@ -22,8 +22,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionType;
 
-import io.github.mrsperry.mcutils.builders.ItemBuilder;
-import io.github.mrsperry.mcutils.builders.PotionBuilder;
+import com.mrjoshuasperry.mcutils.builders.ItemBuilder;
+import com.mrjoshuasperry.mcutils.builders.PotionBuilder;
 
 public class InventoryInspector extends Module implements Listener {
     private final ArrayList<Inventory> inventories = new ArrayList<>();

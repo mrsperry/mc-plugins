@@ -14,8 +14,8 @@ import org.bukkit.entity.Player;
 
 import com.mrjoshuasperry.pocketplugins.MiniAdditions;
 
-import io.github.mrsperry.mcutils.sound.SoundByte;
-import io.github.mrsperry.mcutils.sound.SoundSynth;
+import com.mrjoshuasperry.mcutils.sound.SoundByte;
+import com.mrjoshuasperry.mcutils.sound.SoundSynth;
 
 public class SoundSynthExperiment implements CommandExecutor {
     private final Map<Player, SoundSynth> soundSynths;

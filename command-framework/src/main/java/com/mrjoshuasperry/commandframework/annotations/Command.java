@@ -1,4 +1,4 @@
-package io.github.mrsperry.commandframework.annotations;
+package com.mrjoshuasperry.commandframework.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,17 +26,25 @@ public @interface Command {
     /** The minimum number of arguments required to run this command */
     int minArgs() default 0;
 
-    /** The maximum number of arguments allowed to run this command (-1 means no limit) */
+    /**
+     * The maximum number of arguments allowed to run this command (-1 means no
+     * limit)
+     */
     int maxArgs() default -1;
 
     /**
-     * An array of accepted flag identifiers that will not be included in the argument array
+     * An array of accepted flag identifiers that will not be included in the
+     * argument array
      *
      * Flags are characters that are prefixed by a dash (-)
-     * Flags may optionally have a postfix of a color (:) to denote that a value must follow the flag
+     * Flags may optionally have a postfix of a color (:) to denote that a value
+     * must follow the flag
      */
     String[] flags() default {};
 
-    /** An array of permission strings (only one must match for the sender to have permission) */
+    /**
+     * An array of permission strings (only one must match for the sender to have
+     * permission)
+     */
     String[] permissions() default {};
 }

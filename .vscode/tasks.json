@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run JAR",
+      "type": "shell",
+      "command": "java -jar paper.jar",
+      "options": {
+        "cwd": "${workspaceFolder}/_server"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

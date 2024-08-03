@@ -1,12 +1,12 @@
-package io.github.mrsperry.commandframework;
+package com.mrjoshuasperry.commandframework;
 
 import com.google.common.collect.Lists;
-import io.github.mrsperry.commandframework.annotations.Command;
-import io.github.mrsperry.commandframework.annotations.Completion;
-import io.github.mrsperry.commandframework.annotations.StaticCompletion;
-import io.github.mrsperry.commandframework.context.CommandContext;
-import io.github.mrsperry.commandframework.context.CompletionContext;
-import io.github.mrsperry.commandframework.exceptions.*;
+import com.mrjoshuasperry.commandframework.annotations.Command;
+import com.mrjoshuasperry.commandframework.annotations.Completion;
+import com.mrjoshuasperry.commandframework.annotations.StaticCompletion;
+import com.mrjoshuasperry.commandframework.context.CommandContext;
+import com.mrjoshuasperry.commandframework.context.CompletionContext;
+import com.mrjoshuasperry.commandframework.exceptions.*;
 import org.bukkit.Server;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -28,7 +28,9 @@ public final class CommandManager {
     private final JavaPlugin plugin;
 
     /**
-     * Creates a new command manager instance; used to register commands using annotations
+     * Creates a new command manager instance; used to register commands using
+     * annotations
+     * 
      * @param plugin The owning plugin
      */
     public CommandManager(final JavaPlugin plugin) {
@@ -39,9 +41,12 @@ public final class CommandManager {
     /**
      * Registers all classes in the plugin's package
      *
-     * For recursive registering use {@code registerPackage(File jar, String packageName, boolean recursive}
+     * For recursive registering use
+     * {@code registerPackage(File jar, String packageName, boolean recursive}
+     * 
      * @param jar The file of the plugin
-     * @return The instance of the command manager, allowing for chaining register calls
+     * @return The instance of the command manager, allowing for chaining register
+     *         calls
      */
     public final CommandManager registerPackage(final File jar) {
         return this.registerPackage(jar, null);
@@ -50,10 +55,14 @@ public final class CommandManager {
     /**
      * Registers all classes in the given sub-package
      *
-     * This will not register any classes in the main package and it is not recursive
-     * @param jar The file of the plugin
-     * @param packageName The name of the sub-package (period separated, ex: "your.sub.package")
-     * @return The instance of the command manager, allowing for chaining register calls
+     * This will not register any classes in the main package and it is not
+     * recursive
+     * 
+     * @param jar         The file of the plugin
+     * @param packageName The name of the sub-package (period separated, ex:
+     *                    "your.sub.package")
+     * @return The instance of the command manager, allowing for chaining register
+     *         calls
      */
     public final CommandManager registerPackage(final File jar, final String packageName) {
         return this.registerPackage(jar, packageName, false);
@@ -62,11 +71,16 @@ public final class CommandManager {
     /**
      * Registers all classes in the given sub-package
      *
-     * This will not register any classes in the main package but will recursively register all sub-packages
-     * @param jar The file of the plugin
-     * @param packageName The name of the sub-package (period separated, ex: "your.sub.package")
-     * @param recursive If sub-packages of the given sub-package should be registered
-     * @return The instance of the command manager, allowing for chaining register calls
+     * This will not register any classes in the main package but will recursively
+     * register all sub-packages
+     * 
+     * @param jar         The file of the plugin
+     * @param packageName The name of the sub-package (period separated, ex:
+     *                    "your.sub.package")
+     * @param recursive   If sub-packages of the given sub-package should be
+     *                    registered
+     * @return The instance of the command manager, allowing for chaining register
+     *         calls
      */
     public final CommandManager registerPackage(final File jar, String packageName, final boolean recursive) {
         // Set the main plugin package as the package name
@@ -141,9 +155,12 @@ public final class CommandManager {
     /**
      * Registers all methods in a class that use the {@link Command} annotation
      *
-     * If a command method has a non-unique identifier (name and aliases) a warning will be logged and the command will not be registered
+     * If a command method has a non-unique identifier (name and aliases) a warning
+     * will be logged and the command will not be registered
+     * 
      * @param clazz The class who's methods will be registered
-     * @return The instance of the command manager, allowing for chaining register calls
+     * @return The instance of the command manager, allowing for chaining register
+     *         calls
      */
     public final CommandManager registerClass(final Class<?> clazz) {
         final Method[] methods = clazz.getMethods();
@@ -170,6 +187,7 @@ public final class CommandManager {
 
     /**
      * Registers a command executor method
+     * 
      * @param method The method to register
      */
     private void registerExecutor(final Method method) {
@@ -205,7 +223,8 @@ public final class CommandManager {
             }
 
             if (duplicateID != null) {
-                this.plugin.getLogger().severe("A duplicate command identifier was found and will not be registered: " + duplicateID);
+                this.plugin.getLogger()
+                        .severe("A duplicate command identifier was found and will not be registered: " + duplicateID);
                 break;
             }
         }
@@ -218,7 +237,8 @@ public final class CommandManager {
 
     /**
      * Registers a command tab completion method
-     * @param method The method to register
+     * 
+     * @param method   The method to register
      * @param isStatic If the completion is static or dynamic
      */
     private void registerCompletion(final Method method, final boolean isStatic) {
@@ -243,13 +263,16 @@ public final class CommandManager {
                     throw new Exception();
                 }
             } catch (final Exception ex) {
-                this.plugin.getLogger().severe("Completion methods must return a List<String>: " + this.formatMethodLocation(method));
+                this.plugin.getLogger()
+                        .severe("Completion methods must return a List<String>: " + this.formatMethodLocation(method));
                 return;
             }
 
             final Type[] params = method.getGenericParameterTypes();
             if (params.length != 1 || !params[0].equals(CompletionContext.class)) {
-                this.plugin.getLogger().severe("Completion methods must only contain a single argument of type CompletionContext: " + this.formatMethodLocation(method));
+                this.plugin.getLogger()
+                        .severe("Completion methods must only contain a single argument of type CompletionContext: "
+                                + this.formatMethodLocation(method));
                 return;
             }
         }
@@ -264,14 +287,16 @@ public final class CommandManager {
         }
 
         if (command == null) {
-            this.plugin.getLogger().severe("Could not find command for tab completion (is the method private?): " + this.formatMethodLocation(method));
+            this.plugin.getLogger().severe("Could not find command for tab completion (is the method private?): "
+                    + this.formatMethodLocation(method));
             return;
         }
 
         // Set the completions
         if (isStatic) {
             final Map<Integer, List<String>> completionMap = new HashMap<>();
-            // Split static completions on the pipe symbol, allowing multiple completions per index
+            // Split static completions on the pipe symbol, allowing multiple completions
+            // per index
             // ex: { "one", "two|three" } -> { 1: "one", 2: { "two", "three" } }
             for (int index = 0; index < completions.length; index++) {
                 completionMap.put(index, Lists.newArrayList(completions[index].split("\\|")));
@@ -283,7 +308,10 @@ public final class CommandManager {
         }
     }
 
-    /** Puts all registered commands into the Bukkit command map so that they can be accessed in-game */
+    /**
+     * Puts all registered commands into the Bukkit command map so that they can be
+     * accessed in-game
+     */
     public final void buildCommands() {
         try {
             // Allow access to the global sever command map
@@ -292,7 +320,8 @@ public final class CommandManager {
             field.setAccessible(true);
 
             // Allow plugin commands to be instantiated
-            final Constructor<PluginCommand> pluginCommand = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
+            final Constructor<PluginCommand> pluginCommand = PluginCommand.class.getDeclaredConstructor(String.class,
+                    Plugin.class);
             pluginCommand.setAccessible(true);
 
             final CommandMap commandMap = (CommandMap) field.get(server);
@@ -300,10 +329,11 @@ public final class CommandManager {
             // Add each command to the command map
             for (final WrappedCommand wrapped : this.commands.keySet()) {
                 // Register each identifier (name and all aliases) for this command
-                commandMap.register(this.plugin.getName().toLowerCase(), pluginCommand.newInstance(wrapped.getName(), this.plugin)
-                        .setUsage(wrapped.getUsage())
-                        .setDescription(wrapped.getDescription())
-                        .setAliases(new ArrayList<>(wrapped.getAliases())));
+                commandMap.register(this.plugin.getName().toLowerCase(),
+                        pluginCommand.newInstance(wrapped.getName(), this.plugin)
+                                .setUsage(wrapped.getUsage())
+                                .setDescription(wrapped.getDescription())
+                                .setAliases(new ArrayList<>(wrapped.getAliases())));
             }
         } catch (final Exception ex) {
             this.plugin.getLogger().severe("An error occurred while registering commands!");
@@ -313,13 +343,17 @@ public final class CommandManager {
 
     /**
      * Attempts to execute a registered command
-     * @param sender The sender of the command
-     * @param command The name of the command
+     * 
+     * @param sender       The sender of the command
+     * @param command      The name of the command
      * @param originalArgs The arguments of the command
      */
-    public final void execute(final CommandSender sender, final String command, final String[] originalArgs) throws SenderException, PermissionException, FlagException, TooFewArgumentsException, TooManyArgumentsException, IllegalArgumentException {
+    public final void execute(final CommandSender sender, final String command, final String[] originalArgs)
+            throws SenderException, PermissionException, FlagException, TooFewArgumentsException,
+            TooManyArgumentsException, IllegalArgumentException {
         for (final WrappedCommand cmd : this.commands.keySet()) {
-            // Only execute if the command name is an identifier of the current wrapped command
+            // Only execute if the command name is an identifier of the current wrapped
+            // command
             if (!cmd.identify(command.toLowerCase())) {
                 continue;
             }
@@ -411,16 +445,20 @@ public final class CommandManager {
                     method.invoke(base);
                 }
             } catch (final IllegalAccessException ex) {
-                this.plugin.getLogger().severe("Could not access method to invoke command: " + this.formatMethodLocation(method));
+                this.plugin.getLogger()
+                        .severe("Could not access method to invoke command: " + this.formatMethodLocation(method));
                 ex.printStackTrace();
             } catch (final IllegalArgumentException ex) {
-                this.plugin.getLogger().severe("Illegal argument passed to command method: " + this.formatMethodLocation(method));
+                this.plugin.getLogger()
+                        .severe("Illegal argument passed to command method: " + this.formatMethodLocation(method));
                 ex.printStackTrace();
             } catch (final InvocationTargetException ex) {
-                this.plugin.getLogger().severe("Could not invoke method for command: " + this.formatMethodLocation(method));
+                this.plugin.getLogger()
+                        .severe("Could not invoke method for command: " + this.formatMethodLocation(method));
                 ex.printStackTrace();
             } catch (final NoSuchMethodException | InstantiationException ex) {
-                this.plugin.getLogger().severe("Could not instantiate command class while executing: " + this.formatMethodLocation(method));
+                this.plugin.getLogger().severe(
+                        "Could not instantiate command class while executing: " + this.formatMethodLocation(method));
                 ex.printStackTrace();
             }
         }
@@ -428,9 +466,10 @@ public final class CommandManager {
 
     /**
      * Attempts to tab complete a registered command
-     * @param sender The command sender
+     * 
+     * @param sender  The command sender
      * @param command The command being typed
-     * @param args The command's arguments
+     * @param args    The command's arguments
      * @return A list of completions to display
      */
     @SuppressWarnings("unchecked")
@@ -443,7 +482,8 @@ public final class CommandManager {
             // Get the initial static completions
             final List<String> completions = new ArrayList<>();
             final int index = args.length - 1;
-            StringUtil.copyPartialMatches(args[index], cmd.getStaticCompletions().getOrDefault(index, new ArrayList<>()), completions);
+            StringUtil.copyPartialMatches(args[index],
+                    cmd.getStaticCompletions().getOrDefault(index, new ArrayList<>()), completions);
 
             // Check if dynamic completions should be run
             final Method method = cmd.getCompletionMethod();
@@ -459,16 +499,20 @@ public final class CommandManager {
                 final Object base = method.getDeclaringClass().getDeclaredConstructor().newInstance();
                 completions.addAll((List<String>) method.invoke(base, new CompletionContext(sender, args)));
             } catch (final IllegalAccessException ex) {
-                this.plugin.getLogger().severe("Could not access method to invoke command: " + this.formatMethodLocation(method));
+                this.plugin.getLogger()
+                        .severe("Could not access method to invoke command: " + this.formatMethodLocation(method));
                 ex.printStackTrace();
             } catch (final IllegalArgumentException ex) {
-                this.plugin.getLogger().severe("Illegal argument passed to command method: " + this.formatMethodLocation(method));
+                this.plugin.getLogger()
+                        .severe("Illegal argument passed to command method: " + this.formatMethodLocation(method));
                 ex.printStackTrace();
             } catch (final InvocationTargetException ex) {
-                this.plugin.getLogger().severe("Could not invoke method for command: " + this.formatMethodLocation(method));
+                this.plugin.getLogger()
+                        .severe("Could not invoke method for command: " + this.formatMethodLocation(method));
                 ex.printStackTrace();
             } catch (final NoSuchMethodException | InstantiationException ex) {
-                this.plugin.getLogger().severe("Could not instantiate command class while tab completing: " + this.formatMethodLocation(method));
+                this.plugin.getLogger().severe("Could not instantiate command class while tab completing: "
+                        + this.formatMethodLocation(method));
                 ex.printStackTrace();
             }
 
@@ -480,6 +524,7 @@ public final class CommandManager {
 
     /**
      * Formats a method signature
+     * 
      * @param method The method to format
      * @return The method signature in the style: "[method name]() in [class name]"
      */

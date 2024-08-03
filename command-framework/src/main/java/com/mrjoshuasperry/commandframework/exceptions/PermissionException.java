@@ -1,4 +1,4 @@
-package io.github.mrsperry.commandframework.exceptions;
+package com.mrjoshuasperry.commandframework.exceptions;
 
 public final class PermissionException extends CommandException {
     public PermissionException() {

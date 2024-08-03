@@ -1,7 +1,7 @@
-package io.github.mrsperry.deathchest.listeners;
+package com.mrjoshuasperry.deathchest.listeners;
 
-import io.github.mrsperry.deathchest.DeathChest;
-import io.github.mrsperry.deathchest.Main;
+import com.mrjoshuasperry.deathchest.DeathChest;
+import com.mrjoshuasperry.deathchest.Main;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;

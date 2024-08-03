@@ -1,4 +1,4 @@
-main: "io.github.mrsperry.croptweaks.Main"
+main: "com.mrjoshuasperry.croptweaks.Main"
 name: "CropTweaks"
 version: ${project.version}
 authors: ["dinner1111"]

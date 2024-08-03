@@ -28,7 +28,7 @@ import com.mrjoshuasperry.pocketplugins.additions.nosheepgriefing.NoSheepGriefin
 import com.mrjoshuasperry.pocketplugins.additions.slimyboots.SlimyBootsListener;
 import com.mrjoshuasperry.pocketplugins.additions.woodpile.WoodPileListener;
 
-import io.github.mrsperry.mcutils.ConfigManager;
+import com.mrjoshuasperry.mcutils.ConfigManager;
 
 public class MiniAdditions extends JavaPlugin {
     private static MiniAdditions self;

@@ -1,4 +1,4 @@
-main: "io.github.mrsperry.autostack.Main"
+main: "com.mrjoshuasperry.autostack.Main"
 name: "AutoStack"
 version: "1.0.1"
 authors: ["dinner1111"]

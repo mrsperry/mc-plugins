@@ -1,4 +1,4 @@
-package io.github.mrsperry.commandframework.exceptions;
+package com.mrjoshuasperry.commandframework.exceptions;
 
 import org.bukkit.ChatColor;
 

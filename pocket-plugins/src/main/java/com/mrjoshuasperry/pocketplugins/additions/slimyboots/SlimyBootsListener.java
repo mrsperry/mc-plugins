@@ -20,7 +20,7 @@ import org.bukkit.util.Vector;
 import com.mrjoshuasperry.pocketplugins.MiniAdditions;
 import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
 
-import io.github.mrsperry.mcutils.ItemMetaHandler;
+import com.mrjoshuasperry.mcutils.ItemMetaHandler;
 
 public class SlimyBootsListener extends Module {
     private final NamespacedKey bootsKey;

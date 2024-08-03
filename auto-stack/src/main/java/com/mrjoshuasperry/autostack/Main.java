@@ -1,6 +1,6 @@
 package com.mrjoshuasperry.autostack;
 
-import io.github.mrsperry.mcutils.types.ToolTypes;
+import com.mrjoshuasperry.mcutils.types.ToolTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.*;

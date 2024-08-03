@@ -1,4 +1,4 @@
-package io.github.mrsperry.mobeggs;
+package com.mrjoshuasperry.mobeggs;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

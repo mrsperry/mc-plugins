@@ -1,4 +1,4 @@
-main: "io.github.mrsperry.mobeggs.Main"
+main: "com.mrjoshuasperry.mobeggs.Main"
 name: "MobEggs"
 version: ${project.version}
 authors: ["dinner1111"]

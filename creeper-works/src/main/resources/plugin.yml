@@ -1,4 +1,4 @@
-main: "io.github.mrsperry.creeperworks.Main"
+main: "com.mrjoshuasperry.creeperworks.Main"
 name: "Creeperworks"
 version: ${project.version}
 authors: ["dinner1111"]

@@ -20,8 +20,8 @@ import com.mrjoshuasperry.pocketplugins.MiniAdditions;
 import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
 import com.mrjoshuasperry.pocketplugins.utils.StringHelper;
 
-import io.github.mrsperry.mcutils.ItemMetaHandler;
-import io.github.mrsperry.mcutils.builders.ItemBuilder;
+import com.mrjoshuasperry.mcutils.ItemMetaHandler;
+import com.mrjoshuasperry.mcutils.builders.ItemBuilder;
 
 public class ShearListener extends Module {
     private int chance;

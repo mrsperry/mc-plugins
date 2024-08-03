@@ -1,4 +1,4 @@
-package io.github.mrsperry.levelup;
+package com.mrjoshuasperry.levelup;
 
 import com.google.common.collect.Lists;
 

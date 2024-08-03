@@ -1,7 +1,7 @@
-package io.github.mrsperry.deathchest;
+package com.mrjoshuasperry.deathchest;
 
-import io.github.mrsperry.deathchest.listeners.BlockListener;
-import io.github.mrsperry.deathchest.listeners.PlayerListener;
+import com.mrjoshuasperry.deathchest.listeners.BlockListener;
+import com.mrjoshuasperry.deathchest.listeners.PlayerListener;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

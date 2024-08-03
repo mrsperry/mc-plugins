@@ -1,6 +1,6 @@
-package io.github.mrsperry.croptweaks;
+package com.mrjoshuasperry.croptweaks;
 
-import io.github.mrsperry.mcutils.types.CropTypes;
+import com.mrjoshuasperry.mcutils.types.CropTypes;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

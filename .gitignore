@@ -1,3 +1,7 @@
 .idea/
 test/
 target/
+
+# Testing server
+paper.jar
+_server/

@@ -1,4 +1,4 @@
-package io.github.mrsperry.deathchest;
+package com.mrjoshuasperry.deathchest;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;

@@ -32,9 +32,9 @@ import com.mrjoshuasperry.pocketplugins.MiniAdditions;
 import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
 import com.mrjoshuasperry.pocketplugins.utils.CustomProjectile;
 
-import io.github.mrsperry.mcutils.ItemMetaHandler;
-import io.github.mrsperry.mcutils.LocationUtils;
-import io.github.mrsperry.mcutils.builders.ItemBuilder;
+import com.mrjoshuasperry.mcutils.ItemMetaHandler;
+import com.mrjoshuasperry.mcutils.LocationUtils;
+import com.mrjoshuasperry.mcutils.builders.ItemBuilder;
 
 public class BiomeBombListener extends Module {
     private final NamespacedKey biomeBombTypeKey;
