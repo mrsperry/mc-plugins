@@ -1,0 +1,5 @@
+main: "io.github.mrsperry.creeperworks.Main"
+name: "Creeperworks"
+version: ${project.version}
+authors: ["dinner1111"]
+description: "Adds a colorful firework to creeeper explosions"

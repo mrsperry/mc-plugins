@@ -1,0 +1,8 @@
+# Levels that will trigger a firework
+levels:
+  - 30
+# Colors the firework will select from; fade color also comes from this list
+colors:
+  - "red"
+  - "white"
+  - "blue"

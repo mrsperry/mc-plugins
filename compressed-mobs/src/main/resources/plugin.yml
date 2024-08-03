@@ -1,0 +1,6 @@
+main: "io.github.mrsperry.compressedmobs.Main"
+name: "CompressedMobs"
+version: ${project.version}
+authors: ["dinner1111"]
+description: "Compressing monsters and animals."
+api-version: "1.15"

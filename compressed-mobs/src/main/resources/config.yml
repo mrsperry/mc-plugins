@@ -1,0 +1,18 @@
+# Chance of a compressed mob to spawn (decimals are allowed)
+# Calculated as a 1 in X percent chance
+global-chance: 100.0
+# How many mobs are spawned when killed
+global-min-yield: 3
+global-max-yield: 5
+# Individual creature spawn chances and yields
+# Global values are used unless specified
+creatures:
+  mushroom_cow:
+    chance: 50.0
+    min-yield: 5
+    max-yield: 10
+# List of entity types that can't be compressed
+# Only creatures (passive/hostile mobs) will be affected
+blacklist:
+  - "skeleton"
+  - "ender_dragon"

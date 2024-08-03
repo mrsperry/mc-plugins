@@ -1,0 +1,5 @@
+main: "io.github.mrsperry.levelup.Main"
+name: "LevelUp"
+version: ${project.version}
+authors: ["dinner1111"]
+api-version: "1.15"

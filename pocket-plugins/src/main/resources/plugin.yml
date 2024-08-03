@@ -1,0 +1,12 @@
+main: com.mrjoshuasperry.pocketplugins.PocketPlugins
+name: ${project.name}
+version: ${project.version}
+api-version: 1.21
+description: Adds small additions to minecraft
+commands:
+  synth:
+    description: A tool for making a sound effect
+    usage: /synth [add|remove|edit|list|play]
+  shoot:
+    description: Shoots a glass bottle
+    usage: /shoot

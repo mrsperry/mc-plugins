@@ -1,0 +1,6 @@
+main: "io.github.mrsperry.autostack.Main"
+name: "AutoStack"
+version: "1.0.1"
+authors: ["dinner1111"]
+description: "Automatically gives you an extra stack of items if you run out."
+api-version: "1.15"

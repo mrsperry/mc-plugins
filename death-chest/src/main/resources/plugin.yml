@@ -1,0 +1,6 @@
+main: io.github.mrsperry.deathchest.Main
+name: DeathChest
+version: 1.0.0
+authors: [dinner1111]
+description: Never lose your items again!
+api-version: 1.13

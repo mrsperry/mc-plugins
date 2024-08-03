@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mrjoshuasperry</groupId>
-    <artifactId>mc-utils</artifactId>
+    <artifactId>command-framework</artifactId>
     <version>1.0.28</version>
     <repositories>
         <repository>
