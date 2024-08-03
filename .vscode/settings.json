@@ -19,4 +19,7 @@
     "editor.tabSize": 2,
     "diffEditor.ignoreTrimWhitespace": false,
   },
+  "yaml.schemas": {
+    "https://json.schemastore.org/paper-plugin.json": "plugin.yml"
+  },
 }

@@ -2,10 +2,31 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>com.mrjoshuasperry</groupId>
     <artifactId>mc-plugins</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
+
+    <modules>
+        <!-- Utils and dependencies -->
+        <module>mc-utils</module>
+        <module>command-framework</module>
+
+        <!-- Individual plugins -->
+        <module>auto-stack</module>
+        <module>compressed-mobs</module>
+        <module>creeper-works</module>
+        <module>crop-tweaks</module>
+        <module>custom-generation</module>
+        <module>death-chest</module>
+        <module>death-message</module>
+        <module>dynamic-crafting</module>
+        <module>enhanced-dungeons</module>
+        <module>level-up</module>
+        <module>mob-eggs</module>
+        <module>pocket-plugins</module>
+    </modules>
 
     <repositories>
         <repository>
