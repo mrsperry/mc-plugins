@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.mrjoshuasperry</groupId>
+  <!-- Replace artifactId with name of plugin -->
+  <artifactId>XXX</artifactId>
+  <version>1.0.0</version>
+
+  <parent>
+    <groupId>com.mrjoshuasperry</groupId>
+    <artifactId>mc-plugins</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-api</artifactId>
+    </dependency>
+    <!-- Optionally include mc-utils -->
+    <dependency>
+      <groupId>com.mrjoshuasperry</groupId>
+      <artifactId>mc-utils</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- Remove if a jar should be generated and copied to the testing server -->
+  <properties>
+    <skip.copy.plugin>true</skip.copy.plugin>
+  </properties>
+</project>
