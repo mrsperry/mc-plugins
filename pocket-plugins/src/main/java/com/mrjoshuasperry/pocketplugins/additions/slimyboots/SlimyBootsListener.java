@@ -1,10 +1,9 @@
 package com.mrjoshuasperry.pocketplugins.additions.slimyboots;
 
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -17,18 +16,21 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
-import com.mrjoshuasperry.pocketplugins.MiniAdditions;
-import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
-
 import com.mrjoshuasperry.mcutils.ItemMetaHandler;
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
+import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
+import com.mrjoshuasperry.pocketplugins.utils.Module;
+
+import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.ChatColor;
 
 public class SlimyBootsListener extends Module {
     private final NamespacedKey bootsKey;
-    private final PersistentDataType<Byte, Byte> BYTE = PersistentDataType.BYTE;
+    private static final PersistentDataType<Byte, Byte> BYTE = PersistentDataType.BYTE;
 
     public SlimyBootsListener() {
         super("SlimyBoots");
-        bootsKey = new NamespacedKey(MiniAdditions.getInstance(), "Slimy_Boots");
+        bootsKey = new NamespacedKey(PocketPlugins.getInstance(), "Slimy_Boots");
         initRecipes();
     }
 
@@ -62,19 +64,16 @@ public class SlimyBootsListener extends Module {
         LeatherArmorMeta itemMeta = (LeatherArmorMeta) result.getItemMeta();
         if (itemMeta != null) {
             itemMeta.setColor(Color.fromRGB(100, 255, 100));
-            itemMeta.setDisplayName(ChatColor.GREEN + "Slimy Boots");
-            itemMeta.setLore(
-                    Collections.singletonList(ChatColor.GRAY + "A bit squishy but it should protect from falls"));
+            itemMeta.displayName(Component.text(ChatColor.GREEN + "Slimy Boots"));
+            itemMeta.lore(List.of(Component.text(ChatColor.GRAY + "A bit squishy but it should protect from falls")));
         }
 
         result.setItemMeta(itemMeta);
         ItemMetaHandler.set(result, bootsKey, BYTE, (byte) 1);
-        Map<Character, Material> ingredients = new HashMap<Character, Material>() {
-            {
-                put('B', Material.LEATHER_BOOTS);
-                put('S', Material.SLIME_BLOCK);
-            }
-        };
+        Map<Character, Material> ingredients = new HashMap<>();
+        ingredients.put('B', Material.LEATHER_BOOTS);
+        ingredients.put('S', Material.SLIME_BLOCK);
+
         CraftingUtil.addShapedCrafting("slimy_boots", ingredients, result, "SSS", "SBS", "SSS");
     }
 }

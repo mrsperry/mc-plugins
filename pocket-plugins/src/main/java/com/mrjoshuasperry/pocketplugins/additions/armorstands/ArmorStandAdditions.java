@@ -10,6 +10,8 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import com.mrjoshuasperry.pocketplugins.utils.Module;
+
 public class ArmorStandAdditions extends Module {
     public ArmorStandAdditions() {
         super("ArmorStands");

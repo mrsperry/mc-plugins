@@ -14,7 +14,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mrjoshuasperry.pocketplugins.MiniAdditions;
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
+import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 public class FeatherPlucker extends Module {
     private final JavaPlugin plugin;
@@ -24,7 +25,7 @@ public class FeatherPlucker extends Module {
     public FeatherPlucker() {
         super("FeatherPlucker");
 
-        this.plugin = MiniAdditions.getInstance();
+        this.plugin = PocketPlugins.getInstance();
         this.key = new NamespacedKey(this.plugin, "feather-plucked");
     }
 

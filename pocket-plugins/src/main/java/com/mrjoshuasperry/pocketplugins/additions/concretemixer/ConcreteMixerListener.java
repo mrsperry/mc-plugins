@@ -7,12 +7,14 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import com.mrjoshuasperry.pocketplugins.MiniAdditions;
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
+import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 public class ConcreteMixerListener extends Module {
     private final List<Material> concrete = Arrays.asList(
@@ -44,6 +46,24 @@ public class ConcreteMixerListener extends Module {
         this.waterUseChance = config.getInt("water-use-chance", 5);
     }
 
+    private void handleConcreteHarden(Player player, ItemStack item, Block block) {
+        Material type = block.getType();
+        Levelled levelled = (Levelled) block.getBlockData();
+        Material result = Material.valueOf(type.name().substring(0, type.name().length() - 7));
+        block.getWorld().dropItem(block.getLocation().add(0.5, 1.5, 0.5), new ItemStack(result));
+
+        if (item.getAmount() == 1) {
+            player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+        } else {
+            item.setAmount(item.getAmount() - 1);
+        }
+
+        if (PocketPlugins.getRandom().nextInt(100) <= this.waterUseChance) {
+            levelled.setLevel(levelled.getLevel() - 1);
+            block.setBlockData(levelled);
+        }
+    }
+
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getHand() != null && event.getHand().equals(EquipmentSlot.HAND)) {
@@ -55,19 +75,7 @@ public class ConcreteMixerListener extends Module {
                 Material type = item.getType();
                 if (concrete.contains(type) && levelled.getLevel() != 0) {
                     event.setCancelled(true);
-                    Material result = Material.valueOf(type.name().substring(0, type.name().length() - 7));
-                    block.getWorld().dropItem(block.getLocation().add(0.5, 1.5, 0.5), new ItemStack(result));
-
-                    if (item.getAmount() == 1) {
-                        event.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                    } else {
-                        item.setAmount(item.getAmount() - 1);
-                    }
-
-                    if (MiniAdditions.getRandom().nextInt(100) <= this.waterUseChance) {
-                        levelled.setLevel(levelled.getLevel() - 1);
-                        block.setBlockData(levelled);
-                    }
+                    handleConcreteHarden(event.getPlayer(), item, block);
                 }
             }
         }

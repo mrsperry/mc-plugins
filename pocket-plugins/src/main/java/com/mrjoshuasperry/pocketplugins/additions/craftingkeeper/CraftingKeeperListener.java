@@ -18,6 +18,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import com.mrjoshuasperry.pocketplugins.utils.Module;
+
 public class CraftingKeeperListener extends Module {
     Map<UUID, Location> tableBlocks;
 
@@ -64,13 +66,13 @@ public class CraftingKeeperListener extends Module {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (event.getHand() != null && event.getHand().equals(EquipmentSlot.HAND)) {
-                Block block = event.getClickedBlock();
-                if (block != null && block.getType().equals(Material.CRAFTING_TABLE)) {
-                    this.tableBlocks.put(event.getPlayer().getUniqueId(), block.getLocation());
-                }
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && event.getHand() != null
+                && event.getHand().equals(EquipmentSlot.HAND)) {
+            Block block = event.getClickedBlock();
+            if (block != null && block.getType().equals(Material.CRAFTING_TABLE)) {
+                this.tableBlocks.put(event.getPlayer().getUniqueId(), block.getLocation());
             }
+
         }
     }
 

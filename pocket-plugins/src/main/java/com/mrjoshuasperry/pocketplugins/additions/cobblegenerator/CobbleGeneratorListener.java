@@ -6,6 +6,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockFormEvent;
 
+import com.mrjoshuasperry.pocketplugins.utils.Module;
+
 public class CobbleGeneratorListener extends Module {
     public CobbleGeneratorListener() {
         super("CobbleGenerator");

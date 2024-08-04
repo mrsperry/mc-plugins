@@ -2,14 +2,11 @@ package com.mrjoshuasperry.pocketplugins.additions.inventoryinspector;
 
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -24,8 +21,12 @@ import org.bukkit.potion.PotionType;
 
 import com.mrjoshuasperry.mcutils.builders.ItemBuilder;
 import com.mrjoshuasperry.mcutils.builders.PotionBuilder;
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
+import com.mrjoshuasperry.pocketplugins.utils.Module;
 
-public class InventoryInspector extends Module implements Listener {
+import net.md_5.bungee.api.ChatColor;
+
+public class InventoryInspector extends Module {
     private final ArrayList<Inventory> inventories = new ArrayList<>();
 
     public InventoryInspector() {
@@ -58,7 +59,7 @@ public class InventoryInspector extends Module implements Listener {
     }
 
     private Inventory createInventory(final Player player) {
-        final Inventory result = Bukkit.createInventory(null, 54, player.getName());
+        final Inventory result = PocketPlugins.getInstance().getServer().createInventory(null, 54);
 
         // Set health, hunger, and active effects
         result.setItem(0, new ItemBuilder(Material.GLISTERING_MELON_SLICE)
@@ -120,6 +121,8 @@ public class InventoryInspector extends Module implements Listener {
                 case COLLECT_TO_CURSOR:
                 case MOVE_TO_OTHER_INVENTORY:
                     event.setCancelled(true);
+                    break;
+                default:
                     break;
             }
         }

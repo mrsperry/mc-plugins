@@ -14,16 +14,13 @@ import org.bukkit.inventory.ItemStack;
 @SerializableAs("CraftingKeeperManager")
 public class CraftingKeeperManager implements ConfigurationSerializable {
     private Map<Location, ItemStack[]> inventories;
-    private static CraftingKeeperManager self;
+    private static final CraftingKeeperManager self = new CraftingKeeperManager();
 
     private CraftingKeeperManager() {
         this.inventories = new HashMap<>();
     }
 
     public static CraftingKeeperManager getInstance() {
-        if (self == null) {
-            self = new CraftingKeeperManager();
-        }
         return self;
     }
 
@@ -52,12 +49,13 @@ public class CraftingKeeperManager implements ConfigurationSerializable {
         Map<String, Object> result = new HashMap<>();
         List<String> ids = new ArrayList<>();
 
-        for (Location location : this.inventories.keySet()) {
+        for (Map.Entry<Location, ItemStack[]> entry : this.inventories.entrySet()) {
             String randId = UUID.randomUUID().toString().replace("-", "");
             Map<String, Object> craftingTable = new HashMap<>();
             List<Map<String, Object>> contents = new ArrayList<>();
+            Location location = entry.getKey();
 
-            for (ItemStack item : this.inventories.get(location)) {
+            for (ItemStack item : entry.getValue()) {
                 contents.add(item.serialize());
             }
 

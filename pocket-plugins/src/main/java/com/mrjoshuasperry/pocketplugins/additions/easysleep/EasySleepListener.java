@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,7 +15,11 @@ import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.mrjoshuasperry.pocketplugins.MiniAdditions;
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
+import com.mrjoshuasperry.pocketplugins.utils.Module;
+
+import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.ChatColor;
 
 public class EasySleepListener extends Module {
     private final List<UUID> sleeping;
@@ -42,14 +45,16 @@ public class EasySleepListener extends Module {
 
         if (!this.sleeping.contains(event.getPlayer().getUniqueId())) {
             this.sleeping.add(event.getPlayer().getUniqueId());
-            Bukkit.broadcastMessage(
-                    ChatColor.YELLOW + event.getPlayer().getName() + " is now sleeping. " + getPlayersInBed());
+            Bukkit.broadcast(
+                    Component.text(
+                            ChatColor.YELLOW + event.getPlayer().getName() + " is now sleeping. " + getPlayersInBed()),
+                    "");
         }
 
         if ((double) this.sleeping.size() / (double) Bukkit.getOnlinePlayers().size() >= this.threshold) {
 
-            wakeTask = Bukkit.getScheduler().runTaskLater(MiniAdditions.getInstance(), () -> {
-                Bukkit.broadcastMessage(ChatColor.YELLOW + "Wakey wakey, eggs and bakey.");
+            wakeTask = Bukkit.getScheduler().runTaskLater(PocketPlugins.getInstance(), () -> {
+                Bukkit.broadcast(Component.text(ChatColor.YELLOW + "Wakey wakey, eggs and bakey."), "");
                 World world = event.getPlayer().getWorld();
                 world.setTime(0);
                 world.setStorm(false);
@@ -71,8 +76,8 @@ public class EasySleepListener extends Module {
     public void onPlayerWake(PlayerBedLeaveEvent event) {
         if (this.sleeping.contains(event.getPlayer().getUniqueId())) {
             this.sleeping.remove(event.getPlayer().getUniqueId());
-            Bukkit.broadcastMessage(
-                    ChatColor.YELLOW + event.getPlayer().getName() + " is no longer sleeping. " + getPlayersInBed());
+            Bukkit.broadcast(Component.text(ChatColor.YELLOW + event.getPlayer().getName()
+                    + " mysteriously vanished. They are no longer sleeping. " + getPlayersInBed()), "");
             if (wakeTask != null) {
                 wakeTask.cancel();
                 wakeTask = null;
@@ -84,8 +89,8 @@ public class EasySleepListener extends Module {
     public void onPlayerLeave(PlayerQuitEvent event) {
         if (this.sleeping.contains(event.getPlayer().getUniqueId())) {
             this.sleeping.remove(event.getPlayer().getUniqueId());
-            Bukkit.broadcastMessage(ChatColor.YELLOW + event.getPlayer().getName()
-                    + " mysteriously vanished. They are no longer sleeping. " + getPlayersInBed());
+            Bukkit.broadcast(Component.text(ChatColor.YELLOW + event.getPlayer().getName()
+                    + " mysteriously vanished. They are no longer sleeping. " + getPlayersInBed()), "");
             if (wakeTask != null) {
                 wakeTask.cancel();
                 wakeTask = null;

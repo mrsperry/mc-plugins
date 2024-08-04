@@ -1,7 +1,7 @@
 package com.mrjoshuasperry.pocketplugins.additions.cobblegenerator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,14 +9,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
-import com.mrjoshuasperry.pocketplugins.MiniAdditions;
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
 public class CobbleGeneratorManager {
-    private static CobbleGeneratorManager self;
+    private static final CobbleGeneratorManager self = new CobbleGeneratorManager();
     private final Map<Material, Double> materials;
 
     private CobbleGeneratorManager() {
-        this.materials = new HashMap<>();
+        this.materials = new EnumMap<>(Material.class);
     }
 
     void addMaterial(Material material, double weight) {
@@ -31,7 +31,7 @@ public class CobbleGeneratorManager {
         List<Double> weights = new ArrayList<>(materials.values());
         double total = weights.stream().mapToDouble(Double::doubleValue).sum();
 
-        double randValue = MiniAdditions.getRandom().nextDouble() * total;
+        double randValue = PocketPlugins.getRandom().nextDouble() * total;
         List<Material> mats = new ArrayList<>(this.materials.keySet());
 
         for (int index = 0; index < mats.size(); index++) {
@@ -45,9 +45,6 @@ public class CobbleGeneratorManager {
     }
 
     public static CobbleGeneratorManager getInstance() {
-        if (self == null) {
-            self = new CobbleGeneratorManager();
-        }
         return self;
     }
 

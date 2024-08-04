@@ -11,7 +11,11 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import com.mrjoshuasperry.pocketplugins.utils.Module;
+
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.TextComponent;
 
 public class NamePing extends Module {
     private final Map<String, Date> cooldowns;
@@ -31,9 +35,10 @@ public class NamePing extends Module {
     }
 
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        String msg = event.getMessage();
-        Matcher matcher = pattern.matcher(msg);
+    public void onPlayerChat(AsyncChatEvent event) {
+        String message = ((TextComponent) event.message()).content();
+
+        Matcher matcher = pattern.matcher(message);
         while (matcher.find()) {
             Player player = Bukkit.getPlayer(matcher.group(1));
 

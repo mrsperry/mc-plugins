@@ -12,7 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import com.mrjoshuasperry.pocketplugins.MiniAdditions;
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
 public class CustomProjectile extends BukkitRunnable {
     private int runnableID;
@@ -36,7 +36,7 @@ public class CustomProjectile extends BukkitRunnable {
         this.lifespan = lifespan;
         this.gravity = 0;
         this.downForce = 0;
-        this.display = (projectile) -> {
+        this.display = projectile -> {
         };
         this.entityCollision = (projectile, entities) -> {
         };
@@ -77,7 +77,7 @@ public class CustomProjectile extends BukkitRunnable {
     }
 
     public void launch() {
-        this.runnableID = this.runTaskTimer(MiniAdditions.getInstance(), 0, 1).getTaskId();
+        this.runnableID = this.runTaskTimer(PocketPlugins.getInstance(), 0, 1).getTaskId();
     }
 
     public void update() {
@@ -92,7 +92,7 @@ public class CustomProjectile extends BukkitRunnable {
         Block block = this.location.getBlock();
         Collection<Entity> entities = this.location.getWorld().getNearbyEntities(this.location, this.radius,
                 this.radius, this.radius);
-        if (entities.size() > 0) {
+        if (!entities.isEmpty()) {
             this.entityCollision.execute(this, entities);
         }
         if (!block.getType().equals(Material.AIR)) {

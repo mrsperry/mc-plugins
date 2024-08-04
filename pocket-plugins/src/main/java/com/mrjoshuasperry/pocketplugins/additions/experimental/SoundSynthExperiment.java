@@ -3,19 +3,20 @@ package com.mrjoshuasperry.pocketplugins.additions.experimental;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.mrjoshuasperry.pocketplugins.MiniAdditions;
-
 import com.mrjoshuasperry.mcutils.sound.SoundByte;
 import com.mrjoshuasperry.mcutils.sound.SoundSynth;
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class SoundSynthExperiment implements CommandExecutor {
     private final Map<Player, SoundSynth> soundSynths;
@@ -42,7 +43,9 @@ public class SoundSynthExperiment implements CommandExecutor {
                 String subCommand = args[0];
                 args = Arrays.copyOfRange(args, 1, args.length);
 
-                Bukkit.getLogger().info("[DEBUG] + sub? " + subCommand + " args? " + args.length);
+                if (Bukkit.getLogger().isLoggable(Level.INFO)) {
+                    Bukkit.getLogger().info(String.format("[DEBUG] sub? %s args? %d", subCommand, args.length));
+                }
 
                 switch (subCommand.toLowerCase()) {
                     case "add":
@@ -123,7 +126,7 @@ public class SoundSynthExperiment implements CommandExecutor {
 
     private void play(Player player) {
         SoundSynth pSynth = soundSynths.get(player);
-        pSynth.play(MiniAdditions.getInstance(), player.getLocation());
+        pSynth.play(PocketPlugins.getInstance(), player.getLocation());
     }
 
 }

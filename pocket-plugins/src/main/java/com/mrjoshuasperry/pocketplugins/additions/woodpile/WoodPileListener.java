@@ -2,6 +2,7 @@ package com.mrjoshuasperry.pocketplugins.additions.woodpile;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -12,7 +13,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.mrjoshuasperry.pocketplugins.MiniAdditions;
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
+import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 public class WoodPileListener extends Module {
     private int logConvertTime;
@@ -29,50 +31,54 @@ public class WoodPileListener extends Module {
         this.logConvertTime = config.getInt("log-convert-time", 5);
     }
 
+    private BukkitRunnable createWoodPileRunnable(WoodPile woodPile, BlockPlaceEvent event) {
+        return new BukkitRunnable() {
+            final int lifespan = woodPile.getFuelSize() * logConvertTime * 20;
+            int age = 0;
+
+            @Override
+            public void run() {
+                if (age > lifespan) {
+                    woodPile.convertFuel();
+                    this.cancel();
+                    woodPiles.remove(woodPile);
+                    event.getBlock().getWorld().playSound(event.getBlock().getLocation(),
+                            Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 0.5f);
+                }
+
+                if (age % 10 == 0) {
+                    woodPile.showBurning(Particle.LARGE_SMOKE);
+                }
+
+                if (age % 40 == 0 && PocketPlugins.getRandom().nextBoolean()) {
+                    event.getBlock().getWorld().playSound(event.getBlock().getLocation(),
+                            Sound.BLOCK_FIRE_AMBIENT, 0.5f, 0.5f);
+                }
+                age += 2;
+            }
+        };
+    }
+
     @EventHandler
     public void blockPlaceEvent(BlockPlaceEvent event) {
         Material replaced = event.getBlockReplacedState().getType();
 
         if (replaced.equals(Material.FIRE) && WoodPile.isValidCovering(event.getBlock())) {
-            WoodPile wp = new WoodPile();
-            if (wp.checkValid(event.getBlock())) {
-                woodPiles.put(wp, new BukkitRunnable() {
-                    final int lifespan = wp.getFuelSize() * logConvertTime * 20;
-                    int age = 0;
-
-                    @Override
-                    public void run() {
-                        if (age > lifespan) {
-                            wp.convertFuel();
-                            this.cancel();
-                            woodPiles.remove(wp);
-                            event.getBlock().getWorld().playSound(event.getBlock().getLocation(),
-                                    Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 0.5f);
-                        }
-
-                        if (age % 10 == 0) {
-                            wp.showBurning(Particle.SMOKE_LARGE);
-                        }
-
-                        if (age % 40 == 0 && MiniAdditions.getRandom().nextBoolean()) {
-                            event.getBlock().getWorld().playSound(event.getBlock().getLocation(),
-                                    Sound.BLOCK_FIRE_AMBIENT, 0.5f, 0.5f);
-                        }
-                        age += 2;
-                    }
-                });
-
-                woodPiles.get(wp).runTaskTimer(MiniAdditions.getInstance(), 0, 2);
+            WoodPile woodPile = new WoodPile();
+            if (woodPile.checkValid(event.getBlock())) {
+                woodPiles.put(woodPile, createWoodPileRunnable(woodPile, event));
+                woodPiles.get(woodPile).runTaskTimer(PocketPlugins.getInstance(), 0, 2);
             }
         }
     }
 
     @EventHandler
     public void blockBreakEvent(BlockBreakEvent event) {
-        for (WoodPile pile : woodPiles.keySet()) {
-            if (pile.contains(event.getBlock())) {
-                woodPiles.get(pile).cancel();
-                woodPiles.remove(pile);
+        for (Entry<WoodPile, BukkitRunnable> entry : woodPiles.entrySet()) {
+            WoodPile woodPile = entry.getKey();
+            if (woodPile.contains(event.getBlock())) {
+                woodPiles.get(woodPile).cancel();
+                woodPiles.remove(woodPile);
                 event.getBlock().setType(Material.FIRE);
             }
         }
