@@ -19,18 +19,23 @@ public class Main extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
-        if (event.getEntityType() == EntityType.CREEPER) {
-            Location location = event.getLocation();
-            Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK_ROCKET);
-            FireworkMeta meta = firework.getFireworkMeta();
-            meta.setPower(1);
-            meta.addEffects(FireworkEffect.builder()
-                    .with(FireworkEffect.Type.CREEPER)
-                    .withColor(Color.LIME)
-                    .withFade(Color.GREEN)
-                    .flicker(true)
-                    .build());
-            firework.setFireworkMeta(meta);
+        if (event.getEntityType() != EntityType.CREEPER) {
+            return;
         }
+
+        Location location = event.getLocation();
+        Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK_ROCKET);
+        FireworkMeta meta = firework.getFireworkMeta();
+
+        meta.setPower(1);
+        meta.addEffects(FireworkEffect.builder()
+                .with(FireworkEffect.Type.CREEPER)
+                .withColor(Color.LIME)
+                .withFade(Color.GREEN)
+                .flicker(true)
+                .build());
+                
+        firework.setFireworkMeta(meta);
     }
+
 }
