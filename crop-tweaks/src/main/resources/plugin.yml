@@ -1,6 +1,6 @@
 main: "com.mrjoshuasperry.croptweaks.Main"
 name: "CropTweaks"
 version: ${project.version}
-authors: ["dinner1111"]
-description: "Allows the automatic harvesting and replanting of crops by right clicking them, at the cost of all seeds."
-api-version: "1.15"
+authors: ["mrsperry"]
+description: "Allows the automatic harvesting and replanting of crops by right clicking them with a hoe, at the cost of all seeds."
+api-version: "1.21"

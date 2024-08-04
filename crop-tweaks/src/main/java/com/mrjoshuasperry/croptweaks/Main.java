@@ -1,9 +1,10 @@
 package com.mrjoshuasperry.croptweaks;
 
-import com.mrjoshuasperry.mcutils.types.CropTypes;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
@@ -14,9 +15,12 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Random;
+import com.mrjoshuasperry.mcutils.types.CropTypes;
+import com.mrjoshuasperry.mcutils.types.ToolTypes;
 
 public class Main extends JavaPlugin implements Listener {
     private final Random random = new Random();
@@ -26,54 +30,74 @@ public class Main extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(this, this);
     }
 
-    private void dropItem(Location location, Material material, int amount) {
-        World world = location.getWorld();
-        if (world != null) {
-            world.dropItemNaturally(location, new ItemStack(material, amount));
-        }
-    }
-
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (event.getHand() == EquipmentSlot.HAND) {
-                Block block = event.getClickedBlock();
-                if (block == null) {
-                    return;
-                }
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
 
-                Material type = block.getType();
-                BlockData blockData = block.getBlockData();
-                if (CropTypes.getHarvestableTypes().contains(type) && block.getBlockData() instanceof Ageable) {
-                    Ageable data = (Ageable) blockData;
-                    if (data.getAge() != data.getMaximumAge()) {
-                        return;
-                    }
-                    data.setAge(0);
-                    block.setBlockData(data);
-                    event.setCancelled(true);
+        PlayerInventory inventory = event.getPlayer().getInventory();
+        EquipmentSlot hand = event.getHand();
+        ItemStack tool;
 
-                    Location location = block.getLocation();
-                    int amount = this.random.nextInt(2) + 1;
-                    switch (type) {
-                        case NETHER_WART:
-                            this.dropItem(location, Material.NETHER_WART, amount);
-                            break;
-                        case WHEAT:
-                            this.dropItem(location, Material.WHEAT, 1);
-                            break;
-                        case CARROTS:
-                            this.dropItem(location, Material.CARROT, amount);
-                            break;
-                        case POTATOES:
-                            this.dropItem(location, Material.POTATO, amount);
-                            break;
-                        case BEETROOTS:
-                            this.dropItem(location, Material.BEETROOT, amount);
-                            break;
-                    }
-                }
-            }
+        if (hand == EquipmentSlot.HAND) {
+            tool = inventory.getItemInMainHand();
+        } else {
+            tool = inventory.getItemInOffHand();
+        }
+
+        if (!ToolTypes.getHoeTypes().contains(tool.getType())) {
+            return;
+        }
+
+        Block block = event.getClickedBlock();
+        Material type = block.getType();
+        BlockData blockData = block.getBlockData();
+
+        if (!CropTypes.getHarvestableTypes().contains(type)) {
+            return;
+        }
+
+        Ageable data = (Ageable) blockData;
+        if (data.getAge() != data.getMaximumAge()) {
+            return;
+        }
+
+        data.setAge(0);
+        block.setBlockData(data);
+
+        Location location = block.getLocation();
+        World world = location.getWorld();
+        int amount = this.random.nextInt(2) + 1;
+
+        Damageable meta = (Damageable) tool.getItemMeta();
+        meta.setDamage(meta.getDamage() + 1);
+        tool.setItemMeta(meta);
+
+        switch (type) {
+            case NETHER_WART:
+                world.dropItemNaturally(location, new ItemStack(Material.NETHER_WART, amount));
+                world.playSound(location, Sound.BLOCK_NETHER_WART_BREAK, 1, 1);
+                break;
+            case WHEAT:
+                world.dropItemNaturally(location, new ItemStack(Material.WHEAT, amount));
+                world.playSound(location, Sound.BLOCK_CROP_BREAK, 1, 1);
+                break;
+            case CARROTS:
+                world.dropItemNaturally(location, new ItemStack(Material.CARROT, amount));
+                world.playSound(location, Sound.BLOCK_CROP_BREAK, 1, 1);
+                break;
+            case POTATOES:
+                world.dropItemNaturally(location, new ItemStack(Material.POTATO, amount));
+                world.playSound(location, Sound.BLOCK_CROP_BREAK, 1, 1);
+                break;
+            case BEETROOTS:
+                world.dropItemNaturally(location, new ItemStack(Material.BEETROOT, amount));
+                world.playSound(location, Sound.BLOCK_CROP_BREAK, 1, 1);
+                break;
+            default:
+                return;
         }
     }
+
 }
