@@ -1,75 +1,76 @@
 package com.mrjoshuasperry.compressedmobs;
 
-import com.google.common.collect.Lists;
-
-import net.md_5.bungee.api.ChatColor;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
+import com.google.common.collect.Lists;
+
+import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.ChatColor;
 
 public class Main extends JavaPlugin implements Listener {
-    private ArrayList<CreatureSpawnEvent.SpawnReason> blacklistedReasons = Lists.newArrayList(
-        CreatureSpawnEvent.SpawnReason.BEEHIVE,
-        CreatureSpawnEvent.SpawnReason.CUSTOM,
-        CreatureSpawnEvent.SpawnReason.CURED,
-        CreatureSpawnEvent.SpawnReason.DROWNED,
-        CreatureSpawnEvent.SpawnReason.EXPLOSION,
-        CreatureSpawnEvent.SpawnReason.INFECTION,
-        CreatureSpawnEvent.SpawnReason.LIGHTNING,
-        CreatureSpawnEvent.SpawnReason.SHEARED,
-        CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY,
-        CreatureSpawnEvent.SpawnReason.SLIME_SPLIT,
-        CreatureSpawnEvent.SpawnReason.SPAWNER_EGG
-    );
+    private static final ArrayList<SpawnReason> SPAWN_REASON_BLACKLIST = Lists.newArrayList(
+            SpawnReason.BEEHIVE,
+            SpawnReason.CUSTOM,
+            SpawnReason.CURED,
+            SpawnReason.DROWNED,
+            SpawnReason.EXPLOSION,
+            SpawnReason.INFECTION,
+            SpawnReason.LIGHTNING,
+            SpawnReason.SHEARED,
+            SpawnReason.SHOULDER_ENTITY,
+            SpawnReason.SLIME_SPLIT,
+            SpawnReason.SPAWNER_EGG);
 
-    private Random random;
+    private final Random random = new Random();
+    private final NamespacedKey compressedKey = new NamespacedKey(this, "compressed");
 
-    private double chance;
-    private int minYield;
-    private int maxYield;
+    private static final double GLOBAL_COMPRESS_CHANCE = 100;
+    private static final int GLOBAL_MIN_YIELD = 3;
+    private static final int GLOBAL_MAX_YIELD = 5;
 
-    private HashMap<EntityType, Object[]> creatures = new HashMap<>();
-    private HashSet<EntityType> blacklist = new HashSet<>();
+    private final Map<EntityType, Settings> creatures = new EnumMap<>(EntityType.class);
+    private final Set<EntityType> blacklist = new HashSet<>();
 
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
 
-        this.random = new Random();
-
         FileConfiguration config = this.getConfig();
-        this.chance = config.getDouble("global-chance", 100.0);
-        this.minYield = config.getInt("global-min-yield", 3);
-        this.maxYield = config.getInt("global-max-yield", 5);
 
         if (config.isConfigurationSection("creatures")) {
             for (String key : config.getConfigurationSection("creatures").getKeys(false)) {
                 try {
-                    this.creatures.put(EntityType.valueOf(key.toUpperCase()), new Object[] {
-                        config.getDouble("creatures." + key + ".chance", this.chance),
-                        config.getInt("creatures." + key + ".min-yield", this.minYield),
-                        config.getInt("creatures." + key + ".max-yield", this.maxYield)
-                    });
+                    EntityType type = EntityType.valueOf(key.toUpperCase());
+                    Settings settings = Settings.fromConfig(config.getConfigurationSection("creatures." + key),
+                            GLOBAL_COMPRESS_CHANCE, GLOBAL_MIN_YIELD, GLOBAL_MAX_YIELD);
+
+                    this.creatures.put(type, settings);
                 } catch (IllegalArgumentException ex) {
                     this.getLogger().severe("Could not parse entity type: " + key);
                 }
             }
         }
-        this.getLogger().info("Found " + this.creatures.size() + " custom setting(s)");
+        this.getLogger().info(() -> "Found " + this.creatures.size() + " custom setting(s)");
 
         if (config.isList("blacklist")) {
             for (String mob : config.getStringList("blacklist")) {
@@ -80,59 +81,72 @@ public class Main extends JavaPlugin implements Listener {
                 }
             }
         }
-        this.getLogger().info("Found " + this.blacklist.size() + " types on the blacklist");
+        this.getLogger().info(() -> "Found " + this.blacklist.size() + " types on the blacklist");
 
         this.getServer().getPluginManager().registerEvents(this, this);
     }
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        if (!this.blacklist.contains(event.getEntityType())) {
-            Entity mob = event.getEntity();
-            EntityType type = mob.getType();
-            PersistentDataContainer container = mob.getPersistentDataContainer();
-
-            if (container.has(new NamespacedKey(this, "compressed"), PersistentDataType.BYTE)) {
-                int min = this.minYield, max = this.maxYield;
-                if (this.creatures.containsKey(type)) {
-                    Object[] values = this.creatures.get(type);
-                    min = (int) values[1];
-                    max = (int) values[2];
-                }
-
-                int range = max - min;
-                int total = min + (range > 0 ? this.random.nextInt(range) : 0);
-                for (int amount = 0; amount < total; amount++) {
-                    Entity entity = mob.getWorld().spawnEntity(mob.getLocation(), type);
-                    entity.setVelocity(new Vector(
-                        (this.random.nextDouble() * 2) - 1,
-                        (this.random.nextDouble() / 2),
-                        (this.random.nextDouble() * 2) - 1));
-                }
-            }
+        if (this.blacklist.contains(event.getEntityType())) {
+            return;
         }
+
+        Entity mob = event.getEntity();
+        EntityType type = mob.getType();
+        PersistentDataContainer container = mob.getPersistentDataContainer();
+
+        if (!container.has(this.compressedKey, PersistentDataType.BYTE)) {
+            return;
+        }
+
+        Settings values = this.creatures.get(type);
+        if (values == null) {
+            return;
+        }
+
+        int range = values.maxYield() - values.minYield();
+        int mobsToSpawn = values.minYield() + (range > 0 ? this.random.nextInt(range) : 0);
+
+        for (int amount = 0; amount < mobsToSpawn; amount++) {
+            Entity entity = mob.getWorld().spawnEntity(mob.getLocation(), type);
+            entity.setVelocity(new Vector(
+                    (this.random.nextDouble() * 2) - 1,
+                    (this.random.nextDouble() / 2),
+                    (this.random.nextDouble() * 2) - 1));
+        }
+
     }
 
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         EntityType type = event.getEntityType();
 
-        if (!this.blacklist.contains(type)) {
-            Entity creature = event.getEntity();
-            PersistentDataContainer container = creature.getPersistentDataContainer();
-
-            if (container.has(new NamespacedKey(this, "compressed"), PersistentDataType.BYTE)
-                || this.blacklistedReasons.contains(event.getSpawnReason())) {
-                    return;
-            }
-
-            double chance = this.creatures.containsKey(type) ? (double) this.creatures.get(type)[0] : this.chance;
-            if (this.random.nextDouble() * chance <= 1) {
-                container.set(new NamespacedKey(this, "compressed"), PersistentDataType.BYTE, (byte) 1);
-
-                creature.setCustomName(ChatColor.GRAY + "Compressed " + creature.getName());
-                creature.setCustomNameVisible(true);
-            }
+        if (this.blacklist.contains(type)) {
+            return;
         }
+
+        Creature creature = (Creature) event.getEntity();
+        PersistentDataContainer container = creature.getPersistentDataContainer();
+
+        // Ignore already compressed mobs or mobs that spawn from a blacklisted source
+        if (container.has(this.compressedKey, PersistentDataType.BYTE)
+                || SPAWN_REASON_BLACKLIST.contains(event.getSpawnReason())) {
+            return;
+        }
+
+        Settings values = this.creatures.get(type);
+        if (values == null) {
+            return;
+        }
+
+        if (this.random.nextDouble() * values.compressChance() <= 1) {
+            container.set(this.compressedKey, PersistentDataType.BYTE, (byte) 1);
+
+            creature.customName(Component.text(ChatColor.GRAY + "Compressed " + creature.getName()));
+            creature.setCustomNameVisible(true);
+            creature.setRemoveWhenFarAway(true);
+        }
+
     }
 }
