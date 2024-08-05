@@ -1,18 +1,17 @@
 package com.mrjoshuasperry.customgeneration.populators.rocks;
 
-import com.mrjoshuasperry.customgeneration.PopulatorUtils;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-
-import javafx.util.Pair;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
+
+import com.mrjoshuasperry.customgeneration.PopulatorUtils;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 public class SmallRockPopulator extends BlockPopulator {
     private int chance;
@@ -22,9 +21,9 @@ public class SmallRockPopulator extends BlockPopulator {
     private List<Pair<Material, Byte>> replace;
 
     public SmallRockPopulator(int chance,
-                              List<Pair<Material, Byte>> place,
-                              List<Pair<Material, Byte>> surface,
-                              List<Pair<Material, Byte>> replace) {
+            List<Pair<Material, Byte>> place,
+            List<Pair<Material, Byte>> surface,
+            List<Pair<Material, Byte>> replace) {
         this.chance = chance;
 
         this.place = place;

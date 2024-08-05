@@ -1,18 +1,17 @@
 package com.mrjoshuasperry.customgeneration.populators;
 
-import com.mrjoshuasperry.customgeneration.PopulatorUtils;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-
-import javafx.util.Pair;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
+
+import com.mrjoshuasperry.customgeneration.PopulatorUtils;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 public class RuinPopulator extends BlockPopulator {
     private int chance;
@@ -30,11 +29,11 @@ public class RuinPopulator extends BlockPopulator {
     private List<Pair<Material, Byte>> replace;
 
     public RuinPopulator(int chance, int featureChance, int min, int max, int heightMin, int heightMax,
-                         List<Pair<Material, Byte>> floor,
-                         List<Pair<Material, Byte>> features,
-                         List<Pair<Material, Byte>> place,
-                         List<Pair<Material, Byte>> surface,
-                         List<Pair<Material, Byte>> replace) {
+            List<Pair<Material, Byte>> floor,
+            List<Pair<Material, Byte>> features,
+            List<Pair<Material, Byte>> place,
+            List<Pair<Material, Byte>> surface,
+            List<Pair<Material, Byte>> replace) {
         this.chance = chance;
         this.featureChance = featureChance;
         this.min = min;
@@ -118,7 +117,8 @@ public class RuinPopulator extends BlockPopulator {
                             Block block = world.getHighestBlockAt(x + blockX, z + blockZ).getRelative(0, -1, 0);
                             Pair<Material, Byte> selected = this.floor.get(random.nextInt(this.floor.size()));
 
-                            utils.setType(block.getX(), block.getY(), block.getZ(), selected.getKey(), selected.getValue());
+                            utils.setType(block.getX(), block.getY(), block.getZ(), selected.getKey(),
+                                    selected.getValue());
                         } else if ((blockX == 1) || (blockX == length - 1) || (blockZ == 1) || (blockZ == width - 1)) {
                             // add the feature blocks
                             Block block = world.getHighestBlockAt(x + blockX, z + blockZ);
@@ -127,7 +127,8 @@ public class RuinPopulator extends BlockPopulator {
                                     && (random.nextInt(this.featureChance) == 0)) {
                                 Pair<Material, Byte> selected = this.features.get(random.nextInt(this.features.size()));
 
-                                utils.setType(block.getX(), block.getY(), block.getZ(), selected.getKey(), selected.getValue());
+                                utils.setType(block.getX(), block.getY(), block.getZ(), selected.getKey(),
+                                        selected.getValue());
                             }
                         }
                     }

@@ -1,19 +1,18 @@
 package com.mrjoshuasperry.customgeneration.populators.fossils;
 
-import com.mrjoshuasperry.customgeneration.PopulatorUtils;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-
-import javafx.util.Pair;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
+
+import com.mrjoshuasperry.customgeneration.PopulatorUtils;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 public class RibcageFossilPopulator extends BlockPopulator {
     private int chance;
@@ -25,9 +24,9 @@ public class RibcageFossilPopulator extends BlockPopulator {
     private List<Pair<Material, Byte>> replace;
 
     public RibcageFossilPopulator(int chance, int length, int amount,
-                                  List<Pair<Material, Byte>> place,
-                                  List<Pair<Material, Byte>> surface,
-                                  List<Pair<Material, Byte>> replace) {
+            List<Pair<Material, Byte>> place,
+            List<Pair<Material, Byte>> surface,
+            List<Pair<Material, Byte>> replace) {
         this.chance = chance;
         this.length = length;
         this.amount = amount;
@@ -54,7 +53,8 @@ public class RibcageFossilPopulator extends BlockPopulator {
             int offset = random.nextBoolean() ? 1 : 2;
 
             // generate the spine
-            HashSet<Block> blocks = new HashSet<>(SpineGenerator.generate(world, random, origin, this.length, !direction));
+            HashSet<Block> blocks = new HashSet<>(
+                    SpineGenerator.generate(world, random, origin, this.length, !direction));
 
             Block highest = world.getHighestBlockAt(origin.getX(), origin.getZ());
 

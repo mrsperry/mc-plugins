@@ -1,18 +1,17 @@
 package com.mrjoshuasperry.customgeneration.populators;
 
-import com.mrjoshuasperry.customgeneration.PopulatorUtils;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-
-import javafx.util.Pair;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
+
+import com.mrjoshuasperry.customgeneration.PopulatorUtils;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 public class CavePopulator extends BlockPopulator {
     private int chance;
@@ -31,11 +30,12 @@ public class CavePopulator extends BlockPopulator {
     private List<Pair<Material, Byte>> surface;
     private List<Pair<Material, Byte>> replace;
 
-    public CavePopulator(int chance, int wallChance, int minY, int maxY, int minBlocks, int maxBlocks, int minDistance, int maxDistance, int chanceToBreak,
-                         List<Pair<Material, Byte>> walls,
-                         List<Pair<Material, Byte>> place,
-                         List<Pair<Material, Byte>> surface,
-                         List<Pair<Material, Byte>> replace) {
+    public CavePopulator(int chance, int wallChance, int minY, int maxY, int minBlocks, int maxBlocks, int minDistance,
+            int maxDistance, int chanceToBreak,
+            List<Pair<Material, Byte>> walls,
+            List<Pair<Material, Byte>> place,
+            List<Pair<Material, Byte>> surface,
+            List<Pair<Material, Byte>> replace) {
         this.chance = chance;
         this.wallChance = wallChance;
         this.minY = minY;
@@ -128,7 +128,8 @@ public class CavePopulator extends BlockPopulator {
                             if (distance <= length) {
                                 if (type != Material.AIR) {
                                     Pair<Material, Byte> material = this.place.get(random.nextInt(this.place.size()));
-                                    utils.setType(current.getX(), current.getY(), current.getZ(), material.getKey(), material.getValue());
+                                    utils.setType(current.getX(), current.getY(), current.getZ(), material.getKey(),
+                                            material.getValue());
                                 }
                             }
 
@@ -137,7 +138,8 @@ public class CavePopulator extends BlockPopulator {
                                     (random.nextInt(this.wallChance) == 0) &&
                                     (utils.isValidMaterial(current, this.replace))) {
                                 Pair<Material, Byte> material = this.walls.get(random.nextInt(this.walls.size()));
-                                utils.setType(current.getX(), current.getY(), current.getZ(), material.getKey(), material.getValue());
+                                utils.setType(current.getX(), current.getY(), current.getZ(), material.getKey(),
+                                        material.getValue());
                             }
                         }
                     }

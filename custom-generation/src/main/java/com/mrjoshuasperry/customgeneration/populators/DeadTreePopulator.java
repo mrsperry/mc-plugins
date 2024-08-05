@@ -1,18 +1,17 @@
 package com.mrjoshuasperry.customgeneration.populators;
 
-import com.mrjoshuasperry.customgeneration.PopulatorUtils;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-
-import javafx.util.Pair;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
+
+import com.mrjoshuasperry.customgeneration.PopulatorUtils;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 public class DeadTreePopulator extends BlockPopulator {
     private int chance;
@@ -26,9 +25,9 @@ public class DeadTreePopulator extends BlockPopulator {
     private List<Pair<Material, Byte>> replace;
 
     public DeadTreePopulator(int chance, int min, int max, int branchMin, int branchMax,
-                             List<Pair<Material, Byte>> place,
-                             List<Pair<Material, Byte>> surface,
-                             List<Pair<Material, Byte>> replace) {
+            List<Pair<Material, Byte>> place,
+            List<Pair<Material, Byte>> surface,
+            List<Pair<Material, Byte>> replace) {
         this.chance = chance;
         this.min = min;
         this.max = max;
@@ -109,7 +108,6 @@ public class DeadTreePopulator extends BlockPopulator {
                     } while ((world.getBlockAt(stumpX, stumpY, stumpZ).getType() == Material.AIR) && (stumpY >= 0));
                 }
 
-
                 // create the branches
                 if ((random.nextInt(3) > 0) || ((direction == 3) && (branchTries == 0))) {
                     branchTries++;
@@ -128,7 +126,8 @@ public class DeadTreePopulator extends BlockPopulator {
 
                     blocks.add(world.getBlockAt(branchX, branchY, branchZ));
 
-                    for (int index = utils.getNumber(random, this.branchMin, this.branchMax); index < this.branchMax; index++) {
+                    for (int index = utils.getNumber(random, this.branchMin,
+                            this.branchMax); index < this.branchMax; index++) {
                         if (random.nextInt(5) == 0) {
                             branchY++;
                         }

@@ -1,13 +1,9 @@
 package com.mrjoshuasperry.customgeneration.populators.fossils;
 
-import com.mrjoshuasperry.customgeneration.PopulatorUtils;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-
-import javafx.util.Pair;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -15,6 +11,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
 
+import com.mrjoshuasperry.customgeneration.PopulatorUtils;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 public class HandFossilPopulator extends BlockPopulator {
     private int chance;
@@ -25,9 +23,9 @@ public class HandFossilPopulator extends BlockPopulator {
     private List<Pair<Material, Byte>> replace;
 
     public HandFossilPopulator(int chance, int chestChance,
-                               List<Pair<Material, Byte>> place,
-                               List<Pair<Material, Byte>> surface,
-                               List<Pair<Material, Byte>> replace) {
+            List<Pair<Material, Byte>> place,
+            List<Pair<Material, Byte>> surface,
+            List<Pair<Material, Byte>> replace) {
         this.chance = chance;
         this.chestChance = chestChance;
 
@@ -100,7 +98,6 @@ public class HandFossilPopulator extends BlockPopulator {
                     world.getBlockAt(direction ? x + 4 : x, y + 3, !direction ? z + 4 : z),
                     world.getBlockAt(direction ? x + 4 : x, y + 4, !direction ? z + 4 : z),
                     world.getBlockAt(direction ? x + 4 : x, y + 5, !direction ? z + 4 : z)));
-
 
             if (utils.setBlocks(this.replace, blocks, offset)) {
                 // randomly add a chest on the palm

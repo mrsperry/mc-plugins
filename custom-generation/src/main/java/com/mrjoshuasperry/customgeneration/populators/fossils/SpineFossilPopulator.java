@@ -5,7 +5,7 @@ import com.mrjoshuasperry.customgeneration.PopulatorUtils;
 import java.util.List;
 import java.util.Random;
 
-import javafx.util.Pair;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -23,9 +23,9 @@ public class SpineFossilPopulator extends BlockPopulator {
     private List<Pair<Material, Byte>> replace;
 
     public SpineFossilPopulator(int chance, int min, int max,
-                                List<Pair<Material, Byte>> place,
-                                List<Pair<Material, Byte>> surface,
-                                List<Pair<Material, Byte>> replace) {
+            List<Pair<Material, Byte>> place,
+            List<Pair<Material, Byte>> surface,
+            List<Pair<Material, Byte>> replace) {
         this.chance = chance;
         this.min = min;
         this.max = max;

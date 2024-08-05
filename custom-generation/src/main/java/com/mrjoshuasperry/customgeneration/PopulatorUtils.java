@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-import javafx.util.Pair;
-
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 public class PopulatorUtils {
     private World world;
@@ -31,7 +31,7 @@ public class PopulatorUtils {
     public void setType(int x, int y, int z, Material type, byte data) {
         Block current = this.world.getBlockAt(x, y, z);
         current.setType(type);
-        current.setData(data);
+        // current.setData(data);
     }
 
     public boolean setBlocks(List<Pair<Material, Byte>> replace, HashSet<Block> blocks) {
@@ -65,7 +65,8 @@ public class PopulatorUtils {
     }
 
     public Block getBase(World world, Random random, Chunk chunk, int min, int max) {
-        return world.getBlockAt(random.nextInt(16) + 16 * chunk.getX(), this.getNumber(random, min, max), random.nextInt(16) + 16 * chunk.getZ());
+        return world.getBlockAt(random.nextInt(16) + 16 * chunk.getX(), this.getNumber(random, min, max),
+                random.nextInt(16) + 16 * chunk.getZ());
     }
 
     public boolean isValidMaterial(Block origin, List<Pair<Material, Byte>> materials) {

@@ -1,20 +1,19 @@
 package com.mrjoshuasperry.customgeneration.populators.structures;
 
-import com.mrjoshuasperry.customgeneration.PopulatorUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-import javafx.util.Pair;
-
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
+
+import com.mrjoshuasperry.customgeneration.PopulatorUtils;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 public class AquaductPopulator extends BlockPopulator {
     private int chance;
@@ -31,10 +30,11 @@ public class AquaductPopulator extends BlockPopulator {
     private List<Pair<Material, Byte>> surface;
     private List<Pair<Material, Byte>> replace;
 
-    public AquaductPopulator(int chance, int chestChance, int maxY, int minHeight, int maxHeight, int minLength, int maxLength, int minAmount, int maxAmount,
-                             List<Pair<Material, Byte>> place,
-                             List<Pair<Material, Byte>> surface,
-                             List<Pair<Material, Byte>> replace) {
+    public AquaductPopulator(int chance, int chestChance, int maxY, int minHeight, int maxHeight, int minLength,
+            int maxLength, int minAmount, int maxAmount,
+            List<Pair<Material, Byte>> place,
+            List<Pair<Material, Byte>> surface,
+            List<Pair<Material, Byte>> replace) {
         this.chance = chance;
         this.chestChance = chestChance;
         this.maxY = maxY;
@@ -116,7 +116,6 @@ public class AquaductPopulator extends BlockPopulator {
                 }
                 holder.clear();
 
-
                 // make the Y sit on top of the pillar bases
                 y++;
 
@@ -190,7 +189,6 @@ public class AquaductPopulator extends BlockPopulator {
                 // add the valid chest blocks
                 chests.add(world.getBlockAt(x, y, z));
             }
-
 
             // randomly lower the edges
             for (Block block : lower) {

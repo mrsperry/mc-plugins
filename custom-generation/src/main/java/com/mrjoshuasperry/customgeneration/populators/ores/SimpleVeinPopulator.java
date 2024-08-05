@@ -1,18 +1,17 @@
 package com.mrjoshuasperry.customgeneration.populators.ores;
 
-import com.mrjoshuasperry.customgeneration.PopulatorUtils;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-
-import javafx.util.Pair;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
+
+import com.mrjoshuasperry.customgeneration.PopulatorUtils;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 public class SimpleVeinPopulator extends BlockPopulator {
     private int chance;
@@ -25,9 +24,9 @@ public class SimpleVeinPopulator extends BlockPopulator {
     private List<Pair<Material, Byte>> replace;
 
     public SimpleVeinPopulator(int chance, int tries, int min, int max,
-                               List<Pair<Material, Byte>> place,
-                               List<Pair<Material, Byte>> surface,
-                               List<Pair<Material, Byte>> replace) {
+            List<Pair<Material, Byte>> place,
+            List<Pair<Material, Byte>> surface,
+            List<Pair<Material, Byte>> replace) {
         this.chance = chance;
         this.tries = tries;
         this.min = min;

@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-import javafx.util.Pair;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -25,10 +25,10 @@ public class TemplePopulator extends BlockPopulator {
 
     // due to some data loss this class is a bit messy
     public TemplePopulator(int chance,
-                           List<Pair<Material, Byte>> lights,
-                           List<Pair<Material, Byte>> place,
-                           List<Pair<Material, Byte>> surface,
-                           List<Pair<Material, Byte>> replace) {
+            List<Pair<Material, Byte>> lights,
+            List<Pair<Material, Byte>> place,
+            List<Pair<Material, Byte>> surface,
+            List<Pair<Material, Byte>> replace) {
         this.chance = chance;
 
         this.lights = lights;
@@ -94,29 +94,52 @@ public class TemplePopulator extends BlockPopulator {
                     for (int blockY = 0; blockY <= 13; blockY++) {
                         Block block = origin.getRelative(blockX, blockY + 4, blockZ);
 
-                        if ((blockX != -4 && blockX != 4 || blockZ != -4 && blockZ != 4) && (blockX != -4 && blockX != 4 || blockZ != -3 && blockZ != 3) && (blockX != -3 && blockX != 3 || blockZ != -4 && blockZ != 4) && (blockY > 5 && blockY < 9 || blockX != -4 && blockX != 4 && blockZ != -4 && blockZ != 4) && (blockY < 6 || blockY > 8 || (blockX < -1 || blockX > 1 || blockZ != -4 && blockZ != 4) && (blockX != -4 && blockX != 4 || blockZ < -1 || blockZ > 1)) && ((blockY < 4 || blockY > 6) && blockY < 10 || blockX != -3 && blockX != 3 || blockZ != -3 && blockZ != 3)) {
+                        if ((blockX != -4 && blockX != 4 || blockZ != -4 && blockZ != 4)
+                                && (blockX != -4 && blockX != 4 || blockZ != -3 && blockZ != 3)
+                                && (blockX != -3 && blockX != 3 || blockZ != -4 && blockZ != 4)
+                                && (blockY > 5 && blockY < 9
+                                        || blockX != -4 && blockX != 4 && blockZ != -4 && blockZ != 4)
+                                && (blockY < 6 || blockY > 8
+                                        || (blockX < -1 || blockX > 1 || blockZ != -4 && blockZ != 4)
+                                                && (blockX != -4 && blockX != 4 || blockZ < -1 || blockZ > 1))
+                                && ((blockY < 4 || blockY > 6) && blockY < 10 || blockX != -3 && blockX != 3
+                                        || blockZ != -3 && blockZ != 3)) {
                             if (blockX != 0 || blockZ != 0) {
                                 if (blockY <= 7) {
                                     if (blockY == 7) {
-                                        if ((blockX == -3 || blockX == 3) && blockZ == 0 || blockX == 0 && (blockZ == -3 || blockZ == 3) || (blockX == -1 || blockX == 1) && blockZ == 0 || blockX == 0 && (blockZ == -1 || blockZ == 1)) {
+                                        if ((blockX == -3 || blockX == 3) && blockZ == 0
+                                                || blockX == 0 && (blockZ == -3 || blockZ == 3)
+                                                || (blockX == -1 || blockX == 1) && blockZ == 0
+                                                || blockX == 0 && (blockZ == -1 || blockZ == 1)) {
                                             continue;
                                         }
-                                    } else if ((blockX == -3 || blockX == 3) && blockZ >= -1 && blockZ <= 1 || blockX >= -1 && blockX <= 1 && (blockZ == -3 || blockZ == 3)) {
+                                    } else if ((blockX == -3 || blockX == 3) && blockZ >= -1 && blockZ <= 1
+                                            || blockX >= -1 && blockX <= 1 && (blockZ == -3 || blockZ == 3)) {
                                         continue;
                                     }
                                 }
 
-                                if (blockX >= -2 && blockX <= 2 && blockZ >= -2 && blockZ <= 2 && (blockY <= 4 || blockY == 5 && (blockX != -2 && blockX != 2 || blockZ != -2 && blockZ != 2) || blockY == 6 && (blockX != -2 && blockX != 2 || !(blockZ == -2 | blockZ == 2)) && (blockX != -2 && blockX != 2 || blockZ != -1 && blockZ != 1) && (blockX != -1 && blockX != 1 || blockZ != -2 && blockZ != 2) || blockY >= 8 && blockY <= 10) || blockY == 11 && ((blockX == -1 || blockX == 1) && blockZ == 0 || blockX == 0 && (blockZ == -1 || blockZ == 1))) {
+                                if (blockX >= -2 && blockX <= 2 && blockZ >= -2 && blockZ <= 2 && (blockY <= 4
+                                        || blockY == 5 && (blockX != -2 && blockX != 2 || blockZ != -2 && blockZ != 2)
+                                        || blockY == 6 && (blockX != -2 && blockX != 2 || !(blockZ == -2 | blockZ == 2))
+                                                && (blockX != -2 && blockX != 2 || blockZ != -1 && blockZ != 1)
+                                                && (blockX != -1 && blockX != 1 || blockZ != -2 && blockZ != 2)
+                                        || blockY >= 8 && blockY <= 10)
+                                        || blockY == 11 && ((blockX == -1 || blockX == 1) && blockZ == 0
+                                                || blockX == 0 && (blockZ == -1 || blockZ == 1))) {
                                     continue;
                                 }
                             }
 
-                            if ((blockY == 2 || blockY == 8) && (blockX == -3 || blockX == 3) && (blockZ == -3 || blockZ == 3)) {
+                            if ((blockY == 2 || blockY == 8) && (blockX == -3 || blockX == 3)
+                                    && (blockZ == -3 || blockZ == 3)) {
                                 lights.add(block);
                             }
 
                             if (blockY >= 9) {
-                                if (((blockX == -3 || blockX == 3) && blockZ <= 3 && blockZ != 0 || blockX <= 3 && (blockZ == -3 || blockZ == 3) && blockX != 0) && (blockX != -3 && blockX != 3 || blockZ != -3 && blockZ != 3)) {
+                                if (((blockX == -3 || blockX == 3) && blockZ <= 3 && blockZ != 0
+                                        || blockX <= 3 && (blockZ == -3 || blockZ == 3) && blockX != 0)
+                                        && (blockX != -3 && blockX != 3 || blockZ != -3 && blockZ != 3)) {
                                     continue;
                                 }
 
@@ -198,24 +221,31 @@ public class TemplePopulator extends BlockPopulator {
                     do {
                         blocks.add(current.getRelative(0, offset, 0));
                         --offset;
-                    } while(current.getRelative(0, offset, 0).getType() == Material.AIR);
+                    } while (current.getRelative(0, offset, 0).getType() == Material.AIR);
                 }
             }
         }
 
         for (int blockX = -2; blockX <= 2; blockX++) {
             for (int blockZ = -2; blockZ <= 2; blockZ++) {
-                for(int blockY = 0; blockY <= 9; blockY++) {
+                for (int blockY = 0; blockY <= 9; blockY++) {
                     Block current = origin.getRelative(blockX, blockY + 1, blockZ);
 
-                    if ((blockX != -2 && blockX != 2 || blockZ != -2 && blockZ != 2) && (blockY < 1 || (blockX != -2 && blockX != 2 || blockZ != -1 && blockZ != 1) && (blockX != -1 && blockX != 1 || blockZ != -2 && blockZ != 2) && ((blockY < 4 || blockY > 7) && blockY != 9 || blockX != -1 && blockX != 1 || blockZ != -1 && blockZ != 1) && ((blockY < 5 || blockY > 7) && blockY != 9 || (blockX != -2 && blockX != 2 || blockZ != 0) && blockZ != -2 && blockZ != 2))) {
+                    if ((blockX != -2 && blockX != 2 || blockZ != -2 && blockZ != 2) && (blockY < 1 || (blockX != -2
+                            && blockX != 2 || blockZ != -1 && blockZ != 1)
+                            && (blockX != -1 && blockX != 1 || blockZ != -2 && blockZ != 2)
+                            && ((blockY < 4 || blockY > 7) && blockY != 9 || blockX != -1 && blockX != 1
+                                    || blockZ != -1 && blockZ != 1)
+                            && ((blockY < 5 || blockY > 7) && blockY != 9
+                                    || (blockX != -2 && blockX != 2 || blockZ != 0) && blockZ != -2 && blockZ != 2))) {
                         blocks.add(current);
 
                         if (blockY == 2 && (blockX == -1 || blockX == 1) && (blockZ == -1 || blockZ == 1)) {
                             lights.add(current);
                         }
 
-                        if (blockY == 6 && ((blockX == -1 || blockX == 1) && blockZ == 0 || (blockZ == -1 || blockZ == 1) && blockX == 0)) {
+                        if (blockY == 6 && ((blockX == -1 || blockX == 1) && blockZ == 0
+                                || (blockZ == -1 || blockZ == 1) && blockX == 0)) {
                             lights.add(current);
                         }
 
@@ -228,7 +258,8 @@ public class TemplePopulator extends BlockPopulator {
         }
     }
 
-    public void addStaircase(Block origin, HashSet<Block> blocks, int width, int maxY, boolean direction, boolean flip) {
+    public void addStaircase(Block origin, HashSet<Block> blocks, int width, int maxY, boolean direction,
+            boolean flip) {
         if (!flip) {
             for (int blockX = (direction ? -3 : -width); blockX <= (direction ? 4 : width); blockX++) {
                 for (int blockZ = (direction ? -width : -3); blockZ <= (direction ? width : 4); blockZ++) {
@@ -237,7 +268,8 @@ public class TemplePopulator extends BlockPopulator {
                         blocks.add(current);
 
                         if (blockY == 0) {
-                            for (int offset = -1; current.getRelative(0, offset, 0).getType() == Material.AIR; offset--) {
+                            for (int offset = -1; current.getRelative(0, offset, 0)
+                                    .getType() == Material.AIR; offset--) {
                                 blocks.add(current.getRelative(0, offset, 0));
                             }
                         }
@@ -252,7 +284,8 @@ public class TemplePopulator extends BlockPopulator {
                         blocks.add(current);
 
                         if (blockY == 0) {
-                            for (int offset = -1; current.getRelative(0, offset, 0).getType() == Material.AIR; offset--) {
+                            for (int offset = -1; current.getRelative(0, offset, 0)
+                                    .getType() == Material.AIR; offset--) {
                                 blocks.add(current.getRelative(0, offset, 0));
                             }
                         }

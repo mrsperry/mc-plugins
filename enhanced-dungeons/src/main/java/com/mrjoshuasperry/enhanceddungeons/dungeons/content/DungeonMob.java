@@ -275,7 +275,7 @@ public class DungeonMob {
         final Random random = Main.getRandom();
         for (int index = 0; index < 25; index++) {
             // Set count to 0 to use particle offset
-            world.spawnParticle(Particle.EXPLOSION_NORMAL, this.location, 0,
+            world.spawnParticle(Particle.EXPLOSION, this.location, 0,
                     // The offset starts in the center of the block and travels upwards
                     random.nextDouble() - 0.5, 1, random.nextDouble() - 0.5, 0.2);
         }

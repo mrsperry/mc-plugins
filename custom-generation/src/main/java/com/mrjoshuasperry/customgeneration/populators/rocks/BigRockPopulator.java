@@ -1,19 +1,18 @@
 package com.mrjoshuasperry.customgeneration.populators.rocks;
 
-import com.mrjoshuasperry.customgeneration.PopulatorUtils;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-
-import javafx.util.Pair;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
+
+import com.mrjoshuasperry.customgeneration.PopulatorUtils;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 
 public class BigRockPopulator extends BlockPopulator {
     private int chance;
@@ -25,9 +24,9 @@ public class BigRockPopulator extends BlockPopulator {
     private List<Pair<Material, Byte>> replace;
 
     public BigRockPopulator(int chance, int minHeight, int maxHeight,
-                            List<Pair<Material, Byte>> place,
-                            List<Pair<Material, Byte>> surface,
-                            List<Pair<Material, Byte>> replace) {
+            List<Pair<Material, Byte>> place,
+            List<Pair<Material, Byte>> surface,
+            List<Pair<Material, Byte>> replace) {
         this.chance = chance;
         this.minHeight = minHeight;
         this.maxHeight = maxHeight;
@@ -91,7 +90,6 @@ public class BigRockPopulator extends BlockPopulator {
                 }
             }
 
-
             // top off all the sections
             blocks.addAll(Arrays.asList(
                     world.getBlockAt(x + 2, y + height, z),
@@ -115,7 +113,6 @@ public class BigRockPopulator extends BlockPopulator {
                     world.getBlockAt(x, y + maxHeight + 1, z - 1),
                     world.getBlockAt(x, y - maxHeight - 2, z),
                     world.getBlockAt(x, y + maxHeight + 2, z)));
-
 
             utils.setBlocks(this.replace, blocks);
         }

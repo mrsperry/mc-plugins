@@ -1,6 +1,6 @@
 package io.github.pepsidawg.enchantmentapi;
 
-import javafx.util.Pair;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;

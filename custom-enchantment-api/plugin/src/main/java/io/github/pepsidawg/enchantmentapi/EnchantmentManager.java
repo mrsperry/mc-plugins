@@ -3,7 +3,7 @@ package io.github.pepsidawg.enchantmentapi;
 import io.github.pepsidawg.api.EnchantmentDetails;
 import io.github.pepsidawg.api.NMS;
 import io.github.pepsidawg.enchantmentapi.CustomEnchantmentChangedEvent.EnchantmentChangeReason;
-import javafx.util.Pair;
+import com.mrjoshuasperry.mcutils.classes.Pair;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
