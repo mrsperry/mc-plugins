@@ -1,6 +1,6 @@
 main: com.mrjoshuasperry.deathchest.Main
 name: DeathChest
-version: 1.0.0
-authors: [dinner1111]
-description: Never lose your items again!
-api-version: 1.13
+version: ${project.version}
+authors: ["mrsperry"]
+description: Never lose your items again! Spawns a temporary chest containing all of your items when you die.
+api-version: "1.21"

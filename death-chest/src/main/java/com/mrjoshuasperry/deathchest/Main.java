@@ -1,48 +1,41 @@
 package com.mrjoshuasperry.deathchest;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import com.mrjoshuasperry.deathchest.listeners.BlockListener;
 import com.mrjoshuasperry.deathchest.listeners.PlayerListener;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
-
 public class Main extends JavaPlugin {
-    private static HashSet<DeathChest> chests = new HashSet<>();
+    public static final String CHEST_CONFIG_KEY = "death-chests";
+    public static final String LOCATION_CONFIG_KEY = "location";
+    public static final String ITEMS_CONFIG_KEY = "items";
+
+    private final Set<DeathChest> chests = new HashSet<>();
 
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
 
-        chests = DeathChest.deserialize(this.getConfig());
+        chests.addAll(DeathChest.deserialize(this.getConfig()));
 
-        this.getServer().getPluginManager().registerEvents(new BlockListener(), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        PluginManager manager = this.getServer().getPluginManager();
+        manager.registerEvents(new BlockListener(), this);
+        manager.registerEvents(new PlayerListener(), this);
     }
 
-    @Override
-    public void onDisable() {
-        List<Map<String, Object>> serialized = new ArrayList<>();
-        for (DeathChest chest : chests) {
-            serialized.add(chest.serialize());
-        }
-        this.getConfig().set("chests", serialized);
-        this.saveConfig();
+    public Set<DeathChest> getChests() {
+        return this.chests;
     }
 
-    public static HashSet<DeathChest> getChests() {
-        return chests;
+    public void addChest(DeathChest chest) {
+        this.chests.add(chest);
     }
 
-    public static void addChest(DeathChest chest) {
-        chests.add(chest);
-    }
-
-    public static void removeChest(DeathChest chest) {
-        chests.remove(chest);
+    public void removeChest(DeathChest chest) {
+        this.chests.remove(chest);
     }
 }
