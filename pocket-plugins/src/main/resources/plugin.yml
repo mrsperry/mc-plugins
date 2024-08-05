@@ -3,8 +3,8 @@ name: PocketPlugins
 version: ${project.version}
 description: Adds small additions to minecraft
 authors:
-  - "mrsperry"
-  - "TimPCunningham"
+  - mrsperry
+  - TimPCunningham
 api-version: "1.21"
 commands:
   synth:
