@@ -1,8 +1,11 @@
 main: com.mrjoshuasperry.pocketplugins.PocketPlugins
-name: ${project.name}
+name: PocketPlugins
 version: ${project.version}
-api-version: 1.21
 description: Adds small additions to minecraft
+authors:
+  - "mrsperry"
+  - "TimPCunningham"
+api-version: "1.21"
 commands:
   synth:
     description: A tool for making a sound effect

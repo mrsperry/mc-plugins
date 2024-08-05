@@ -1,6 +1,7 @@
-main: "com.mrjoshuasperry.compressedmobs.Main"
-name: "CompressedMobs"
+main: com.mrjoshuasperry.compressedmobs.Main
+name: CompressedMobs
 version: ${project.version}
-authors: ["mrsperry"]
-description: "Compressing monsters and animals."
+description: Compressing monsters and animals.
+authors:
+  - mrsperry
 api-version: "1.21"

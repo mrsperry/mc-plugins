@@ -1,5 +1,7 @@
-main: "com.mrjoshuasperry.levelup.Main"
-name: "LevelUp"
+main: com.mrjoshuasperry.levelup.Main
+name: LevelUp
 version: ${project.version}
-authors: ["mrsperry"]
+description: Launches fireworks when you level up.
+authors:
+  - mrsperry
 api-version: "1.21"

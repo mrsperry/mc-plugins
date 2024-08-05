@@ -1,6 +1,7 @@
-main: "com.mrjoshuasperry.creeperworks.Main"
-name: "Creeperworks"
+main: com.mrjoshuasperry.creeperworks.Main
+name: Creeperworks
 version: ${project.version}
-authors: ["mrsperry"]
-description: "Adds a colorful firework to creeper explosions"
+description: Adds a colorful firework to creeper explosions
+authors:
+  - mrsperry
 api-version: "1.21"

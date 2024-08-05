@@ -1,6 +1,7 @@
-main: "com.mrjoshuasperry.autostack.Main"
-name: "AutoStack"
+main: com.mrjoshuasperry.autostack.Main
+name: AutoStack
 version: ${project.version}
-authors: ["mrsperry"]
-description: "Automatically gives you an extra stack of items if you run out."
+description: Automatically gives you an extra stack of items if you run out.
+authors:
+  - mrsperry
 api-version: "1.21"
