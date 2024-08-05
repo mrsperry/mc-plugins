@@ -15,10 +15,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class Main extends JavaPlugin implements Listener {
     // Can't group all mobs that have eggs any other way
-    public HashSet<EntityType> blacklist = new HashSet<>();
+    private final Set<EntityType> blacklist = new HashSet<>();
 
     private Random random;
 
@@ -90,16 +91,5 @@ public class Main extends JavaPlugin implements Listener {
     public void onPlayerEggThrow(PlayerEggThrowEvent event) {
         // Don't want chickens spawning when we hit a mob
         event.setHatching(false);
-    }
-
-    private String getType(EntityType type) {
-        switch (type) {
-            case MUSHROOM_COW:
-                return "MOOSHROOM";
-            case PIG_ZOMBIE:
-                return "ZOMBIE_PIGMAN";
-            default:
-                return type.toString();
-        }
     }
 }
