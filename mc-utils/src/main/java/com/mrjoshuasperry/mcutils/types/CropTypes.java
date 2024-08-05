@@ -1,32 +1,31 @@
 package com.mrjoshuasperry.mcutils.types;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Material;
 
 import com.google.common.collect.Lists;
 
 public class CropTypes {
-    private static ArrayList<Material> harvestable = Lists.newArrayList(
+    private static List<Material> harvestable = Lists.newArrayList(
             Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS, Material.NETHER_WART);
 
-    private static ArrayList<Material> breakable = Lists.newArrayList(
+    private static List<Material> breakable = Lists.newArrayList(
             Material.MELON, Material.PUMPKIN, Material.COCOA_BEANS, Material.SUGAR_CANE, Material.BAMBOO,
             Material.CACTUS, Material.RED_MUSHROOM, Material.BROWN_MUSHROOM);
 
-    private static ArrayList<Material> clickable = Lists.newArrayList(
+    private static List<Material> clickable = Lists.newArrayList(
             Material.SWEET_BERRY_BUSH);
 
-    private static ArrayList<Material> seeds = Lists.newArrayList(
+    private static List<Material> seeds = Lists.newArrayList(
             Material.WHEAT_SEEDS, Material.BEETROOT_SEEDS, Material.MELON_SEEDS, Material.PUMPKIN_SEEDS);
 
-    private static ArrayList<Material> saplings = Lists.newArrayList(
+    private static List<Material> saplings = Lists.newArrayList(
             Material.ACACIA_SAPLING, Material.BIRCH_SAPLING, Material.DARK_OAK_SAPLING, Material.JUNGLE_SAPLING,
-            Material.OAK_SAPLING,
-            Material.SPRUCE_SAPLING);
+            Material.OAK_SAPLING, Material.SPRUCE_SAPLING);
 
-    public static ArrayList<Material> getAllTypes() {
-        ArrayList<Material> types = CropTypes.harvestable;
+    public static List<Material> getAllTypes() {
+        List<Material> types = CropTypes.harvestable;
         types.addAll(CropTypes.breakable);
         types.addAll(CropTypes.clickable);
         types.addAll(CropTypes.seeds);
@@ -35,23 +34,23 @@ public class CropTypes {
         return types;
     }
 
-    public static ArrayList<Material> getHarvestableTypes() {
+    public static List<Material> getHarvestableTypes() {
         return CropTypes.harvestable;
     }
 
-    public static ArrayList<Material> getBreakableTypes() {
+    public static List<Material> getBreakableTypes() {
         return CropTypes.breakable;
     }
 
-    public static ArrayList<Material> getClickableTypes() {
+    public static List<Material> getClickableTypes() {
         return CropTypes.clickable;
     }
 
-    public static ArrayList<Material> getSeedTypes() {
+    public static List<Material> getSeedTypes() {
         return CropTypes.seeds;
     }
 
-    public static ArrayList<Material> getSaplingTypes() {
+    public static List<Material> getSaplingTypes() {
         return CropTypes.saplings;
     }
 }
