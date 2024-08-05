@@ -1,0 +1,8 @@
+main: com.mrjoshuasperry.dynamiccrafting.Main
+name: DynamicCrafting
+version: ${project.version}
+description: Allows custom recipes and many methods for in-world crafting.
+authors:
+  - mrsperry
+  - TimPCunningham
+api-version: "1.21"
