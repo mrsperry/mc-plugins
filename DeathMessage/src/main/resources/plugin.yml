@@ -1,5 +1,0 @@
-main: io.github.mrsperry.deathmessage.Main
-name: DeathMessage
-version: 1.0.0.0
-authors: [dinner1111]
-description: Sends you the location where you died.
