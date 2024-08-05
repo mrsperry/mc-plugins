@@ -1,5 +1,5 @@
 main: "com.mrjoshuasperry.levelup.Main"
 name: "LevelUp"
 version: ${project.version}
-authors: ["dinner1111"]
-api-version: "1.15"
+authors: ["mrsperry"]
+api-version: "1.21"

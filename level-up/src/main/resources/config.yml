@@ -3,6 +3,43 @@ levels:
   - 30
 # Colors the firework will select from; fade color also comes from this list
 colors:
-  - "red"
-  - "white"
-  - "blue"
+  # White
+  - alpha: 255
+    red: 255
+    green: 255
+    blue: 255
+  # Red
+  - alpha: 255
+    red: 255
+    green: 0
+    blue: 0
+  # Green
+  - alpha: 255
+    red: 0
+    green: 255
+    blue: 0
+  # Blue
+  - alpha: 255
+    red: 0
+    green: 0
+    blue: 255
+  # Yellow
+  - alpha: 255
+    red: 255
+    green: 255
+    blue: 0
+  # Orange
+  - alpha: 255
+    red: 255
+    green: 165
+    blue: 0
+  # Purple
+  - alpha: 255
+    red: 128
+    green: 0
+    blue: 128
+  # Cyan
+  - alpha: 255
+    red: 0
+    green: 255
+    blue: 255
