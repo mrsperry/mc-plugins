@@ -1,168 +1,216 @@
 package com.mrjoshuasperry.deathchest;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 
-public class DeathChest implements ConfigurationSerializable {
-    private final JavaPlugin plugin;
-    private final Location location;
-    private final PlayerInventory inventory;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
-    public DeathChest(JavaPlugin plugin, Location location, PlayerInventory inventory) {
-        this.plugin = plugin;
-        this.location = location;
-        this.inventory = inventory;
+public class DeathChest {
+    private static int getItemIndexForwardOffset(int index) {
+        int adjustedIndex = index;
+        // This shifts the hotbar items down 3 rows, to allow for a more natural look
+        if (index < 9) {
+            adjustedIndex += 27;
+        }
 
-        this.saveToConfig();
+        // Maintain position of armor and offhand items, while shifting all other items
+        // up one row
+        if (index > 9 && index < 36) {
+            adjustedIndex -= 9;
+        }
+
+        return adjustedIndex;
     }
 
-    private void saveToConfig() {
-        FileConfiguration config = this.plugin.getConfig();
-        Set<DeathChest> chests = DeathChest.deserialize(this.plugin);
-        chests.add(this);
+    private static int getItemIndexBackwardOffset(int index) {
+        int adjustedIndex = index;
+        // This shifts the hotbar items back to their original position
+        if (index < 27) {
+            adjustedIndex += 9;
+        }
 
-        config.set(Main.CHEST_CONFIG_KEY, chests);
-        this.plugin.saveConfig();
+        // This shifts the rest of the main inventory items back to their original
+        // position
+        if (index > 26 && index < 36) {
+            adjustedIndex -= 27;
+        }
+
+        return adjustedIndex;
     }
 
-    private void deleteFromConfig() {
-        FileConfiguration config = this.plugin.getConfig();
-        Set<DeathChest> chests = DeathChest.deserialize(this.plugin);
-        chests.remove(this);
+    public static void updateChestContents(Main plugin, Chest chest, Inventory inventory, boolean updateIndex) {
+        PersistentDataContainer container = chest.getPersistentDataContainer();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        config.set(Main.CHEST_CONFIG_KEY, chests);
-        this.plugin.saveConfig();
+        try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
+            Map<Integer, ItemStack> items = new HashMap<>();
+            for (int index = 0; index < inventory.getSize(); index++) {
+                ItemStack item = inventory.getItem(index);
+                if (item == null) {
+                    continue;
+                }
+
+                int adjustedIndex = updateIndex ? DeathChest.getItemIndexForwardOffset(index) : index;
+                items.put(adjustedIndex, item);
+            }
+
+            dataOutput.writeInt(items.entrySet().size());
+            for (Entry<Integer, ItemStack> entry : items.entrySet()) {
+                dataOutput.writeInt(entry.getKey());
+                dataOutput.writeObject(entry.getValue());
+            }
+
+            byte[] byteArray = outputStream.toByteArray();
+            container.set(plugin.getDeathChestItemsKey(), PersistentDataType.BYTE_ARRAY, byteArray);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        chest.update();
     }
 
-    public void takeItems(PlayerInventory inventory) {
-        for (ItemStack item : this.inventory.getContents()) {
+    public static void create(Main plugin, Player player) {
+        Location location = player.getLocation();
+        World world = player.getWorld();
+        Block block = world.getBlockAt(location);
+
+        Inventory inventory = player.getInventory();
+        if (inventory.isEmpty()) {
+            return;
+        }
+
+        player.sendMessage(
+                Component
+                        .text().color(NamedTextColor.RED).content("Your death chest is located at ("
+                                + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ()
+                                + ")")
+                        .build());
+
+        block.setType(Material.CHEST);
+
+        Chest chest = (Chest) block.getState();
+
+        PersistentDataContainer container = chest.getPersistentDataContainer();
+        container.set(plugin.getDeathChestKey(), PersistentDataType.BOOLEAN, true);
+        container.set(plugin.getDeathChestPlayerKey(), PersistentDataType.STRING, player.getName());
+
+        DeathChest.updateChestContents(plugin, chest, inventory, true);
+    }
+
+    public static void destroy(Chest chest) {
+        World world = chest.getWorld();
+        Location location = chest.getLocation();
+        world.playSound(location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+
+        for (ItemStack item : chest.getInventory().getContents()) {
             if (item == null) {
                 continue;
             }
 
-            inventory.addItem(item);
+            world.dropItemNaturally(location, item);
         }
 
-        this.deleteFromConfig();
+        chest.getBlock().setType(Material.AIR);
     }
 
-    public void openInventory(Player player) {
-        World world = player.getWorld();
-        Block block = world.getBlockAt(this.location);
-        
-        player.openInventory(inventory);
-        player.playSound(this.location, Sound.BLOCK_CHEST_OPEN, 1, 1);
+    private static Inventory readInventory(Main plugin, Chest chest) {
+        PersistentDataContainer container = chest.getPersistentDataContainer();
+
+        String playerName = container.get(plugin.getDeathChestPlayerKey(), PersistentDataType.STRING);
+        Inventory inventory = new DeathChestInventory(plugin, chest, 45, Component.text(playerName + "'s Death Chest"))
+                .getInventory();
+
+        byte[] itemBytes = chest.getPersistentDataContainer().get(
+                plugin.getDeathChestItemsKey(),
+                PersistentDataType.BYTE_ARRAY);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(itemBytes);
+
+        try (BukkitObjectInputStream input = new BukkitObjectInputStream(inputStream)) {
+            int inventorySize = input.readInt();
+
+            for (int index = 0; index < inventorySize; index++) {
+                int slot = input.readInt();
+                ItemStack item = (ItemStack) input.readObject();
+
+                inventory.setItem(slot, item);
+            }
+        } catch (EOFException ex) {
+            // Do nothing
+        } catch (ClassNotFoundException | IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        return inventory;
     }
 
-    public void spill() {
-        World world = this.location.getWorld();
-        if (world == null) {
-            return;
-        }
+    public static void takeItems(Main plugin, Player player, Chest chest) {
+        Inventory inventory = DeathChest.readInventory(plugin, chest);
+        Inventory playerInventory = player.getInventory();
 
-        block.setType(Material.AIR);
+        for (int index = 0; index < inventory.getSize(); index++) {
+            if (playerInventory.firstEmpty() == -1) {
+                break;
+            }
 
-        for (ItemStack item : this.items) {
-            this.location.getWorld().dropItemNaturally(this.location, item);
-        }
-
-        this.plugin.getLogger().info("Spilling death chest in \"" + this.location.getWorld().getName() + "\"" + " at ("
-                + this.location.getBlockX() + ", "
-                + this.location.getBlockY() + ", "
-                + this.location.getBlockZ() + ")");
-    }
-
-    public Map<String, Object> serialize() {
-        Map<String, Object> output = new HashMap<>();
-        Map<Integer, Map<String, Object>> items = new HashMap<>();
-
-        output.put(Main.LOCATION_CONFIG_KEY, this.location.serialize());
-
-        ItemStack[] contents = this.inventory.getContents();
-        for (int index = 0; index < contents.length; index++) {
-            items.put(index, contents[index].serialize());
-        }
-        output.put(Main.ITEMS_CONFIG_KEY, items);
-
-        return output;
-    }
-
-    public static Set<DeathChest> deserialize(JavaPlugin plugin) {
-        FileConfiguration config = plugin.getConfig();
-        Set<DeathChest> output = new HashSet<>();
-
-        if (!config.isList(Main.CHEST_CONFIG_KEY)) {
-            return output;
-        }
-
-        for (Map<?, ?> map : config.getMapList(Main.CHEST_CONFIG_KEY)) {
-            Location location;
-            PlayerInventory inventory = (PlayerInventory) Bukkit.createInventory(null, InventoryType.PLAYER);
-
-            Object locationObject = map.get(Main.LOCATION_CONFIG_KEY);
-            if (!(locationObject instanceof Map)) {
+            ItemStack item = inventory.getItem(index);
+            if (item == null) {
                 continue;
             }
 
-            Map<String, Object> locationMap = new HashMap<>();
-            for (Entry<?, ?> entry : ((Map<?, ?>) locationObject).entrySet()) {
-                Object key = entry.getKey();
-
-                if (!(key instanceof String)) {
-                    throw new AssertionError("Invalid location key-value pair: " + entry.toString());
-                }
-
-                locationMap.put((String) key, entry.getValue());
+            int adjustedIndex = DeathChest.getItemIndexBackwardOffset(index);
+            ItemStack currentItem = playerInventory.getItem(adjustedIndex);
+            if (currentItem == null) {
+                playerInventory.setItem(adjustedIndex, item);
+            } else {
+                playerInventory.addItem(item);
             }
 
-            location = Location.deserialize(locationMap);
-
-            Map<?, ?> inventoryMap = (Map<?, ?>) map.get(Main.ITEMS_CONFIG_KEY);
-            for (Entry<?, ?> item : inventoryMap.entrySet()) {
-                Object key = item.getKey();
-                Object value = item.getValue();
-                if (!(key instanceof Integer) || !(value instanceof Map)) {
-                    continue;
-                }
-
-                Map<String, Object> itemStackMap = new HashMap<>();
-                for (Entry<?, ?> itemEntry : ((Map<?, ?>) value).entrySet()) {
-                    Object itemKey = itemEntry.getKey();
-                    Object itemValue = itemEntry.getValue();
-                    if (!(itemKey instanceof String)) {
-                        continue;
-                    }
-
-                    itemStackMap.put((String) itemKey, itemValue);
-                }
-
-                inventory.setItem(Integer.parseInt((String) key), ItemStack.deserialize(itemStackMap));
-            }
-
-            output.add(new DeathChest(plugin, location, inventory));
+            inventory.clear(index);
         }
 
-        return output;
+        if (inventory.isEmpty()) {
+            DeathChest.destroy(chest);
+        } else {
+            DeathChest.updateChestContents(plugin, chest, inventory, false);
+        }
     }
 
-    public Location getLocation() {
-        return this.location;
+    public static void openInventory(Main plugin, Player player, Chest chest) {
+        Inventory inventory = DeathChest.readInventory(plugin, chest);
+        player.openInventory(inventory);
     }
 }

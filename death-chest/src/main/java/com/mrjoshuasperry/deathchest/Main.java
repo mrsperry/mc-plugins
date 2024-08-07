@@ -1,41 +1,44 @@
 package com.mrjoshuasperry.deathchest;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import org.bukkit.NamespacedKey;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mrjoshuasperry.deathchest.listeners.BlockListener;
+import com.mrjoshuasperry.deathchest.listeners.EntityListener;
+import com.mrjoshuasperry.deathchest.listeners.InventoryListener;
 import com.mrjoshuasperry.deathchest.listeners.PlayerListener;
 
 public class Main extends JavaPlugin {
-    public static final String CHEST_CONFIG_KEY = "death-chests";
-    public static final String LOCATION_CONFIG_KEY = "location";
-    public static final String ITEMS_CONFIG_KEY = "items";
-
-    private final Set<DeathChest> chests = new HashSet<>();
+    private final NamespacedKey deathChestKey = new NamespacedKey(this, "death-chest");
+    private final NamespacedKey deathChestItemsKey = new NamespacedKey(this, "death-chest-items");
+    private final NamespacedKey deathChestPlayerKey = new NamespacedKey(this, "death-chest-player");
 
     @Override
     public void onEnable() {
-        this.saveDefaultConfig();
-
-        chests.addAll(DeathChest.deserialize(this.getConfig()));
+        Listener[] listeners = {
+                new BlockListener(this),
+                new EntityListener(this),
+                new InventoryListener(this),
+                new PlayerListener(this)
+        };
 
         PluginManager manager = this.getServer().getPluginManager();
-        manager.registerEvents(new BlockListener(), this);
-        manager.registerEvents(new PlayerListener(), this);
+        for (Listener listener : listeners) {
+            manager.registerEvents(listener, this);
+        }
     }
 
-    public Set<DeathChest> getChests() {
-        return this.chests;
+    public NamespacedKey getDeathChestKey() {
+        return this.deathChestKey;
     }
 
-    public void addChest(DeathChest chest) {
-        this.chests.add(chest);
+    public NamespacedKey getDeathChestItemsKey() {
+        return this.deathChestItemsKey;
     }
 
-    public void removeChest(DeathChest chest) {
-        this.chests.remove(chest);
+    public NamespacedKey getDeathChestPlayerKey() {
+        return this.deathChestPlayerKey;
     }
 }

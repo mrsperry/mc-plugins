@@ -1,65 +1,70 @@
 package com.mrjoshuasperry.deathchest.listeners;
 
-import com.mrjoshuasperry.deathchest.DeathChest;
-import com.mrjoshuasperry.deathchest.Main;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
-import java.util.HashSet;
+import com.mrjoshuasperry.deathchest.Main;
 
 public class BlockListener implements Listener {
+    private final Main plugin;
+
+    public BlockListener(Main plugin) {
+        this.plugin = plugin;
+    }
+
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        if (this.checkSpill(event.getBlock())) {
-            event.setDropItems(false);
+        BlockState state = event.getBlock().getState();
+
+        if (!(state instanceof Chest)) {
+            return;
         }
+
+        Chest chest = (Chest) state;
+        PersistentDataContainer container = chest.getPersistentDataContainer();
+        boolean isDeathChest = container.getOrDefault(plugin.getDeathChestKey(), PersistentDataType.BOOLEAN, false);
+
+        if (!isDeathChest) {
+            return;
+        }
+
+        event.setCancelled(true);
     }
 
     @EventHandler
-    public void onBlockExplode(BlockExplodeEvent event) {
-        HashSet<Block> remove = new HashSet<>();
-        for (Block block : event.blockList()) {
-            if (this.checkSpill(block)) {
-                remove.add(block);
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Block block = event.getBlock();
+
+        if (block.getType() != Material.CHEST) {
+            return;
+        }
+
+        BlockFace[] faces = new BlockFace[] { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
+        for (BlockFace face : faces) {
+            if (block.getRelative(face).getType() != Material.CHEST) {
+                continue;
             }
-        }
 
-        for (Block block : remove) {
-            event.blockList().remove(block);
-        }
-    }
+            Chest chest = (Chest) block.getRelative(face).getState();
+            PersistentDataContainer container = chest.getPersistentDataContainer();
+            boolean isDeathChest = container.getOrDefault(plugin.getDeathChestKey(), PersistentDataType.BOOLEAN,
+                    false);
 
-    @EventHandler
-    public void onEntityExplode(EntityExplodeEvent event) {
-        HashSet<Block> remove = new HashSet<>();
-        for (Block block : event.blockList()) {
-            if (this.checkSpill(block)) {
-                remove.add(block);
+            if (!isDeathChest) {
+                continue;
             }
+
+            event.setCancelled(true);
+            return;
         }
-
-        for (Block block : remove) {
-            event.blockList().remove(block);
-        }
-    }
-
-    private boolean checkSpill(Block block) {
-        if (block.getType() == Material.CHEST) {
-            for (DeathChest chest : new HashSet<>(Main.getChests())) {
-                if (chest.getLocation().equals(block.getLocation())) {
-                    chest.spill();
-
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }
