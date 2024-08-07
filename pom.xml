@@ -8,25 +8,6 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <modules>
-        <!-- Utils and dependencies -->
-        <module>mc-utils</module>
-        <module>command-framework</module>
-
-        <!-- Individual plugins -->
-        <module>auto-stack</module>
-        <module>compressed-mobs</module>
-        <module>creeper-works</module>
-        <module>crop-tweaks</module>
-        <module>custom-generation</module>
-        <module>death-chest</module>
-        <module>dynamic-crafting</module>
-        <module>enhanced-dungeons</module>
-        <module>level-up</module>
-        <module>mob-eggs</module>
-        <module>pocket-plugins</module>
-    </modules>
-
     <repositories>
         <repository>
             <id>papermc</id>
@@ -91,8 +72,23 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources/</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
+
 
     <profiles>
         <profile>
@@ -100,7 +96,13 @@
             <modules>
                 <module>mc-utils</module>
                 <module>command-framework</module>
+                <module>auto-stack</module>
+                <module>compressed-mobs</module>
                 <module>creeper-works</module>
+                <module>crop-tweaks</module>
+                <module>death-chest</module>
+                <module>level-up</module>
+                <module>mob-eggs</module>
                 <module>pocket-plugins</module>
             </modules>
         </profile>
