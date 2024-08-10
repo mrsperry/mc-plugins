@@ -40,13 +40,14 @@
                 <executions>
                     <execution>
                         <id>copy-plugin</id>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <configuration>
                             <skip>${skip.copy.plugin}</skip>
                             <target>
                                 <copy todir="${project.basedir}/../_server/plugins">
                                     <fileset dir="${project.build.directory}">
                                         <include name="*.jar" />
+                                        <exclude name="original-*.jar" />
                                     </fileset>
                                 </copy>
                             </target>
@@ -80,6 +81,19 @@
                     <release>17</release>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -88,7 +102,6 @@
             </resource>
         </resources>
     </build>
-
 
     <profiles>
         <profile>

@@ -1,6 +1,6 @@
-.idea/
-test/
+# Maven
 target/
+dependency-reduced-pom.xml
 
 # Testing server
 paper.jar
