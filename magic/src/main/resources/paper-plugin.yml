@@ -1,0 +1,6 @@
+name: Magic
+version: "1.0"
+main: com.timpcunningham.magic.Magic
+description: Magic Plugin Test
+api-version: "1.21"
+bootstrapper: com.timpcunningham.magic.MagicBootstrap

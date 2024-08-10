@@ -1,0 +1,7 @@
+main: com.timpcunningham.magic.Magic
+name: Magic
+version: ${project.version}
+description: Launches fireworks when you level up.
+authors:
+  - TimPCunningham
+api-version: "1.21"

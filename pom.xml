@@ -102,6 +102,7 @@
                 <module>crop-tweaks</module>
                 <module>death-chest</module>
                 <module>level-up</module>
+                <module>magic</module>
                 <module>mob-eggs</module>
                 <module>pocket-plugins</module>
             </modules>
