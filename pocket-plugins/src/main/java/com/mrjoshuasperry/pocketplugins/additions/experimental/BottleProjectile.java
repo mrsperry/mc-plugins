@@ -9,11 +9,12 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import com.mrjoshuasperry.pocketplugins.utils.CustomProjectile;
+import com.mrjoshuasperry.mcutils.CustomProjectile;
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
 public class BottleProjectile {
     public static CustomProjectile getBottleProjectile(Location location, Vector direction) {
-        CustomProjectile bottle = new CustomProjectile(location, direction, 1, 200)
+        CustomProjectile bottle = new CustomProjectile(PocketPlugins.getInstance(), location, direction, 1, 200)
                 .addAcceleration(0.2, 2.5)
                 .addGravity(0.1)
                 .onDisplay(proj -> {

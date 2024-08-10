@@ -27,12 +27,12 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.mrjoshuasperry.mcutils.CustomProjectile;
 import com.mrjoshuasperry.mcutils.ItemMetaHandler;
 import com.mrjoshuasperry.mcutils.LocationUtils;
 import com.mrjoshuasperry.mcutils.builders.ItemBuilder;
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
-import com.mrjoshuasperry.pocketplugins.utils.CustomProjectile;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 import net.md_5.bungee.api.ChatColor;
@@ -135,7 +135,7 @@ public class BiomeBombListener extends Module {
     }
 
     private CustomProjectile getBiomeBomb(ItemStack item, Location location, Vector direction) {
-        CustomProjectile biomeBomb = new CustomProjectile(location, direction, 0.1, 500)
+        CustomProjectile biomeBomb = new CustomProjectile(PocketPlugins.getInstance(), location, direction, 0.1, 500)
                 .addAcceleration(0.1, 1.3)
                 .addGravity(0.05)
                 .onDisplay(proj -> {
