@@ -136,7 +136,7 @@ public class ExplorersAtlas extends Module {
     MapView view = Bukkit.createMap(player.getWorld());
 
     List<Component> lore = meta.lore();
-    lore.add(Component.text("Atlas Owner: " + player.displayName()).color(NamedTextColor.AQUA));
+    lore.add(Component.text("Atlas Owner: " + player.getName()).color(NamedTextColor.AQUA));
     meta.lore(lore);
 
     view.setScale(Scale.CLOSEST);
