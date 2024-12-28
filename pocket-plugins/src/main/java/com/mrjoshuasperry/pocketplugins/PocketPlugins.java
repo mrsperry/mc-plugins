@@ -2,25 +2,33 @@ package com.mrjoshuasperry.pocketplugins;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Lists;
 import com.mrjoshuasperry.mcutils.ConfigManager;
 import com.mrjoshuasperry.pocketplugins.additions.armorstands.ArmorStandAdditions;
+import com.mrjoshuasperry.pocketplugins.additions.biomebombs.BiombeBomb;
 import com.mrjoshuasperry.pocketplugins.additions.cobblegenerator.CobbleGeneratorListener;
+import com.mrjoshuasperry.pocketplugins.additions.commandmacros.Macros;
 import com.mrjoshuasperry.pocketplugins.additions.concretemixer.ConcreteMixerListener;
 import com.mrjoshuasperry.pocketplugins.additions.craftingkeeper.CraftingKeeperListener;
 import com.mrjoshuasperry.pocketplugins.additions.craftingkeeper.CraftingKeeperManager;
 import com.mrjoshuasperry.pocketplugins.additions.easypaintings.EasyPaintings;
 import com.mrjoshuasperry.pocketplugins.additions.easysleep.EasySleepListener;
-import com.mrjoshuasperry.pocketplugins.additions.experimental.ExperimentalCommands;
 import com.mrjoshuasperry.pocketplugins.additions.experimental.SoundSynthExperiment;
 import com.mrjoshuasperry.pocketplugins.additions.featherplucker.FeatherPlucker;
 import com.mrjoshuasperry.pocketplugins.additions.igneousgenerator.IgneousGeneratorListener;
+import com.mrjoshuasperry.pocketplugins.additions.improvedMaps.ExplorersAtlas;
+import com.mrjoshuasperry.pocketplugins.additions.improvedMaps.WaypointManager;
 import com.mrjoshuasperry.pocketplugins.additions.improvedshears.ShearListener;
 import com.mrjoshuasperry.pocketplugins.additions.inventoryinspector.InventoryInspector;
 import com.mrjoshuasperry.pocketplugins.additions.leadattacher.LeadAttacherListener;
@@ -30,24 +38,29 @@ import com.mrjoshuasperry.pocketplugins.additions.slimyboots.SlimyBootsListener;
 import com.mrjoshuasperry.pocketplugins.additions.woodpile.WoodPileListener;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
-public class PocketPlugins extends JavaPlugin {
+public class PocketPlugins extends JavaPlugin implements Listener {
     private static Random rand = new Random();
     private ConfigManager configManager;
+    private List<NamespacedKey> registeredCraftingKeys;
 
     @Override
     public void onEnable() {
 
+        this.registeredCraftingKeys = new ArrayList<>();
         saveDefaultConfig();
 
         ArrayList<Module> modules = Lists.newArrayList(
                 new ArmorStandAdditions(),
+                new BiombeBomb(),
                 new CobbleGeneratorListener(),
                 new ConcreteMixerListener(),
                 new CraftingKeeperListener(),
                 new EasyPaintings(),
                 new EasySleepListener(),
+                new ExplorersAtlas(),
                 new IgneousGeneratorListener(),
                 new ShearListener(),
+                new Macros(),
                 new NamePing(),
                 new SlimyBootsListener(),
                 new WoodPileListener(),
@@ -67,12 +80,15 @@ public class PocketPlugins extends JavaPlugin {
             module.init(config);
         }
 
+        loadWaypoints();
         loadCrafting();
         initExperimental();
+        this.getServer().getPluginManager().registerEvents(this, this);
     }
 
     @Override
     public void onDisable() {
+        saveWaypoints();
         saveCrafting();
     }
 
@@ -91,9 +107,6 @@ public class PocketPlugins extends JavaPlugin {
     public void initExperimental() {
         this.getCommand("synth").setExecutor(new SoundSynthExperiment());
         this.getLogger().info("Sound Synth enabled");
-
-        this.getCommand("shoot").setExecutor(new ExperimentalCommands());
-        this.getLogger().info("Experimental Commands enabled");
     }
 
     private void saveCrafting() {
@@ -116,6 +129,29 @@ public class PocketPlugins extends JavaPlugin {
         } catch (Exception e) {
             getLogger().warning("Error loading crafting tables!");
             e.printStackTrace();
+        }
+    }
+
+    private void saveWaypoints() {
+        WaypointManager manager = WaypointManager.getInstance();
+        manager.saveWaypoints(new File(getDataFolder(), "waypoints.yml"));
+    }
+
+    private void loadWaypoints() {
+        WaypointManager manager = WaypointManager.getInstance();
+        manager.loadWaypoints(new File(getDataFolder(), "waypoints.yml"));
+    }
+
+    public void addDiscoverableCraftingKey(NamespacedKey key) {
+        this.registeredCraftingKeys.add(key);
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        for (NamespacedKey key : registeredCraftingKeys) {
+            if (!event.getPlayer().hasDiscoveredRecipe(key)) {
+                event.getPlayer().discoverRecipe(key);
+            }
         }
     }
 }

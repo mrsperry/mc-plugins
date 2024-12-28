@@ -10,6 +10,13 @@ commands:
   synth:
     description: A tool for making a sound effect
     usage: /synth [add|remove|edit|list|play]
-  shoot:
-    description: Shoots a glass bottle
-    usage: /shoot
+  markers:
+    description: Manage your map markers
+    usage: /<command> <add|list>
+  biomebombs:
+    description: Lists all available biome bombs and their crafting ingredients
+    usage: /biomebombs
+    aliases: [bb]
+  macro:
+    description: Command macro management
+    usage: /macro <list|run>

@@ -1,0 +1,12 @@
+macros:
+  test1:
+    op_only: false
+    commands:
+      - "bb"
+      - "markers list"
+  test2:
+    op_only: true
+    commands:
+      - "time set day"
+      - "gamemode spectator"
+      - "say I am watching you!"
