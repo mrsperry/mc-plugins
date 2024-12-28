@@ -7,6 +7,7 @@ public class Magic extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        getServer().getPluginManager().registerEvents(new MagicTest(), this);
     }
 
     public static Magic getInstance() {
