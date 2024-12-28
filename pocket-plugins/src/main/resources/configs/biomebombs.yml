@@ -1,2 +1,123 @@
-enabled: false
-bomb-range: 7
+enabled: true
+bomb-range: 9
+crafting-output: 4
+biomes:
+  plains:
+    biome: "Plains"
+    catalyst: "TALL_GRASS"
+    color:
+      red: 130
+      green: 255
+      blue: 185
+  ocean:
+    biome: "Ocean"
+    catalyst: "KELP"
+    color:
+      red: 95
+      green: 205
+      blue: 225
+  forest:
+    biome: "Forest"
+    catalyst: "OAK_LEAVES"
+    color:
+      red: 75
+      green: 130
+      blue: 35
+  desert:
+    biome: "Desert"
+    catalyst: "SAND"
+    color:
+      red: 255
+      green: 240
+      blue: 150
+  taiga:
+    biome: "Taiga"
+    catalyst: "SPRUCE_LEAVES"
+    color:
+      red: 90
+      green: 115
+      blue: 60
+  jungle:
+    biome: "Jungle"
+    catalyst: "JUNGLE_LEAVES"
+    color:
+      red: 55
+      green: 255
+      blue: 45
+  badlands:
+    biome: "Badlands"
+    catalyst: "TERRACOTTA"
+    color:
+      red: 165
+      green: 120
+      blue: 90
+  dark_forest:
+    biome: "Dark_Forest"
+    catalyst: "DARK_OAK_LEAVES"
+    color:
+      red: 25
+      green: 90
+      blue: 25
+  mushroom_fields:
+    biome: "Mushroom_Fields"
+    catalyst: "MYCELIUM"
+    color:
+      red: 200
+      green: 125
+      blue: 200
+  snowy_plains:
+    biome: "Snowy_Plains"
+    catalyst: "SNOW_BLOCK"
+    color:
+      red: 255
+      green: 255
+      blue: 255
+  savanna:
+    biome: "Savanna"
+    catalyst: "ACACIA_LEAVES"
+    color:
+      red: 255
+      green: 198
+      blue: 89
+  swamp:
+    biome: "Swamp"
+    catalyst: "LILY_PAD"
+    color:
+      red: 76
+      green: 83
+      blue: 42
+  mangrove_swamp:
+    biome: "Mangrove_Swamp"
+    catalyst: "MANGROVE_ROOTS"
+    color:
+      red: 162
+      green: 47
+      blue: 47
+  cherry_grove:
+    biome: "Cherry_Grove"
+    catalyst: "CHERRY_LEAVES"
+    color:
+      red: 255
+      green: 192
+      blue: 203
+  deep_dark:
+    biome: "Deep_Dark"
+    catalyst: "SCULK"
+    color:
+      red: 1
+      green: 15
+      blue: 48
+  frozen_ocean:
+    biome: "Frozen_Ocean"
+    catalyst: "ICE"
+    color:
+      red: 148
+      green: 214
+      blue: 255
+  warm_ocean:
+    biome: "Warm_Ocean"
+    catalyst: "SEAGRASS"
+    color:
+      red: 0
+      green: 204
+      blue: 255
