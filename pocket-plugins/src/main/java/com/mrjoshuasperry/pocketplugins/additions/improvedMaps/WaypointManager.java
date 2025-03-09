@@ -13,15 +13,24 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.map.MapCursor;
 
+import com.google.common.collect.Lists;
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
+
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 
 @SerializableAs("WaypointManager")
 public class WaypointManager implements ConfigurationSerializable {
   private Map<UUID, List<Waypoint>> waypoints;
   private static WaypointManager self;
+  private static List<MapCursor.Type> cursorTypes;
 
   private WaypointManager() {
     waypoints = new HashMap<>();
+
+    cursorTypes = Lists.newArrayList(RegistryAccess.registryAccess()
+        .getRegistry(RegistryKey.MAP_DECORATION_TYPE)
+        .iterator());
   }
 
   public static WaypointManager getInstance() {
@@ -136,7 +145,12 @@ public class WaypointManager implements ConfigurationSerializable {
         try {
           String cursorTypeStr = (String) waypointData.get("cursorType");
           if (cursorTypeStr != null) {
-            waypoint.setCursorType(MapCursor.Type.valueOf(cursorTypeStr));
+            for (MapCursor.Type type : cursorTypes) {
+              if (type.toString().equalsIgnoreCase(cursorTypeStr)) {
+                waypoint.setCursorType(type);
+                break;
+              }
+            }
           }
         } catch (IllegalArgumentException e) {
           PocketPlugins.getInstance().getLogger()

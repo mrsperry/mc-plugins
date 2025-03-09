@@ -36,13 +36,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class ExplorersAtlas extends Module {
-  private final WaypointManager waypointManager;
   private final NamespacedKey ATLAS_KEY;
 
   public ExplorersAtlas() {
     super("ExplorersAtlas");
 
-    this.waypointManager = WaypointManager.getInstance();
     ATLAS_KEY = new NamespacedKey(PocketPlugins.getInstance(), "explorer_atlas_id");
 
     // Register the markers command
