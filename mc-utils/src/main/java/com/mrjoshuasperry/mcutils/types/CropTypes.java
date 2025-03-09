@@ -3,6 +3,7 @@ package com.mrjoshuasperry.mcutils.types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.Material;
 
@@ -78,6 +79,12 @@ public class CropTypes {
     }
 
     public static Material getCropFromSeed(Material seed) {
-        return CropTypes.cropToSeed.get(seed);
+        for (Entry<Material, Material> entry : CropTypes.cropToSeed.entrySet()) {
+            if (entry.getValue() == seed) {
+                return entry.getKey();
+            }
+        }
+
+        throw new IllegalArgumentException("No crop found for seed: " + seed);
     }
 }
