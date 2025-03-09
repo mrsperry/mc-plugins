@@ -33,6 +33,7 @@ import com.mrjoshuasperry.pocketplugins.additions.improvedshears.ShearListener;
 import com.mrjoshuasperry.pocketplugins.additions.inventoryinspector.InventoryInspector;
 import com.mrjoshuasperry.pocketplugins.additions.leadattacher.LeadAttacherListener;
 import com.mrjoshuasperry.pocketplugins.additions.nameping.NamePing;
+import com.mrjoshuasperry.pocketplugins.additions.noendermangriefing.NoEndermanGriefing;
 import com.mrjoshuasperry.pocketplugins.additions.nosheepgriefing.NoSheepGriefingListener;
 import com.mrjoshuasperry.pocketplugins.additions.slimyboots.SlimyBootsListener;
 import com.mrjoshuasperry.pocketplugins.additions.woodpile.WoodPileListener;
@@ -65,6 +66,7 @@ public class PocketPlugins extends JavaPlugin implements Listener {
                 new SlimyBootsListener(),
                 new WoodPileListener(),
                 new LeadAttacherListener(),
+                new NoEndermanGriefing(),
                 new NoSheepGriefingListener(),
                 new FeatherPlucker(),
                 new InventoryInspector());
