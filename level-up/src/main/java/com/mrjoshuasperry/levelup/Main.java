@@ -58,10 +58,10 @@ public class Main extends JavaPlugin implements Listener {
 
             Map<?, ?> colorMap = (Map<?, ?>) color;
             try {
-                int alpha = Integer.parseInt((String) colorMap.get("alpha"));
-                int red = Integer.parseInt((String) colorMap.get("red"));
-                int green = Integer.parseInt((String) colorMap.get("green"));
-                int blue = Integer.parseInt((String) colorMap.get("blue"));
+                int alpha = Integer.parseInt(colorMap.get("alpha").toString());
+                int red = Integer.parseInt(colorMap.get("red").toString());
+                int green = Integer.parseInt(colorMap.get("green").toString());
+                int blue = Integer.parseInt(colorMap.get("blue").toString());
 
                 this.colors.add(Color.fromARGB(alpha, red, green, blue));
             } catch (ClassCastException ex) {
