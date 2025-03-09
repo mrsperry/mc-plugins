@@ -48,9 +48,6 @@ public class PocketPlugins extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-
-        Bukkit.getLogger().info("********** VERSION: " + Bukkit.getBukkitVersion() + " *************");
-
         this.registeredCraftingKeys = new ArrayList<>();
         saveDefaultConfig();
 
