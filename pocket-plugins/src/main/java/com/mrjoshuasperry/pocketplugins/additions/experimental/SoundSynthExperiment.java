@@ -2,6 +2,7 @@ package com.mrjoshuasperry.pocketplugins.additions.experimental;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -12,17 +13,22 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.Lists;
 import com.mrjoshuasperry.mcutils.sound.SoundByte;
 import com.mrjoshuasperry.mcutils.sound.SoundSynth;
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import net.md_5.bungee.api.ChatColor;
 
 public class SoundSynthExperiment implements CommandExecutor {
     private final Map<Player, SoundSynth> soundSynths;
+    private final List<Sound> sounds;
 
     public SoundSynthExperiment() {
         soundSynths = new HashMap<>();
+        sounds = Lists.newArrayList(RegistryAccess.registryAccess().getRegistry(RegistryKey.SOUND_EVENT).iterator());
     }
 
     @Override
@@ -79,7 +85,11 @@ public class SoundSynthExperiment implements CommandExecutor {
         SoundSynth pSynth = soundSynths.get(player);
         if (args.length == 4) {
             try {
-                pSynth.add(new SoundByte(Sound.valueOf(args[0].toUpperCase()), Float.parseFloat(args[1]),
+                List<String> soundNames = sounds.stream().map((sound) -> sound.toString()).toList();
+                Sound sound = this.sounds.get(soundNames.indexOf(args[0].toUpperCase()));
+
+                pSynth.add(new SoundByte(sound,
+                        Float.parseFloat(args[1]),
                         Float.parseFloat(args[2]), Integer.parseInt(args[3])));
                 player.sendMessage(ChatColor.GREEN + "Sound added!");
             } catch (Exception e) {
@@ -108,7 +118,10 @@ public class SoundSynthExperiment implements CommandExecutor {
         SoundSynth pSynth = soundSynths.get(player);
         if (args.length == 5) {
             try {
-                pSynth.edit(new SoundByte(Sound.valueOf(args[1].toUpperCase()), Float.parseFloat(args[2]),
+                List<String> soundNames = sounds.stream().map((sound) -> sound.toString()).toList();
+                Sound sound = this.sounds.get(soundNames.indexOf(args[1].toUpperCase()));
+
+                pSynth.edit(new SoundByte(sound, Float.parseFloat(args[2]),
                         Float.parseFloat(args[3]), Integer.parseInt(args[4])), Integer.parseInt(args[0]));
                 player.sendMessage(ChatColor.GREEN + "Sound added!");
             } catch (Exception e) {
