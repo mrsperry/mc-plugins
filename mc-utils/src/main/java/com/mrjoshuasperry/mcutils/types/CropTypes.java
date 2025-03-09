@@ -1,6 +1,8 @@
 package com.mrjoshuasperry.mcutils.types;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Material;
 
@@ -25,6 +27,21 @@ public class CropTypes {
     private static List<Material> saplings = Lists.newArrayList(
             Material.ACACIA_SAPLING, Material.BIRCH_SAPLING, Material.DARK_OAK_SAPLING, Material.JUNGLE_SAPLING,
             Material.OAK_SAPLING, Material.SPRUCE_SAPLING);
+
+    private static Map<Material, Material> cropToSeed = new HashMap<>() {
+        {
+            put(Material.WHEAT, Material.WHEAT_SEEDS);
+            put(Material.CARROTS, Material.CARROT);
+            put(Material.POTATOES, Material.POTATO);
+            put(Material.BEETROOTS, Material.BEETROOT_SEEDS);
+            put(Material.MELON_STEM, Material.MELON_SEEDS);
+            put(Material.PUMPKIN_STEM, Material.PUMPKIN_SEEDS);
+            put(Material.SWEET_BERRY_BUSH, Material.SWEET_BERRIES);
+            put(Material.PITCHER_CROP, Material.PITCHER_POD);
+            put(Material.TORCHFLOWER_CROP, Material.TORCHFLOWER_SEEDS);
+            put(Material.NETHER_WART, Material.NETHER_WART);
+        }
+    };
 
     public static List<Material> getAllTypes() {
         List<Material> types = CropTypes.harvestable;
@@ -54,5 +71,13 @@ public class CropTypes {
 
     public static List<Material> getSaplingTypes() {
         return CropTypes.saplings;
+    }
+
+    public static Material getSeedType(Material crop) {
+        return CropTypes.cropToSeed.get(crop);
+    }
+
+    public static Material getCropType(Material seed) {
+        return CropTypes.cropToSeed.get(seed);
     }
 }
