@@ -17,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.collect.Lists;
 import com.mrjoshuasperry.mcutils.ConfigManager;
 import com.mrjoshuasperry.pocketplugins.additions.armorstands.ArmorStandAdditions;
+import com.mrjoshuasperry.pocketplugins.additions.autoplanter.AutoPlanter;
 import com.mrjoshuasperry.pocketplugins.additions.biomebombs.BiombeBomb;
 import com.mrjoshuasperry.pocketplugins.additions.cobblegenerator.CobbleGeneratorListener;
 import com.mrjoshuasperry.pocketplugins.additions.commandmacros.Macros;
@@ -54,6 +55,7 @@ public class PocketPlugins extends JavaPlugin implements Listener {
         saveDefaultConfig();
 
         ArrayList<Module> modules = Lists.newArrayList(
+                new AutoPlanter(),
                 new ArmorStandAdditions(),
                 new BiombeBomb(),
                 new CobbleGeneratorListener(),

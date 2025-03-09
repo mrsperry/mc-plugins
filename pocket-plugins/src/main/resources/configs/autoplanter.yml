@@ -1,0 +1,4 @@
+enabled: true
+# Delay is in seconds
+min-delay: 0.25
+max-delay: 2
