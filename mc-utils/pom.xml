@@ -17,7 +17,6 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
