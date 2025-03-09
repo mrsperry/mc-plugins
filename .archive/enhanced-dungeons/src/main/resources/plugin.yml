@@ -1,0 +1,11 @@
+main: com.mrjoshuasperry.enhanceddungeons.Main
+name: EnhancedDungeons
+version: ${project.version}
+description: Adds customizable dungeon worlds to explore
+authors:
+  - mrsperry
+api-version: "1.21"
+commands:
+  dungeon:
+    usage: /dungeon <party>
+    description: A general command used for dungeon manipulation

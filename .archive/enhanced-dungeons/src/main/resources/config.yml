@@ -1,0 +1,11 @@
+dungeons:
+  # The path to the dungeon worlds folder
+  folder-path: "dungeons"
+dungeon-keys:
+  # The chance a key drops from a monster death
+  drop-chance: 0.01
+  # If a player must kill a monster for keys to drop
+  require-player-kill: false
+parties:
+  # The number of seconds a player has to accept a party invite
+  invite-time: 15

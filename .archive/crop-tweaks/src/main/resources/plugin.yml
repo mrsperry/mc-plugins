@@ -1,0 +1,7 @@
+main: com.mrjoshuasperry.croptweaks.Main
+name: CropTweaks
+version: ${project.version}
+description: Allows the automatic harvesting and replanting of crops by right clicking them with a hoe, at the cost of all seeds.
+authors:
+  - mrsperry
+api-version: "1.21"

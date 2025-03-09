@@ -1,0 +1,10 @@
+main: com.mrjoshuasperry.customgeneration.Main
+name: CustomGeneration
+version: ${project.version}
+description: A plugin that allows for custom world generation.
+authors:
+  - mrsperry
+api-version: "1.21"
+commands:
+  createworld:
+    usage: /createworld
