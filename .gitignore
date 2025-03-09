@@ -5,3 +5,6 @@ dependency-reduced-pom.xml
 # Testing server
 paper.jar
 _server/
+
+# Distributable plugin jars
+_dist

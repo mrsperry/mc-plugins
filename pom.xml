@@ -39,7 +39,25 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <id>copy-plugin</id>
+                        <id>copy-plugin-to-dist-folder</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <skip>${skip.copy.plugin}</skip>
+                            <target>
+                                <copy todir="${project.basedir}/../_dist">
+                                    <fileset dir="${project.build.directory}">
+                                        <include name="*.jar" />
+                                        <exclude name="original-*.jar" />
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>copy-plugin-to-dev-server</id>
                         <phase>install</phase>
                         <configuration>
                             <skip>${skip.copy.plugin}</skip>
