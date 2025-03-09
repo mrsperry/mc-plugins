@@ -2,7 +2,6 @@ package com.mrjoshuasperry.pocketplugins.additions.biomebombs;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -22,6 +21,8 @@ import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
+import io.papermc.paper.registry.TypedKey;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -107,7 +108,7 @@ public class BiomeBombProjectile {
     Location effectedLocation = origin.clone();
     String type = String.valueOf(proj.getMetaData(TYPE_META_KEY)).toUpperCase();
     Biome biome = RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME)
-        .get(new NamespacedKey("minecraft", type.toLowerCase()));
+        .get(TypedKey.create(RegistryKey.BIOME, Key.key("minecraft:" + type.toLowerCase())));
 
     origin.add(0.5, 0, 0.5);
 
