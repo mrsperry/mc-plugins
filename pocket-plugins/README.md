@@ -117,6 +117,7 @@ public class NMSFeature_v1_21_4 extends Module {
 
   @Override
   public void init(YamlConfiguration configuration) {
+    super.init(configuration);
     Bukkit.getLogger().info("This is version v1.21.4");
     this.shared.sharedFunction();
   }
