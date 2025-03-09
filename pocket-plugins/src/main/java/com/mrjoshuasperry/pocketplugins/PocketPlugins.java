@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -46,6 +47,8 @@ public class PocketPlugins extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+
+        Bukkit.getLogger().info("********** VERSION: " + Bukkit.getBukkitVersion() + " *************");
 
         this.registeredCraftingKeys = new ArrayList<>();
         saveDefaultConfig();

@@ -2,12 +2,14 @@ package com.mrjoshuasperry.pocketplugins.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
 public class Module implements IModule, Listener {
     private final String name;
+    private boolean enabled = false;
 
     public Module(String name) {
         this.name = name;
@@ -16,10 +18,9 @@ public class Module implements IModule, Listener {
     @Override
     public void init(YamlConfiguration config) {
         if (config != null && config.getBoolean("enabled")) {
-            Bukkit.getLogger().info(this.getName() + " Initialized!");
-            Bukkit.getServer().getPluginManager().registerEvents(this, PocketPlugins.getInstance());
+            this.enableModule();
         } else {
-            Bukkit.getLogger().info(this.getName() + " Disabled!");
+            this.disableModule();
         }
     }
 
@@ -31,5 +32,21 @@ public class Module implements IModule, Listener {
     @Override
     public void onDisable() {
         // Its just that way ok
+    }
+
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
+    public void enableModule() {
+        Bukkit.getLogger().info(this.getName() + " Initialized!");
+        Bukkit.getServer().getPluginManager().registerEvents(this, PocketPlugins.getInstance());
+        enabled = true;
+    }
+
+    public void disableModule() {
+        Bukkit.getLogger().info(this.getName() + " Disabled!");
+        HandlerList.unregisterAll(this);
+        this.enabled = false;
     }
 }
