@@ -11,4 +11,4 @@ mvn install -P <profile name>
 The plugins should be automatically added to your dev server. You can use VSCode's run configuration by pressing F5 to start the server, or navigate to the `/_server` directory and run the `start.bat` file manually.
 
 ## Updating Paper
-To update Paper, simply navigate to the `/_server` directory and replace the `paper.jar`.
+To update Paper, simply navigate put an updated `paper.jar` at the root directory. This jar will be copied to the dev server when running `mvn install`.
