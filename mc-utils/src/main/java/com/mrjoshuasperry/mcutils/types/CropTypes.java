@@ -73,11 +73,11 @@ public class CropTypes {
         return CropTypes.saplings;
     }
 
-    public static Material getSeedType(Material crop) {
+    public static Material getSeedFromCrop(Material crop) {
         return CropTypes.cropToSeed.get(crop);
     }
 
-    public static Material getCropType(Material seed) {
+    public static Material getCropFromSeed(Material seed) {
         return CropTypes.cropToSeed.get(seed);
     }
 }
