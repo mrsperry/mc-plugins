@@ -18,7 +18,9 @@ public class CropTypes {
             Material.SWEET_BERRY_BUSH);
 
     private static List<Material> seeds = Lists.newArrayList(
-            Material.WHEAT_SEEDS, Material.BEETROOT_SEEDS, Material.MELON_SEEDS, Material.PUMPKIN_SEEDS);
+            Material.WHEAT_SEEDS, Material.CARROT, Material.POTATO, Material.BEETROOT_SEEDS, Material.MELON_SEEDS,
+            Material.PUMPKIN_SEEDS,
+            Material.PITCHER_POD, Material.TORCHFLOWER_SEEDS);
 
     private static List<Material> saplings = Lists.newArrayList(
             Material.ACACIA_SAPLING, Material.BIRCH_SAPLING, Material.DARK_OAK_SAPLING, Material.JUNGLE_SAPLING,
