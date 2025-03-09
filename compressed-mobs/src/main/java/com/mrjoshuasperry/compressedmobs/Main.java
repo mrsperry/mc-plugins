@@ -1,6 +1,5 @@
 package com.mrjoshuasperry.compressedmobs;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,9 +8,9 @@ import java.util.Set;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -22,25 +21,10 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-import com.google.common.collect.Lists;
-
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 
 public class Main extends JavaPlugin implements Listener {
-    private static final ArrayList<SpawnReason> SPAWN_REASON_BLACKLIST = Lists.newArrayList(
-            SpawnReason.BEEHIVE,
-            SpawnReason.CUSTOM,
-            SpawnReason.CURED,
-            SpawnReason.DROWNED,
-            SpawnReason.EXPLOSION,
-            SpawnReason.INFECTION,
-            SpawnReason.LIGHTNING,
-            SpawnReason.SHEARED,
-            SpawnReason.SHOULDER_ENTITY,
-            SpawnReason.SLIME_SPLIT,
-            SpawnReason.SPAWNER_EGG);
-
     private final Random random = new Random();
     private final NamespacedKey compressedKey = new NamespacedKey(this, "compressed");
 
@@ -126,12 +110,16 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
 
-        Creature creature = (Creature) event.getEntity();
-        PersistentDataContainer container = creature.getPersistentDataContainer();
+        LivingEntity entity = event.getEntity();
+        PersistentDataContainer container = entity.getPersistentDataContainer();
 
-        // Ignore already compressed mobs or mobs that spawn from a blacklisted source
-        if (container.has(this.compressedKey, PersistentDataType.BYTE)
-                || SPAWN_REASON_BLACKLIST.contains(event.getSpawnReason())) {
+        // Ignore already compressed mobs
+        if (container.has(this.compressedKey, PersistentDataType.BYTE)) {
+            return;
+        }
+
+        // Ignore non-natural spawns
+        if (event.getSpawnReason() != SpawnReason.NATURAL) {
             return;
         }
 
@@ -143,9 +131,9 @@ public class Main extends JavaPlugin implements Listener {
         if (this.random.nextDouble() * values.compressChance() <= 1) {
             container.set(this.compressedKey, PersistentDataType.BYTE, (byte) 1);
 
-            creature.customName(Component.text(ChatColor.GRAY + "Compressed " + creature.getName()));
-            creature.setCustomNameVisible(true);
-            creature.setRemoveWhenFarAway(true);
+            entity.customName(Component.text(ChatColor.GRAY + "Compressed " + entity.getName()));
+            entity.setCustomNameVisible(true);
+            entity.setRemoveWhenFarAway(true);
         }
 
     }
