@@ -16,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.collect.Lists;
 import com.mrjoshuasperry.mcutils.ConfigManager;
 import com.mrjoshuasperry.pocketplugins.additions.armorstands.ArmorStandAdditions;
+import com.mrjoshuasperry.pocketplugins.additions.autoBreeding.AutoBreeding;
 import com.mrjoshuasperry.pocketplugins.additions.autoplanter.AutoPlanter;
 import com.mrjoshuasperry.pocketplugins.additions.biomebombs.BiombeBomb;
 import com.mrjoshuasperry.pocketplugins.additions.cobblegenerator.CobbleGeneratorListener;
@@ -38,6 +39,7 @@ import com.mrjoshuasperry.pocketplugins.additions.noendermangriefing.NoEndermanG
 import com.mrjoshuasperry.pocketplugins.additions.nosheepgriefing.NoSheepGriefingListener;
 import com.mrjoshuasperry.pocketplugins.additions.slimyboots.SlimyBootsListener;
 import com.mrjoshuasperry.pocketplugins.additions.woodpile.WoodPileListener;
+import com.mrjoshuasperry.pocketplugins.utils.DebuggerDisplay;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 public class PocketPlugins extends JavaPlugin implements Listener {
@@ -51,6 +53,7 @@ public class PocketPlugins extends JavaPlugin implements Listener {
         saveDefaultConfig();
 
         ArrayList<Module> modules = Lists.newArrayList(
+                new AutoBreeding(),
                 new AutoPlanter(),
                 new ArmorStandAdditions(),
                 new BiombeBomb(),
@@ -93,6 +96,7 @@ public class PocketPlugins extends JavaPlugin implements Listener {
     public void onDisable() {
         saveWaypoints();
         saveCrafting();
+        DebuggerDisplay.getInstance().removeAll();
     }
 
     public static PocketPlugins getInstance() {
