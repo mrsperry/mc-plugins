@@ -34,7 +34,6 @@ public class PathfinderUtil {
 
       if (mob.getLocation().distance(target) <= threshold) {
         callback.execute(mob, true);
-        Bukkit.getLogger().info("Execute 1");
         taskHolder[0].cancel();
         return;
       }
@@ -48,7 +47,6 @@ public class PathfinderUtil {
           if (updatedResult == null || !updatedResult.canReachFinalPoint()) {
             pathfinder.stopPathfinding();
             callback.execute(mob, false);
-            Bukkit.getLogger().info("Execute 2");
             taskHolder[0].cancel();
           }
 
