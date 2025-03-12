@@ -18,6 +18,7 @@ import com.mrjoshuasperry.mcutils.ConfigManager;
 import com.mrjoshuasperry.pocketplugins.additions.armorstands.ArmorStandAdditions;
 import com.mrjoshuasperry.pocketplugins.additions.autoBreeding.AutoBreeding;
 import com.mrjoshuasperry.pocketplugins.additions.autoplanter.AutoPlanter;
+import com.mrjoshuasperry.pocketplugins.additions.autoplanter2.AutoPlanter2;
 import com.mrjoshuasperry.pocketplugins.additions.biomebombs.BiombeBomb;
 import com.mrjoshuasperry.pocketplugins.additions.cobblegenerator.CobbleGeneratorListener;
 import com.mrjoshuasperry.pocketplugins.additions.commandmacros.Macros;
@@ -55,6 +56,7 @@ public class PocketPlugins extends JavaPlugin implements Listener {
         ArrayList<Module> modules = Lists.newArrayList(
                 new AutoBreeding(),
                 new AutoPlanter(),
+                new AutoPlanter2(),
                 new ArmorStandAdditions(),
                 new BiombeBomb(),
                 new CobbleGeneratorListener(),

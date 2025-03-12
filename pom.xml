@@ -126,11 +126,9 @@
             <id>survival</id>
             <modules>
                 <module>mc-utils</module>
-                <module>command-framework</module>
                 <module>auto-stack</module>
                 <module>compressed-mobs</module>
                 <module>creeper-works</module>
-                <module>crop-tweaks</module>
                 <module>death-chest</module>
                 <module>level-up</module>
                 <module>magic</module>

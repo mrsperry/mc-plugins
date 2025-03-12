@@ -22,7 +22,6 @@ import com.mrjoshuasperry.pocketplugins.utils.PathfinderUtil;
 
 public class AutoBreeding extends Module {
   private static long BREED_TASK_INTERVAL = 5;
-  private static double BREED_ITEM_THRESHOLD_DISTANCE = 0.75;
   private static double TARGET_CHANCE = 0.25;
 
   private final JavaPlugin plugin;
@@ -79,13 +78,12 @@ public class AutoBreeding extends Module {
 
           Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             this.breedingTargets.put(entity, target);
-            PathfinderUtil.pathTo(
+            PathfinderUtil pathfinder = new PathfinderUtil();
+            pathfinder.pathTo(
                 entity,
                 target.getLocation(),
-                BREED_ITEM_THRESHOLD_DISTANCE,
                 1,
-                true,
-                (mob, success) -> {
+                (Boolean success) -> {
                   if (!success) {
                     this.breedingTargets.remove(entity);
                     return;
