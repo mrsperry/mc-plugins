@@ -28,13 +28,6 @@ public class PathfinderUtil {
 
   public void pathTo(Mob mob, Location target, double speed, Consumer<Boolean> callback) {
     Pathfinder pathfinder = mob.getPathfinder();
-    PathResult pathResult = pathfinder.findPath(target);
-
-    if (!pathResult.canReachFinalPoint()) {
-      Bukkit.getLogger().info("Cannot reach final point " + mob.getLocation() + " : " + target);
-      callback.accept(false);
-      return;
-    }
 
     pathfinder.moveTo(target, speed);
 
@@ -61,14 +54,6 @@ public class PathfinderUtil {
       PathResult currentPath = pathfinder.getCurrentPath();
       if (currentPath == null) {
         Bukkit.getLogger().info("Current path is null");
-        onPathComplete.accept(false);
-        return;
-      }
-
-      // Ensure the mob can reach the final point (e.g. if it was blocked by a wall
-      // after moving)
-      if (!currentPath.canReachFinalPoint()) {
-        Bukkit.getLogger().info("Cannot reach target");
         onPathComplete.accept(false);
         return;
       }
