@@ -4,14 +4,16 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Mob;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.destroystokyo.paper.entity.Pathfinder;
 import com.destroystokyo.paper.entity.Pathfinder.PathResult;
+import com.google.common.collect.Lists;
 import com.mrjoshuasperry.mcutils.classes.Pair;
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
@@ -26,7 +28,68 @@ public class PathfinderUtil {
     this.taskId = -1;
   }
 
+  protected void runPathingChecks(Mob mob, Location target, Consumer<Boolean> onPathComplete) {
+    Pathfinder pathfinder = mob.getPathfinder();
+
+    // The mob has reached the target
+    if (mob.getLocation().distance(target) < 1) {
+      onPathComplete.accept(true);
+      return;
+    }
+
+    PathResult currentPath = pathfinder.getCurrentPath();
+    if (currentPath == null) {
+      onPathComplete.accept(false);
+      return;
+    }
+
+    // Ensure the final point of the path is the target
+    List<Location> validLocations = Lists.newArrayList(target.getBlock().getLocation());
+    List<BlockFace> validFaces = Lists.newArrayList(BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH,
+        BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
+    Block block = target.getBlock();
+
+    for (BlockFace face : validFaces) {
+      Block relativeBlock = block.getRelative(face);
+
+      if (relativeBlock.isPassable()) {
+        validLocations.add(relativeBlock.getLocation());
+      }
+    }
+
+    if (!validLocations.contains(currentPath.getFinalPoint())) {
+      onPathComplete.accept(false);
+      return;
+    }
+  }
+
+  public void pathToExact(Mob mob, Location target, double speed, Consumer<Boolean> callback) {
+    this.pathToExact(mob, target, speed, callback, null);
+  }
+
+  public void pathToExact(Mob mob, Location target, double speed, Consumer<Boolean> callback,
+      Consumer<Consumer<Boolean>> additionalChecks) {
+    this.pathTo(mob, target, speed, callback, (Consumer<Boolean> onPathComplete) -> {
+      PathResult currentPath = mob.getPathfinder().getCurrentPath();
+      // Ensure the mob can reach the final point (e.g. if it was blocked by a wall
+      // after moving)
+      if (!currentPath.canReachFinalPoint()) {
+        onPathComplete.accept(false);
+        return;
+      }
+
+      if (additionalChecks != null) {
+        additionalChecks.accept(onPathComplete);
+      }
+    });
+  }
+
   public void pathTo(Mob mob, Location target, double speed, Consumer<Boolean> callback) {
+    this.pathTo(mob, target, speed, callback, null);
+  }
+
+  public void pathTo(Mob mob, Location target, double speed, Consumer<Boolean> callback,
+      Consumer<Consumer<Boolean>> additionalChecks) {
     Pathfinder pathfinder = mob.getPathfinder();
 
     pathfinder.moveTo(target, speed);
@@ -38,31 +101,10 @@ public class PathfinderUtil {
     };
 
     this.taskId = this.scheduler.runTaskTimer(this.plugin, () -> {
-      // Ensure the mob is alive, not despawned, ect
-      if (!mob.isValid()) {
-        Bukkit.getLogger().info("Mob is not valid");
-        onPathComplete.accept(false);
-        return;
-      }
+      this.runPathingChecks(mob, target, onPathComplete);
 
-      // The mob has reached the target
-      if (mob.getLocation().distance(target) < 1) {
-        onPathComplete.accept(true);
-        return;
-      }
-
-      PathResult currentPath = pathfinder.getCurrentPath();
-      if (currentPath == null) {
-        Bukkit.getLogger().info("Current path is null");
-        onPathComplete.accept(false);
-        return;
-      }
-
-      // Ensure the final point of the path is the target
-      if (!currentPath.getFinalPoint().equals(target.getBlock().getLocation())) {
-        Bukkit.getLogger().info("Target is no longer final point");
-        onPathComplete.accept(false);
-        return;
+      if (additionalChecks != null) {
+        additionalChecks.accept(onPathComplete);
       }
     }, 0, 1).getTaskId();
   }
