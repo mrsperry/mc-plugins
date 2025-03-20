@@ -31,6 +31,10 @@ improvedshears:
   # Dye change is out of 100
   dye-chance: 50
 
+mobgriefing:
+  no-sheep-griefing: true
+  no-enderman-griefing: true
+
 nameping:
   # Ping cooldown is in seconds
   ping-cooldown: 5
