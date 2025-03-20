@@ -30,7 +30,7 @@ public class FeatherPlucker extends Module {
     public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfigg) {
         super.initialize(readableConfig, writableConfigg);
 
-        this.cooldown = readableConfig.getInt("cooldown", 20 * 300);
+        this.cooldown = readableConfig.getInt("cooldown", 300) * 20;
     }
 
     @EventHandler

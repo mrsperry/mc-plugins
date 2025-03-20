@@ -14,8 +14,8 @@ import org.bukkit.inventory.PlayerInventory;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 /** @author TimPCunningham */
-public class LeadAttacherListener extends Module {
-    public LeadAttacherListener() {
+public class LeadAttacher extends Module {
+    public LeadAttacher() {
         super("LeadAttacherListener");
     }
 

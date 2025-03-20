@@ -21,10 +21,10 @@ import org.bukkit.inventory.ItemStack;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 /** @author TimPCunningham */
-public class CraftingKeeperListener extends Module {
+public class CraftingKeeper extends Module {
     Map<UUID, Location> tableBlocks;
 
-    public CraftingKeeperListener() {
+    public CraftingKeeper() {
         super("CraftingKeeper");
         this.tableBlocks = new HashMap<>();
         ConfigurationSerialization.registerClass(CraftingKeeperManager.class, "CraftingKeeperManager");

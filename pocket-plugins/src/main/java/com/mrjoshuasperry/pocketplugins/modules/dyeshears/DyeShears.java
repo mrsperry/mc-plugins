@@ -1,4 +1,4 @@
-package com.mrjoshuasperry.pocketplugins.modules.improvedshears;
+package com.mrjoshuasperry.pocketplugins.modules.dyeshears;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
@@ -24,12 +25,12 @@ import com.mrjoshuasperry.pocketplugins.utils.StringHelper;
 import net.md_5.bungee.api.ChatColor;
 
 /** @author TimPCunningham */
-public class ShearListener extends Module {
+public class DyeShears extends Module {
     private int chance;
     private final NamespacedKey shearKey;
     private static final PersistentDataType<Byte, Byte> BYTE = PersistentDataType.BYTE;
 
-    public ShearListener() {
+    public DyeShears() {
         super("ImprovedShears");
         this.shearKey = this.createKey("Improved_Shears");
     }
@@ -42,27 +43,33 @@ public class ShearListener extends Module {
     }
 
     @EventHandler
-    public void onShear(PlayerShearEntityEvent event) {
-        if (event.getEntity() instanceof Sheep) {
-            Player player = event.getPlayer();
-            Sheep sheep = (Sheep) event.getEntity();
-            ItemStack itemUsed = checkAndGet(player);
-            Double chanceRoll = this.getPlugin().getRandom().nextDouble();
+    public void onPlayerShearEntity(PlayerShearEntityEvent event) {
+        Entity entity = event.getEntity();
 
-            if (itemUsed.getType().equals(Material.SHEARS) &&
-                    ItemMetaHandler.hasKey(itemUsed, this.shearKey, BYTE) &&
-                    chanceRoll <= (chance / 100.0)) {
-                event.setCancelled(true);
-                DyeColor color = sheep.getColor();
-                if (color != null) {
-                    ItemStack drop = new ItemStack(Material.valueOf(color.name() + "_DYE"));
-                    int amount = this.getPlugin().getRandom().nextInt(1, 4);
-                    drop.setAmount(amount);
-                    sheep.setSheared(true);
-                    sheep.getWorld().dropItemNaturally(sheep.getLocation().clone().add(0, 0.5, 0), drop);
-                    player.getWorld().playSound(sheep.getLocation(), Sound.ENTITY_SHEEP_SHEAR, 1, 1);
-                }
+        if (!(entity instanceof Sheep)) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        Sheep sheep = (Sheep) entity;
+        ItemStack itemUsed = this.checkAndGet(player);
+        Double chanceRoll = this.getPlugin().getRandom().nextDouble();
+        
+        if (itemUsed.getType().equals(Material.SHEARS) &&
+                ItemMetaHandler.hasKey(itemUsed, this.shearKey, BYTE) &&
+                chanceRoll <= (chance / 100.0)) {
+
+            DyeColor color = sheep.getColor();
+            if (color == null) {
+                return;
             }
+
+            event.setCancelled(true);
+            ItemStack drop = new ItemStack(Material.valueOf(color.name() + "_DYE"));
+            drop.setAmount(this.getPlugin().getRandom().nextInt(1, 4));
+            sheep.setSheared(true);
+            sheep.getWorld().dropItemNaturally(sheep.getLocation().clone().add(0, 0.5, 0), drop);
+            player.getWorld().playSound(sheep.getLocation(), Sound.ENTITY_SHEEP_SHEAR, 1, 1);
         }
     }
 

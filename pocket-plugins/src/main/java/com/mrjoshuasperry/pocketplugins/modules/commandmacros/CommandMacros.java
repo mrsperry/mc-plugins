@@ -8,10 +8,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 /** @author TimPCunningham */
-public class Macros extends Module {
+public class CommandMacros extends Module {
   private final Map<String, MacroData> macros;
 
-  public Macros() {
+  public CommandMacros() {
     super("commandmacros");
     this.macros = new HashMap<>();
   }
@@ -19,7 +19,7 @@ public class Macros extends Module {
   @Override
   public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
     super.initialize(readableConfig, writableConfig);
-    loadMacros(writableConfig);
+    this.loadMacros(writableConfig);
     MacrosCommand executor = new MacrosCommand(macros);
     this.getPlugin().getCommand("macro").setExecutor(executor);
     this.getPlugin().getCommand("macro").setTabCompleter(executor);

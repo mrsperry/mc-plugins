@@ -20,7 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mrjoshuasperry.pocketplugins.modules.craftingkeeper.CraftingKeeperManager;
-import com.mrjoshuasperry.pocketplugins.modules.improvedmaps.WaypointManager;
+import com.mrjoshuasperry.pocketplugins.modules.explorersatlas.WaypointManager;
 import com.mrjoshuasperry.pocketplugins.utils.DebuggerDisplay;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 

@@ -23,13 +23,17 @@ concretemixer:
   # Use change is out of 100
   water-use-chance: 5
 
+dyeshears:
+  # Dye change is out of 100
+  dye-chance: 50
+
 featherplucker:
   # Cooldown is in seconds
   cooldown: 300
 
-improvedshears:
-  # Dye change is out of 100
-  dye-chance: 50
+igneousgenerator:
+  # Conversion time is in seconds
+  max-conversion-time: 2
 
 mobgriefing:
   no-sheep-griefing: true

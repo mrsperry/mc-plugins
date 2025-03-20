@@ -1,119 +1,86 @@
 package com.mrjoshuasperry.pocketplugins.modules.woodpile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
+import org.bukkit.Sound;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
-/** @author TimPCunningham */
-public class WoodPile {
-    private final List<Block> fuel;
-    private final List<Block> covering;
-    private List<Block> visited;
-    static List<Material> validCovering = Arrays.asList(Material.GRASS_BLOCK, Material.DIRT, Material.COARSE_DIRT,
-            Material.PODZOL, Material.MYCELIUM);
-    static List<Material> validFuel = Arrays.asList(Material.ACACIA_LOG, Material.BIRCH_LOG, Material.DARK_OAK_LOG,
-            Material.JUNGLE_LOG, Material.OAK_LOG, Material.SPRUCE_LOG);
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
+import com.mrjoshuasperry.pocketplugins.utils.Module;
+
+public class WoodPile extends Module {
+    private final Map<WoodPileConstruct, BukkitRunnable> woodPiles;
+    private int logConvertTime;
 
     public WoodPile() {
-        fuel = new ArrayList<>();
-        covering = new ArrayList<>();
-        visited = new ArrayList<>();
+        super("WoodPile");
+        woodPiles = new HashMap<>();
     }
 
-    public void addFuelBlock(Block block) {
-        this.fuel.add(block);
+    @Override
+    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super.initialize(readableConfig, writableConfig);
+        this.logConvertTime = readableConfig.getInt("log-convert-time", 5);
     }
 
-    public void addCoveringBlock(Block block) {
-        this.covering.add(block);
+    private BukkitRunnable createWoodPileRunnable(WoodPileConstruct woodPile, BlockPlaceEvent event) {
+        return new BukkitRunnable() {
+            final int lifespan = woodPile.getFuelSize() * logConvertTime * 20;
+            int age = 0;
+
+            @Override
+            public void run() {
+                if (age > lifespan) {
+                    woodPile.convertFuel();
+                    this.cancel();
+                    woodPiles.remove(woodPile);
+                    event.getBlock().getWorld().playSound(event.getBlock().getLocation(),
+                            Sound.BLOCK_FIRE_EXTINGUISH, 0.5f, 0.5f);
+                }
+
+                if (age % 10 == 0) {
+                    woodPile.showBurning(Particle.LARGE_SMOKE);
+                }
+
+                if (age % 40 == 0 && PocketPlugins.getInstance().getRandom().nextBoolean()) {
+                    event.getBlock().getWorld().playSound(event.getBlock().getLocation(),
+                            Sound.BLOCK_FIRE_AMBIENT, 0.5f, 0.5f);
+                }
+                age += 2;
+            }
+        };
     }
 
-    public boolean checkValid(Block start) {
-        visited = new ArrayList<>();
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Material replaced = event.getBlockReplacedState().getType();
 
-        if (isValidCovering(start)) { // find fuel;
-            if (isValidFuel(start.getRelative(BlockFace.UP))) {
-                return recursiveCheck(start.getRelative(BlockFace.UP));
+        if (replaced.equals(Material.FIRE) && WoodPileConstruct.isValidCovering(event.getBlock())) {
+            WoodPileConstruct woodPile = new WoodPileConstruct();
+            if (woodPile.checkValid(event.getBlock())) {
+                woodPiles.put(woodPile, createWoodPileRunnable(woodPile, event));
+                woodPiles.get(woodPile).runTaskTimer(PocketPlugins.getInstance(), 0, 2);
             }
-            if (isValidFuel(start.getRelative(BlockFace.DOWN))) {
-                return recursiveCheck(start.getRelative(BlockFace.DOWN));
-            }
-            if (isValidFuel(start.getRelative(BlockFace.EAST))) {
-                return recursiveCheck(start.getRelative(BlockFace.EAST));
-            }
-            if (isValidFuel(start.getRelative(BlockFace.WEST))) {
-                return recursiveCheck(start.getRelative(BlockFace.WEST));
-            }
-            if (isValidFuel(start.getRelative(BlockFace.NORTH))) {
-                return recursiveCheck(start.getRelative(BlockFace.NORTH));
-            }
-            if (isValidFuel(start.getRelative(BlockFace.SOUTH))) {
-                return recursiveCheck(start.getRelative(BlockFace.SOUTH));
-            }
-        }
-
-        return false;
-    }
-
-    private boolean recursiveCheck(Block current) {
-        if (this.visited.contains(current)) {
-            return true;
-        }
-
-        if (!isValidCovering(current) && !isValidFuel(current)) {
-            return false;
-        }
-
-        this.visited.add(current);
-
-        if (isValidFuel(current)) {
-            this.fuel.add(current);
-            boolean result = recursiveCheck(current.getRelative(BlockFace.UP));
-            result = result && recursiveCheck(current.getRelative(BlockFace.DOWN));
-            result = result && recursiveCheck(current.getRelative(BlockFace.EAST));
-            result = result && recursiveCheck(current.getRelative(BlockFace.WEST));
-            result = result && recursiveCheck(current.getRelative(BlockFace.SOUTH));
-            result = result && recursiveCheck(current.getRelative(BlockFace.NORTH));
-
-            return result;
-        } else if (current.getRelative(BlockFace.UP).getType().equals(Material.AIR)) {
-            this.covering.add(current);
-        }
-
-        return true;
-    }
-
-    public int getFuelSize() {
-        return this.fuel.size();
-    }
-
-    public void convertFuel() {
-        for (Block block : this.fuel) {
-            block.setType(Material.COAL_BLOCK);
         }
     }
 
-    public void showBurning(Particle particle) {
-        for (Block block : this.covering) {
-            block.getWorld().spawnParticle(particle, block.getLocation().clone().add(0.5, 1, 0.5), 1, 0.5, 0, 0.5, 0);
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        for (Entry<WoodPileConstruct, BukkitRunnable> entry : woodPiles.entrySet()) {
+            WoodPileConstruct woodPile = entry.getKey();
+            if (woodPile.contains(event.getBlock())) {
+                woodPiles.get(woodPile).cancel();
+                woodPiles.remove(woodPile);
+                event.getBlock().setType(Material.FIRE);
+            }
         }
     }
-
-    public boolean contains(Block block) {
-        return this.visited.contains(block);
-    }
-
-    public static boolean isValidFuel(Block block) {
-        return validFuel.contains(block.getType());
-    }
-
-    public static boolean isValidCovering(Block block) {
-        return validCovering.contains(block.getType());
-    }
-
 }

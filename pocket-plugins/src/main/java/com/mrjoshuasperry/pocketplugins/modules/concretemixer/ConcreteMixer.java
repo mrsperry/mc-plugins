@@ -1,6 +1,5 @@
 package com.mrjoshuasperry.pocketplugins.modules.concretemixer;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Material;
@@ -16,8 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 /** @author TimPCunningham */
-public class ConcreteMixerListener extends Module {
-    private final List<Material> concrete = Arrays.asList(
+public class ConcreteMixer extends Module {
+    private final List<Material> concrete = List.of(
             Material.BLACK_CONCRETE_POWDER,
             Material.CYAN_CONCRETE_POWDER,
             Material.BLUE_CONCRETE_POWDER,
@@ -34,15 +33,17 @@ public class ConcreteMixerListener extends Module {
             Material.RED_CONCRETE_POWDER,
             Material.WHITE_CONCRETE_POWDER,
             Material.YELLOW_CONCRETE_POWDER);
+
     private int waterUseChance;
 
-    public ConcreteMixerListener() {
+    public ConcreteMixer() {
         super("ConcreteMixer");
     }
 
     @Override
     public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
         super.initialize(readableConfig, writableConfig);
+
         this.waterUseChance = readableConfig.getInt("water-use-chance", 5);
     }
 
@@ -66,18 +67,28 @@ public class ConcreteMixerListener extends Module {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getHand() != null && event.getHand().equals(EquipmentSlot.HAND)) {
-            ItemStack item = event.getItem();
-            Block block = event.getClickedBlock();
-
-            if (block != null && block.getType().equals(Material.CAULDRON) && item != null) {
-                Levelled levelled = (Levelled) block.getBlockData();
-                Material type = item.getType();
-                if (concrete.contains(type) && levelled.getLevel() != 0) {
-                    event.setCancelled(true);
-                    handleConcreteHarden(event.getPlayer(), item, block);
-                }
-            }
+        if (event.getHand() == EquipmentSlot.OFF_HAND) {
+            return;
         }
+
+        ItemStack item = event.getItem();
+        Block block = event.getClickedBlock();
+
+        if (block.getType() != Material.CAULDRON) {
+            return;
+        }
+
+        Levelled levelled = (Levelled) block.getBlockData();
+        if (levelled.getLevel() == 0) {
+            return;
+        }
+
+        Material type = item.getType();
+        if (!concrete.contains(type)) {
+            return;
+        }
+
+        event.setCancelled(true);
+        this.handleConcreteHarden(event.getPlayer(), item, block);
     }
 }

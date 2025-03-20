@@ -24,11 +24,11 @@ import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 
 /** @author TimPCunningham */
-public class SlimyBootsListener extends Module {
+public class SlimyBoots extends Module {
     private final NamespacedKey bootsKey;
     private static final PersistentDataType<Byte, Byte> BYTE = PersistentDataType.BYTE;
 
-    public SlimyBootsListener() {
+    public SlimyBoots() {
         super("SlimyBoots");
         bootsKey = this.createKey("SlimyBoots");
         initRecipes();
