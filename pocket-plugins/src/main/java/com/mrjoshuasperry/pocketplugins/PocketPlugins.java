@@ -1,9 +1,14 @@
 package com.mrjoshuasperry.pocketplugins;
 
 import java.io.File;
+import java.net.JarURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,82 +18,30 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.google.common.collect.Lists;
-import com.mrjoshuasperry.mcutils.ConfigManager;
-import com.mrjoshuasperry.pocketplugins.additions.armorstands.ArmorStandAdditions;
-import com.mrjoshuasperry.pocketplugins.additions.autoBreeding.AutoBreeding;
-import com.mrjoshuasperry.pocketplugins.additions.beeplanter.BeePlanter;
-import com.mrjoshuasperry.pocketplugins.additions.biomebombs.BiombeBomb;
-import com.mrjoshuasperry.pocketplugins.additions.cobblegenerator.CobbleGeneratorListener;
-import com.mrjoshuasperry.pocketplugins.additions.commandmacros.Macros;
-import com.mrjoshuasperry.pocketplugins.additions.concretemixer.ConcreteMixerListener;
-import com.mrjoshuasperry.pocketplugins.additions.craftingkeeper.CraftingKeeperListener;
-import com.mrjoshuasperry.pocketplugins.additions.craftingkeeper.CraftingKeeperManager;
-import com.mrjoshuasperry.pocketplugins.additions.easypaintings.EasyPaintings;
-import com.mrjoshuasperry.pocketplugins.additions.easysleep.EasySleepListener;
-import com.mrjoshuasperry.pocketplugins.additions.experimental.SoundSynthExperiment;
-import com.mrjoshuasperry.pocketplugins.additions.featherplucker.FeatherPlucker;
-import com.mrjoshuasperry.pocketplugins.additions.igneousgenerator.IgneousGeneratorListener;
-import com.mrjoshuasperry.pocketplugins.additions.improvedMaps.ExplorersAtlas;
-import com.mrjoshuasperry.pocketplugins.additions.improvedMaps.WaypointManager;
-import com.mrjoshuasperry.pocketplugins.additions.improvedshears.ShearListener;
-import com.mrjoshuasperry.pocketplugins.additions.inventoryinspector.InventoryInspector;
-import com.mrjoshuasperry.pocketplugins.additions.leadattacher.LeadAttacherListener;
-import com.mrjoshuasperry.pocketplugins.additions.nameping.NamePing;
-import com.mrjoshuasperry.pocketplugins.additions.noendermangriefing.NoEndermanGriefing;
-import com.mrjoshuasperry.pocketplugins.additions.nosheepgriefing.NoSheepGriefingListener;
-import com.mrjoshuasperry.pocketplugins.additions.slimyboots.SlimyBootsListener;
-import com.mrjoshuasperry.pocketplugins.additions.woodpile.WoodPileListener;
+import com.mrjoshuasperry.pocketplugins.modules.craftingkeeper.CraftingKeeperManager;
+import com.mrjoshuasperry.pocketplugins.modules.improvedmaps.WaypointManager;
 import com.mrjoshuasperry.pocketplugins.utils.DebuggerDisplay;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 public class PocketPlugins extends JavaPlugin implements Listener {
-    private static Random rand = new Random();
-    private ConfigManager configManager;
+    private Random random = new Random();
+
     private List<NamespacedKey> registeredCraftingKeys;
 
     @Override
     public void onEnable() {
         this.registeredCraftingKeys = new ArrayList<>();
-        saveDefaultConfig();
 
-        ArrayList<Module> modules = Lists.newArrayList(
-                new AutoBreeding(),
-                new BeePlanter(),
-                new ArmorStandAdditions(),
-                new BiombeBomb(),
-                new CobbleGeneratorListener(),
-                new ConcreteMixerListener(),
-                new CraftingKeeperListener(),
-                new EasyPaintings(),
-                new EasySleepListener(),
-                new ExplorersAtlas(),
-                new IgneousGeneratorListener(),
-                new ShearListener(),
-                new Macros(),
-                new NamePing(),
-                new SlimyBootsListener(),
-                new WoodPileListener(),
-                new LeadAttacherListener(),
-                new NoEndermanGriefing(),
-                new NoSheepGriefingListener(),
-                new FeatherPlucker(),
-                new InventoryInspector());
-        ArrayList<String> names = new ArrayList<>();
-        for (Module module : modules) {
-            names.add(module.getName());
-        }
+        this.saveDefaultConfig();
 
-        this.configManager = new ConfigManager(this, names, true);
+        List<Module> modules = this.loadModules();
 
         for (Module module : modules) {
-            YamlConfiguration config = this.configManager.getConfig(module.getName().toLowerCase());
-            module.init(config);
+            module.initialize(null);
         }
 
         loadWaypoints();
         loadCrafting();
-        initExperimental();
         this.getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -99,21 +52,66 @@ public class PocketPlugins extends JavaPlugin implements Listener {
         DebuggerDisplay.getInstance().removeAll();
     }
 
+    private List<Module> loadModules() {
+        List<Module> modules = new ArrayList<>();
+
+        try {
+            String modulesPath = this.getClass().getPackageName().replace(".", "/") + "/modules";
+            List<URL> resources = Collections.list(this.getClassLoader().getResources(modulesPath));
+
+            for (URL url : resources) {
+                if (!url.getProtocol().equals("jar")) {
+                    continue;
+                }
+
+                JarURLConnection jarConnection = (JarURLConnection) url.openConnection();
+                JarFile jarFile = jarConnection.getJarFile();
+
+                List<JarEntry> entries = Collections.list(jarFile.entries());
+                for (JarEntry entry : entries) {
+                    String entryName = entry.getName();
+
+                    if (!entryName.startsWith(modulesPath)) {
+                        continue;
+                    }
+
+                    if (!entryName.endsWith(".class")) {
+                        continue;
+                    }
+
+                    String fullClassName = entryName.replace("/", ".").replace(".class", "");
+                    String[] parts = fullClassName.split("\\.");
+
+                    String className = parts[parts.length - 1];
+                    String packageName = parts[parts.length - 2];
+
+                    if (!className.equalsIgnoreCase(packageName)) {
+                        continue;
+                    }
+
+                    Class<?> clazz = getClassLoader().loadClass(className);
+                    if (!Module.class.isAssignableFrom(clazz)) {
+                        continue;
+                    }
+
+                    Module moduleInstance = (Module) clazz.getDeclaredConstructor().newInstance();
+                    modules.add(moduleInstance);
+                }
+            }
+        } catch (Exception ex) {
+            this.getLogger().severe("Failed to load modules: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        return modules;
+    }
+
     public static PocketPlugins getInstance() {
         return JavaPlugin.getPlugin(PocketPlugins.class);
     }
 
-    public static Random getRandom() {
-        return rand;
-    }
-
-    public ConfigManager getConfigManager() {
-        return this.configManager;
-    }
-
-    public void initExperimental() {
-        this.getCommand("synth").setExecutor(new SoundSynthExperiment());
-        this.getLogger().info("Sound Synth enabled");
+    public Random getRandom() {
+        return this.random;
     }
 
     private void saveCrafting() {

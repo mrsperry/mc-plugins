@@ -1,12 +1,9 @@
+# Example macro:
+# macros:
+#   testmacro:
+#     op-only: <true | false> # Defaults to false
+#     commands:
+#       - "time set day"
+#       - "gamemode spectator"
+
 macros:
-  test1:
-    op_only: false
-    commands:
-      - "bb"
-      - "markers list"
-  test2:
-    op_only: true
-    commands:
-      - "time set day"
-      - "gamemode spectator"
-      - "say I am watching you!"

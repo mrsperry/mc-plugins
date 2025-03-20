@@ -2,63 +2,55 @@ package com.mrjoshuasperry.pocketplugins.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class NMSModule extends Module {
-  private static final String VERSION = Bukkit.getBukkitVersion();
-  protected static final Map<String, Class<? extends Module>> nmsModuleHandlers = new HashMap<>();
-  private Module loadedModule;
+  protected static final Map<String, Class<? extends Module>> nmsModuleHandlers;
+
+  protected final String bukkitVersion;
 
   static {
+    nmsModuleHandlers = new HashMap<>();
+
     // Add module versions here.
     // nmsModuleHandlers.put("V_1_21_R1", MyModule.class)
   }
 
   public NMSModule(String name) {
     super(name);
+
+    this.bukkitVersion = Bukkit.getBukkitVersion();
   }
 
   @Override
-  public void init(YamlConfiguration configuration) {
-    super.init(configuration);
+  public void initialize(YamlConfiguration configuration) {
+    super.initialize(configuration);
 
-    // See if we even need to go through the trouble initializing.
-    if (this.isEnabled()) {
-
-      // Module will have a static delcaration adding to map of supported versions
-      if (isVersionSupported()) {
-
-        // Find correct class version
-        Class<? extends Module> handlerClzz = nmsModuleHandlers.get(VERSION);
-
-        try {
-
-          // Get constructor matching Module(String, NMSModule) { ... }
-          // Initialize with (moduleName_VERSION, this)
-          this.loadedModule = handlerClzz.getDeclaredConstructor(String.class, NMSModule.class)
-              .newInstance(this.getName() + "_" + VERSION, this);
-
-          // Make sure this module is initialized as well
-          this.loadedModule.init(configuration);
-        } catch (Exception e) {
-
-          // Cleanup if there is an error intializing module version
-          Bukkit.getLogger()
-              .warning("There was a problem enabling module \"" + this.getName() + "_" + VERSION + "\" disabling...");
-          Bukkit.getLogger().warning(e.getMessage());
-          e.printStackTrace();
-          this.disableModule();
-        }
-      } else {
-        Bukkit.getLogger().info("Module version for " + VERSION + " not found!");
-        this.disableModule();
-      }
+    if (!this.isEnabled()) {
+      return;
     }
-  }
 
-  public boolean isVersionSupported() {
-    return nmsModuleHandlers.containsKey(VERSION);
+    Logger logger = this.getPlugin().getLogger();
+
+    if (!NMSModule.nmsModuleHandlers.containsKey(bukkitVersion)) {
+      logger.warning(this.getModuleName() + " version for " + bukkitVersion + " not found!");
+      this.disableModule();
+      return;
+    }
+
+    Class<? extends Module> handlerClass = nmsModuleHandlers.get(bukkitVersion);
+    try {
+      Module module = handlerClass.getDeclaredConstructor(String.class, NMSModule.class)
+          .newInstance(this.getModuleName() + "_" + bukkitVersion, this);
+
+      module.initialize(configuration);
+    } catch (Exception ex) {
+      logger.warning("An error occurred while enabling: \"" + this.getModuleName() + "_" + bukkitVersion);
+      ex.printStackTrace();
+      this.disableModule();
+    }
   }
 }

@@ -140,14 +140,6 @@
             <id>creative</id>
             <modules>
                 <module>mc-utils</module>
-                <module>command-framework</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>map</id>
-            <modules>
-                <module>mc-utils</module>
-                <module>pocket-plugins</module>
             </modules>
         </profile>
     </profiles>

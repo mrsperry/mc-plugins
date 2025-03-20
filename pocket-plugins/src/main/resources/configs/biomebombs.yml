@@ -1,6 +1,3 @@
-enabled: true
-bomb-range: 9
-crafting-output: 4
 biomes:
   plains:
     biome: "Plains"

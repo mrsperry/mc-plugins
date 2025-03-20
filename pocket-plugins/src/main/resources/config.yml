@@ -1,0 +1,38 @@
+autobreeding:
+  # Delay is in seconds
+  min-delay: 0.25
+  max-delay: 2
+  range: 10
+
+beeplanter:
+  search-radius: 4
+
+biomebombs:
+  bomb-range: 9
+  crafting-output: 4
+
+cobblegenerator:
+  # These chances are a weighted ratio
+  blocks:
+    cobblestone: 1
+    stone: 1
+
+concretemixer:
+  # Use change is out of 100
+  water-use-chance: 5
+
+featherplucker:
+  # Cooldown is in seconds
+  cooldown: 300
+
+improvedshears:
+  # Dye change is out of 100
+  dye-chance: 50
+
+nameping:
+  # Ping cooldown is in seconds
+  ping-cooldown: 5
+
+woodpile:
+  # How many seconds it takes to convert a single log
+  log-convert-time: 5

@@ -1,22 +1,19 @@
 main: com.mrjoshuasperry.pocketplugins.PocketPlugins
 name: PocketPlugins
 version: ${project.version}
-description: Adds small additions to minecraft
+description: A collection of small changes and additions to enhance vanilla gameplay
 authors:
   - mrsperry
   - TimPCunningham
 api-version: "1.21"
 commands:
-  synth:
-    description: A tool for making a sound effect
-    usage: /synth [add|remove|edit|list|play]
   markers:
     description: Manage your map markers
-    usage: /<command> <add|list>
+    usage: /markers <add | list>
   biomebombs:
     description: Lists all available biome bombs and their crafting ingredients
     usage: /biomebombs
     aliases: [bb]
   macro:
     description: Command macro management
-    usage: /macro <list|run>
+    usage: /macro <list | run>

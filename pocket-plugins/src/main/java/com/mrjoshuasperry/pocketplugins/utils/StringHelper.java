@@ -6,10 +6,6 @@ import java.util.List;
 import net.md_5.bungee.api.ChatColor;
 
 public final class StringHelper {
-
-    private StringHelper() {
-    }
-
     private static final List<ChatColor> rainbowColors = Arrays.asList(ChatColor.RED, ChatColor.GOLD, ChatColor.YELLOW,
             ChatColor.GREEN, ChatColor.BLUE, ChatColor.LIGHT_PURPLE);
 

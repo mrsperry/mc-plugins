@@ -14,10 +14,6 @@ import org.bukkit.inventory.recipe.CraftingBookCategory;
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
 public class CraftingUtil {
-
-    private CraftingUtil() {
-    }
-
     public static void addShapelessCrafting(String name, Map<Material, Integer> ingredients, ItemStack result) {
         NamespacedKey key = new NamespacedKey(PocketPlugins.getInstance(), name);
         ShapelessRecipe recipe = new ShapelessRecipe(key, result);

@@ -30,5 +30,4 @@ public class CursorUtils {
   public static MapCursor.Type getRandomCursor() {
     return bannerTypes[random.nextInt(bannerTypes.length)];
   }
-
 }
