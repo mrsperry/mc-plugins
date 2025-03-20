@@ -10,7 +10,6 @@ import java.util.Random;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,11 +21,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mrjoshuasperry.pocketplugins.modules.craftingkeeper.CraftingKeeperManager;
 import com.mrjoshuasperry.pocketplugins.modules.improvedmaps.WaypointManager;
-import com.mrjoshuasperry.pocketplugins.modules.timeplayed.TimePlayed;
 import com.mrjoshuasperry.pocketplugins.utils.DebuggerDisplay;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
-
-import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 
 public class PocketPlugins extends JavaPlugin implements Listener {
     private Random random = new Random();
