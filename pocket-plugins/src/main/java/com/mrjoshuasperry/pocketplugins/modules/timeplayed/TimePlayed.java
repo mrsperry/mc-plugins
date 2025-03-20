@@ -52,7 +52,7 @@ public class TimePlayed extends Module implements BasicCommand {
     CommandSender sender = commandSourceStack.getSender();
 
     if (!(sender instanceof Player)) {
-      sender.sendMessage(Component.text("You must be a played to use this command", NamedTextColor.RED));
+      sender.sendMessage(Component.text("You must be a player to use this command", NamedTextColor.RED));
       return;
     }
 
