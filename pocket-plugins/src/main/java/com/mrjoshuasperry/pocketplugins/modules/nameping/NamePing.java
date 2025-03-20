@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
@@ -29,9 +29,9 @@ public class NamePing extends Module {
     }
 
     @Override
-    public void initialize(YamlConfiguration config) {
-        super.initialize(config);
-        this.cooldown = config.getInt("ping-cooldown", 5);
+    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super.initialize(readableConfig, writableConfig);
+        this.cooldown = readableConfig.getInt("ping-cooldown", 5);
     }
 
     @EventHandler

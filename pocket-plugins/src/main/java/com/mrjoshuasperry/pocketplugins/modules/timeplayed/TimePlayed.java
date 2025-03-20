@@ -6,14 +6,13 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 public class TimePlayed extends Module {
   protected Map<UUID, Long> timePlayed;
-  protected YamlConfiguration config;
 
   public TimePlayed() {
     super("TimePlayed");
@@ -22,9 +21,8 @@ public class TimePlayed extends Module {
   }
 
   @Override
-  public void initialize(YamlConfiguration config) {
-    super.initialize(config);
-    this.config = config;
+  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super.initialize(readableConfig, writableConfig);
   }
 
   public void onTimePlayedCommand(CommandSender sender, Command command, String label, String[] args) {

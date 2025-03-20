@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Levelled;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -40,9 +40,9 @@ public class ConcreteMixerListener extends Module {
     }
 
     @Override
-    public void initialize(YamlConfiguration config) {
-        super.initialize(config);
-        this.waterUseChance = config.getInt("water-use-chance", 5);
+    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super.initialize(readableConfig, writableConfig);
+        this.waterUseChance = readableConfig.getInt("water-use-chance", 5);
     }
 
     private void handleConcreteHarden(Player player, ItemStack item, Block block) {

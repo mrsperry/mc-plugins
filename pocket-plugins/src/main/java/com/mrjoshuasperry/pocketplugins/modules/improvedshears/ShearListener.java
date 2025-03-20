@@ -7,7 +7,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
@@ -34,9 +34,9 @@ public class ShearListener extends Module {
     }
 
     @Override
-    public void initialize(YamlConfiguration config) {
-        super.initialize(config);
-        this.chance = config.getInt("dye-chance", 25);
+    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super.initialize(readableConfig, writableConfig);
+        this.chance = readableConfig.getInt("dye-chance", 25);
         this.initRecipes();
     }
 

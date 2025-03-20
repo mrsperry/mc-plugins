@@ -1,8 +1,7 @@
 package com.mrjoshuasperry.pocketplugins.utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
@@ -12,7 +11,9 @@ public class Module implements Listener {
     private final String name;
 
     private PocketPlugins plugin;
-    private YamlConfiguration config;
+
+    private ConfigurationSection readableConfig;
+    private ConfigurationSection writableConfig;
     private boolean enabled;
 
     public Module(String name) {
@@ -21,9 +22,10 @@ public class Module implements Listener {
         this.plugin = PocketPlugins.getInstance();
     }
 
-    public void initialize(YamlConfiguration config) {
-        this.config = config;
-        this.enabled = config.getBoolean("enabled", false);
+    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        this.readableConfig = readableConfig;
+        this.writableConfig = writableConfig;
+        this.enabled = readableConfig.getBoolean("enabled", true);
 
         if (this.enabled) {
             this.onEnable();
@@ -33,12 +35,12 @@ public class Module implements Listener {
     }
 
     public void onEnable() {
-        Bukkit.getLogger().info(this.name + " enabled!");
-        Bukkit.getServer().getPluginManager().registerEvents(this, PocketPlugins.getInstance());
+        this.plugin.getLogger().info(this.name + " enabled!");
+        this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
     }
 
     public void onDisable() {
-        Bukkit.getLogger().info(this.name + " disabled!");
+        this.plugin.getLogger().info(this.name + " disabled!");
         HandlerList.unregisterAll(this);
     }
 
@@ -62,6 +64,14 @@ public class Module implements Listener {
 
     public final PocketPlugins getPlugin() {
         return this.plugin;
+    }
+
+    public final ConfigurationSection getReadableConfig() {
+        return this.readableConfig;
+    }
+
+    public final ConfigurationSection getWritableConfig() {
+        return this.writableConfig;
     }
 
     public final boolean isEnabled() {

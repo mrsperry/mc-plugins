@@ -11,6 +11,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
@@ -37,7 +38,19 @@ public class PocketPlugins extends JavaPlugin implements Listener {
         List<Module> modules = this.loadModules();
 
         for (Module module : modules) {
-            module.initialize(null);
+            String moduleName = module.getModuleName().toLowerCase();
+            YamlConfiguration writableConfig = this.loadWritableConfig(moduleName);
+
+            ConfigurationSection readableSection = this.getConfig().getConfigurationSection(moduleName);
+            ConfigurationSection writableSection = writableConfig.getRoot();
+
+            if (readableSection == null) {
+                YamlConfiguration config = new YamlConfiguration();
+                config.set("enabled", true);
+                readableSection = config.getRoot();
+            }
+
+            module.initialize(readableSection, writableSection);
         }
 
         loadWaypoints();
@@ -89,7 +102,7 @@ public class PocketPlugins extends JavaPlugin implements Listener {
                         continue;
                     }
 
-                    Class<?> clazz = getClassLoader().loadClass(className);
+                    Class<?> clazz = this.getClassLoader().loadClass(fullClassName);
                     if (!Module.class.isAssignableFrom(clazz)) {
                         continue;
                     }
@@ -99,11 +112,23 @@ public class PocketPlugins extends JavaPlugin implements Listener {
                 }
             }
         } catch (Exception ex) {
-            this.getLogger().severe("Failed to load modules: " + ex.getMessage());
+            this.getLogger().severe("Failed to load module: " + ex.getMessage());
             ex.printStackTrace();
         }
 
         return modules;
+    }
+
+    private YamlConfiguration loadWritableConfig(String configName) {
+        String resourceName = "configs/" + configName + ".yml";
+        File dataFile = new File(this.getDataFolder(), resourceName);
+
+        if (!dataFile.exists() && this.getResource(resourceName) != null) {
+            dataFile.getParentFile().mkdirs();
+            this.saveResource("configs/" + configName + ".yml", false);
+        }
+
+        return YamlConfiguration.loadConfiguration(dataFile);
     }
 
     public static PocketPlugins getInstance() {

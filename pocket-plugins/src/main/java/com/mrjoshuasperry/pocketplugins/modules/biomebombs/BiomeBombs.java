@@ -11,7 +11,6 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -36,25 +35,25 @@ public class BiomeBombs extends Module {
   private List<BiomeBombData> biomeBombsData;
 
   public BiomeBombs() {
-    super("biomebombs");
+    super("BiomeBombs");
     biomeBombTypeKey = this.createKey("biomb_bomb_type");
     biomeBombColorKey = this.createKey("biomb_bomb_color");
   }
 
   @Override
-  public void initialize(YamlConfiguration config) {
-    super.initialize(config);
+  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super.initialize(readableConfig, writableConfig);
 
-    this.explosionRage = config.getInt("bomb-range");
+    this.explosionRage = readableConfig.getInt("bomb-range");
 
-    registerCraftingRecipes(config);
+    registerCraftingRecipes(readableConfig, writableConfig);
     this.getPlugin().getCommand("biomebombs").setExecutor(new BiomeBombCommand(biomeBombsData));
   }
 
-  private void registerCraftingRecipes(YamlConfiguration config) {
-    ConfigurationSection biomeConfigSection = config.getConfigurationSection("biomes");
+  private void registerCraftingRecipes(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    ConfigurationSection biomeConfigSection = writableConfig.getConfigurationSection("biomes");
     biomeBombsData = new ArrayList<>();
-    int craftingAmount = config.getInt("crafting-output");
+    int craftingAmount = readableConfig.getInt("crafting-output");
 
     for (String key : biomeConfigSection.getKeys(false)) {
       biomeBombsData.add(new BiomeBombData(biomeConfigSection.getConfigurationSection(key)));

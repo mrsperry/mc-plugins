@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -26,9 +26,9 @@ public class WoodPileListener extends Module {
     }
 
     @Override
-    public void initialize(YamlConfiguration config) {
-        super.initialize(config);
-        this.logConvertTime = config.getInt("log-convert-time", 5);
+    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super.initialize(readableConfig, writableConfig);
+        this.logConvertTime = readableConfig.getInt("log-convert-time", 5);
     }
 
     private BukkitRunnable createWoodPileRunnable(WoodPile woodPile, BlockPlaceEvent event) {

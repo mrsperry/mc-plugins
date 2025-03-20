@@ -1,3 +1,5 @@
+# All modules are enabled by default. To disable a module, add `enabled: false` to its section.
+
 autobreeding:
   # Delay is in seconds
   min-delay: 0.25

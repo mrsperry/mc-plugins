@@ -10,7 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -46,10 +46,10 @@ public class BeePlanter extends Module {
   }
 
   @Override
-  public void initialize(YamlConfiguration config) {
-    super.initialize(config);
+  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super.initialize(readableConfig, writableConfig);
 
-    this.searchRadius = config.getInt("search-radius", 4);
+    this.searchRadius = readableConfig.getInt("search-radius", 4);
   }
 
   @EventHandler

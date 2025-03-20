@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 
 public class NMSModule extends Module {
   protected static final Map<String, Class<? extends Module>> nmsModuleHandlers;
@@ -26,8 +26,8 @@ public class NMSModule extends Module {
   }
 
   @Override
-  public void initialize(YamlConfiguration configuration) {
-    super.initialize(configuration);
+  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super.initialize(readableConfig, writableConfig);
 
     if (!this.isEnabled()) {
       return;
@@ -46,7 +46,7 @@ public class NMSModule extends Module {
       Module module = handlerClass.getDeclaredConstructor(String.class, NMSModule.class)
           .newInstance(this.getModuleName() + "_" + bukkitVersion, this);
 
-      module.initialize(configuration);
+      module.initialize(readableConfig, writableConfig);
     } catch (Exception ex) {
       logger.warning("An error occurred while enabling: \"" + this.getModuleName() + "_" + bukkitVersion);
       ex.printStackTrace();

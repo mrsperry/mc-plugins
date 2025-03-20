@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
@@ -17,15 +16,15 @@ public class Macros extends Module {
   }
 
   @Override
-  public void initialize(YamlConfiguration config) {
-    super.initialize(config);
-    loadMacros(config);
+  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super.initialize(readableConfig, writableConfig);
+    loadMacros(writableConfig);
     MacrosCommand executor = new MacrosCommand(macros);
     this.getPlugin().getCommand("macro").setExecutor(executor);
     this.getPlugin().getCommand("macro").setTabCompleter(executor);
   }
 
-  private void loadMacros(YamlConfiguration config) {
+  private void loadMacros(ConfigurationSection config) {
     ConfigurationSection macrosSection = config.getConfigurationSection("macros");
     if (macrosSection == null)
       return;

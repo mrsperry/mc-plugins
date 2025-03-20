@@ -3,7 +3,7 @@ package com.mrjoshuasperry.pocketplugins.modules.featherplucker;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -26,10 +26,10 @@ public class FeatherPlucker extends Module {
     }
 
     @Override
-    public void initialize(final YamlConfiguration config) {
-        super.initialize(config);
+    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfigg) {
+        super.initialize(readableConfig, writableConfigg);
 
-        this.cooldown = config.getInt("cooldown", 20 * 300);
+        this.cooldown = readableConfig.getInt("cooldown", 20 * 300);
     }
 
     @EventHandler

@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockFormEvent;
 
@@ -25,10 +24,10 @@ public class CobbleGenerator extends Module {
     }
 
     @Override
-    public void initialize(YamlConfiguration config) {
-        super.initialize(config);
+    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super.initialize(readableConfig, writableConfig);
 
-        ConfigurationSection section = config.getConfigurationSection("blocks");
+        ConfigurationSection section = readableConfig.getConfigurationSection("blocks");
         if (section == null) {
             return;
         }

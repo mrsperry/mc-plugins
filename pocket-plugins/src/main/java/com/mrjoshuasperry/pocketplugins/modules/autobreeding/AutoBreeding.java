@@ -11,7 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Item;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,12 +41,12 @@ public class AutoBreeding extends Module {
   }
 
   @Override
-  public void initialize(YamlConfiguration configuration) {
-    super.initialize(configuration);
+  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super.initialize(readableConfig, writableConfig);
 
-    this.minDelay = configuration.getDouble("min-delay", 0.25f);
-    this.maxDelay = configuration.getDouble("max-delay", 2f);
-    this.range = configuration.getInt("range", 8);
+    this.minDelay = readableConfig.getDouble("min-delay", 0.25f);
+    this.maxDelay = readableConfig.getDouble("max-delay", 2f);
+    this.range = readableConfig.getInt("range", 8);
 
     this.tick();
   }
