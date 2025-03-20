@@ -8,6 +8,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+/** @author mrsperry */
 public class NoSheepGriefingListener extends Module {
     public NoSheepGriefingListener() {
         super("NoSheepGriefing");

@@ -25,6 +25,7 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 import net.md_5.bungee.api.ChatColor;
 
+/** @author mrsperry */
 public class InventoryInspector extends Module {
     private final ArrayList<Inventory> inventories = new ArrayList<>();
 

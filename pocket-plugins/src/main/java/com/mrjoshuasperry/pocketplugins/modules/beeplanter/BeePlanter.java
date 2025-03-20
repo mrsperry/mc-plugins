@@ -28,6 +28,7 @@ import com.mrjoshuasperry.pocketplugins.utils.PathfinderUtil;
 
 import io.papermc.paper.event.entity.EntityMoveEvent;
 
+/** @author mrsperry */
 public class BeePlanter extends Module {
   protected Random random;
 

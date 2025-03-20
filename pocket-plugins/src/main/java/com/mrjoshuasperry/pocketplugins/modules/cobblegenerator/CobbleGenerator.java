@@ -14,6 +14,7 @@ import org.bukkit.event.block.BlockFormEvent;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+/** @author TimPCunningham */
 public class CobbleGenerator extends Module {
     private final Map<Material, Double> materials;
 

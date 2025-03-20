@@ -34,6 +34,7 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+/** @author TimPCunningham */
 public class ExplorersAtlas extends Module {
   private final NamespacedKey ATLAS_KEY;
 

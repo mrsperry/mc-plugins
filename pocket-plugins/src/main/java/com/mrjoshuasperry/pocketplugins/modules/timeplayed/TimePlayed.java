@@ -18,6 +18,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+/** @author mrsperry */
 public class TimePlayed extends Module implements BasicCommand {
   protected Map<UUID, Long> timePlayed;
 

@@ -6,6 +6,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+/** @author mrsperry */
 public class NoEndermanGriefing extends Module {
     public NoEndermanGriefing() {
         super("NoEndermanGriefing");

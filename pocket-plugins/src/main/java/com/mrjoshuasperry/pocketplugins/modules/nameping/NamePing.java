@@ -17,6 +17,7 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.TextComponent;
 
+/** @author TimPCunningham */
 public class NamePing extends Module {
     private final Map<String, Date> cooldowns;
     private final Pattern pattern;

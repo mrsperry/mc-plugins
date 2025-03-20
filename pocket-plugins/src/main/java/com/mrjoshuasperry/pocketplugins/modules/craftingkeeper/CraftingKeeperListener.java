@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+/** @author TimPCunningham */
 public class CraftingKeeperListener extends Module {
     Map<UUID, Location> tableBlocks;
 

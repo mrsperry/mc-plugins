@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.mrjoshuasperry.pocketplugins.utils.BlockUtils;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+/** @author TimPCunningham */
 public class IgneousGeneratorListener extends Module {
     private final List<Material> igneousMaterials = Arrays.asList(Material.DIORITE, Material.GRANITE,
             Material.ANDESITE);

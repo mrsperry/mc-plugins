@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+/** @author TimPCunningham */
 public class ArmorStandAdditions extends Module {
     public ArmorStandAdditions() {
         super("ArmorStands");

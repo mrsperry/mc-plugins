@@ -15,6 +15,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+/** @author mrsperry */
 public class FeatherPlucker extends Module {
     private final NamespacedKey key;
     private int cooldown;

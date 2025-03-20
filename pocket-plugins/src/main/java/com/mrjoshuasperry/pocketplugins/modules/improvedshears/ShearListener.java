@@ -23,6 +23,7 @@ import com.mrjoshuasperry.pocketplugins.utils.StringHelper;
 
 import net.md_5.bungee.api.ChatColor;
 
+/** @author TimPCunningham */
 public class ShearListener extends Module {
     private int chance;
     private final NamespacedKey shearKey;

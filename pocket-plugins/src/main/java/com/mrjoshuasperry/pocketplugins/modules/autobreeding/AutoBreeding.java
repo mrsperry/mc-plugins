@@ -20,6 +20,7 @@ import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 import com.mrjoshuasperry.pocketplugins.utils.PathfinderUtil;
 
+/** @author TimPCunningham */
 public class AutoBreeding extends Module {
   private static long BREED_TASK_INTERVAL = 5;
   private static double TARGET_CHANCE = 0.25;

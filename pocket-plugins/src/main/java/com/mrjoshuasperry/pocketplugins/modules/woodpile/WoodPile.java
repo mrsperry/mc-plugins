@@ -9,6 +9,7 @@ import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
+/** @author TimPCunningham */
 public class WoodPile {
     private final List<Block> fuel;
     private final List<Block> covering;

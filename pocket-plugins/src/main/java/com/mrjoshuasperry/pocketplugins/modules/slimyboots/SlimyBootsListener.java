@@ -23,6 +23,7 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 
+/** @author TimPCunningham */
 public class SlimyBootsListener extends Module {
     private final NamespacedKey bootsKey;
     private static final PersistentDataType<Byte, Byte> BYTE = PersistentDataType.BYTE;

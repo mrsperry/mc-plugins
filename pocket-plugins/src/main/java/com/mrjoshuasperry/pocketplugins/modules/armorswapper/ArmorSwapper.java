@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+/** @author mrsperry */
 public class ArmorSwapper extends Module {
   public ArmorSwapper() {
     super("ArmorSwapper");

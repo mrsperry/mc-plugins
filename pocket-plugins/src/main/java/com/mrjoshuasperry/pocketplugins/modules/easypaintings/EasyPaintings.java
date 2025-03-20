@@ -15,6 +15,7 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 
+/** @author TimPCunningham */
 public class EasyPaintings extends Module {
     protected ArrayList<Art> availableArt;
 

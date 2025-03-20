@@ -28,6 +28,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+/** @author TimPCunningham */
 public class BiomeBombs extends Module {
   private final NamespacedKey biomeBombTypeKey;
   private final NamespacedKey biomeBombColorKey;
