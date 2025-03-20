@@ -8,6 +8,11 @@ import org.bukkit.event.Listener;
 
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+
 public class Module implements Listener {
     private final String name;
 
@@ -43,16 +48,7 @@ public class Module implements Listener {
     public void onDisable() {
         this.plugin.getLogger().info(this.name + " disabled!");
         HandlerList.unregisterAll(this);
-
-        YamlConfiguration config = new YamlConfiguration();
-        config.setDefaults(this.writableConfig.getRoot());
-
-        try {
-            config.save(this.plugin.getDataFolder() + "/configs/" + this.name.toLowerCase() + ".yml");
-        } catch (Exception ex) {
-            this.plugin.getLogger().severe("Could not save " + this.name + " configuration!");
-            ex.printStackTrace();
-        }
+        this.saveConfig();
     }
 
     public final void enableModule() {
@@ -63,6 +59,25 @@ public class Module implements Listener {
     public final void disableModule() {
         this.enabled = false;
         this.onDisable();
+    }
+
+    public final void registerBasicCommand(String command, BasicCommand commandClass) {
+        this.plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
+                (ReloadableRegistrarEvent<Commands> event) -> event.registrar().register(command, commandClass));
+    }
+
+    public final void saveConfig() {
+        YamlConfiguration config = new YamlConfiguration();
+        for (String key : this.writableConfig.getKeys(false)) {
+            config.set(key, this.writableConfig.get(key));
+        }
+
+        try {
+            config.save(this.plugin.getDataFolder() + "/configs/" + this.name.toLowerCase() + ".yml");
+        } catch (Exception ex) {
+            this.plugin.getLogger().severe("Could not save " + this.name + " configuration!");
+            ex.printStackTrace();
+        }
     }
 
     public final NamespacedKey createKey(String name) {
