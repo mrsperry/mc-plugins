@@ -2,6 +2,7 @@ package com.mrjoshuasperry.pocketplugins.utils;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
@@ -42,6 +43,16 @@ public class Module implements Listener {
     public void onDisable() {
         this.plugin.getLogger().info(this.name + " disabled!");
         HandlerList.unregisterAll(this);
+
+        YamlConfiguration config = new YamlConfiguration();
+        config.setDefaults(this.writableConfig.getRoot());
+
+        try {
+            config.save(this.plugin.getDataFolder() + "/configs/" + this.name.toLowerCase() + ".yml");
+        } catch (Exception ex) {
+            this.plugin.getLogger().severe("Could not save " + this.name + " configuration!");
+            ex.printStackTrace();
+        }
     }
 
     public final void enableModule() {
