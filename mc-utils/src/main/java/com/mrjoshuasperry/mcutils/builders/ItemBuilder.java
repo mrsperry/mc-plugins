@@ -1,15 +1,16 @@
 package com.mrjoshuasperry.mcutils.builders;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import net.kyori.adventure.text.Component;
 
 public class ItemBuilder {
     protected ItemStack item;
@@ -29,7 +30,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setMaterial(Material material) {
-        this.item.setType(material);
+        this.item = this.item.withType(material);
         return this;
     }
 
@@ -38,37 +39,24 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setData(short data) {
-        this.item.setDurability(data);
+    public ItemBuilder setName(Component name) {
+        this.meta.itemName(name);
         return this;
     }
 
-    public ItemBuilder setName(String name) {
-        this.meta.setDisplayName(ChatColor.RESET + name);
+    public ItemBuilder setLore(List<Component> lore) {
+        this.meta.lore(lore);
         return this;
     }
 
-    public ItemBuilder setNameColor(ChatColor color) {
-        this.meta.setDisplayName(color + this.meta.getDisplayName());
+    public ItemBuilder addLore(Component loreLine) {
+        List<Component> lore = this.meta.lore() == null ? new ArrayList<>() : this.meta.lore();
+        lore.add(loreLine);
+        this.meta.lore(lore);
         return this;
     }
 
-    public ItemBuilder setLore(List<String> lore) {
-        this.meta.setLore(lore);
-        return this;
-    }
-
-    public ItemBuilder addLore(String loreLine) {
-        List<String> temp = this.meta.getLore();
-        if (temp == null) {
-            temp = new ArrayList<>();
-        }
-
-        temp.add(loreLine);
-        return this.setLore(temp);
-    }
-
-    public ItemBuilder setEnchantments(HashMap<Enchantment, Integer> enchantments) {
+    public ItemBuilder setEnchantments(Map<Enchantment, Integer> enchantments) {
         for (Enchantment enchant : enchantments.keySet()) {
             this.meta.addEnchant(enchant, enchantments.get(enchant), true);
         }

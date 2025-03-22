@@ -1,13 +1,14 @@
 package com.mrjoshuasperry.mcutils.builders;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+
+import net.kyori.adventure.text.Component;
 
 public class BookBuilder extends ItemBuilder {
     private BookMeta bookMeta;
@@ -34,56 +35,26 @@ public class BookBuilder extends ItemBuilder {
         return this;
     }
 
-    public BookBuilder addLine(int index, String line) {
-        String page = "";
+    public BookBuilder addLine(int pageIndex, Component line) {
+        Component page;
         try {
-            page = this.bookMeta.getPage(index);
+            page = this.bookMeta.page(pageIndex);
         } catch (Exception ex) {
-            this.bookMeta.addPage(line);
+            this.bookMeta.addPages(line);
+            return this;
         }
-        this.bookMeta.setPage(index, page.concat("\n" + line));
+
+        this.bookMeta.page(pageIndex, page.append(Component.newline()).append(line));
         return this;
     }
 
-    public BookBuilder addPage(List<String> content) {
-        int count = this.bookMeta.getPageCount();
-        return this.setPage((count == 0 ? 0 : count + 1), content);
-    }
-
-    public BookBuilder addPage(String... content) {
-        int count = this.bookMeta.getPageCount();
-        return this.setPage((count == 0 ? 0 : count + 1), Arrays.asList(content));
-    }
-
-    public BookBuilder setPage(int index, List<String> content) {
-        try {
-            this.bookMeta.getPage(index);
-        } catch (Exception ex) {
-            this.bookMeta.addPage("");
-        }
-        this.bookMeta.setPage(index, this.getLines(content));
+    public BookBuilder setPage(int pageIndex, Component page) {
+        this.bookMeta.page(pageIndex, page);
         return this;
     }
 
-    public BookBuilder setPage(int index, String... content) {
-        return this.setPage(index, Arrays.asList(content));
-    }
-
-    private String getLines(List<String> content) {
-        if (content.size() > 0) {
-            String page = "";
-            for (String line : content) {
-                page = page.concat(line + "\n");
-            }
-            return page.substring(0, page.length() - 1);
-        }
-        return "";
-    }
-
-    public BookBuilder setPages(List<List<String>> pages) {
-        for (int index = 0; index < pages.size(); index++) {
-            this.setPage(index, pages.get(index));
-        }
+    public BookBuilder setPages(List<Component> pages) {
+        this.bookMeta.pages(pages);
         return this;
     }
 
@@ -94,41 +65,32 @@ public class BookBuilder extends ItemBuilder {
     }
 
     @Override
-    public BookBuilder setData(short data) {
-        this.item.setDurability(data);
+    public BookBuilder setName(Component name) {
+        super.setName(name);
         return this;
     }
 
     @Override
-    public BookBuilder setName(String name) {
-        this.meta.setDisplayName(name);
+    public BookBuilder setLore(List<Component> lore) {
+        super.setLore(lore);
         return this;
     }
 
     @Override
-    public BookBuilder setLore(List<String> lore) {
-        this.meta.setLore(lore);
+    public BookBuilder addLore(Component loreLine) {
+        super.addLore(loreLine);
         return this;
     }
 
     @Override
-    public BookBuilder addLore(String loreLine) {
-        List<String> temp = this.meta.getLore();
-        temp.add(loreLine);
-        return this.setLore(temp);
-    }
-
-    @Override
-    public BookBuilder setEnchantments(HashMap<Enchantment, Integer> enchantments) {
-        for (Enchantment enchant : enchantments.keySet()) {
-            this.meta.addEnchant(enchant, enchantments.get(enchant), true);
-        }
+    public BookBuilder setEnchantments(Map<Enchantment, Integer> enchantments) {
+        super.setEnchantments(enchantments);
         return this;
     }
 
     @Override
     public BookBuilder addEnchantment(Enchantment enchantment, int level) {
-        this.meta.addEnchant(enchantment, level, true);
+        super.addEnchantment(enchantment, level);
         return this;
     }
 
