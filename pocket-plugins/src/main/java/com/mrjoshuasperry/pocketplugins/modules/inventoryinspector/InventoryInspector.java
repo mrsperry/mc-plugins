@@ -23,7 +23,8 @@ import com.mrjoshuasperry.mcutils.builders.ItemBuilder;
 import com.mrjoshuasperry.mcutils.builders.PotionBuilder;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /** @author mrsperry */
 public class InventoryInspector extends Module {
@@ -63,15 +64,15 @@ public class InventoryInspector extends Module {
 
         // Set health, hunger, and active effects
         result.setItem(0, new ItemBuilder(Material.GLISTERING_MELON_SLICE)
-                .setName(ChatColor.RED + "Health")
+                .setName(Component.text("Health", NamedTextColor.RED))
                 .setAmount((int) (player.getHealth()))
                 .build());
         result.setItem(1, new ItemBuilder(Material.COOKED_BEEF)
-                .setName(ChatColor.YELLOW + "Hunger")
+                .setName(Component.text("Hunger", NamedTextColor.YELLOW))
                 .setAmount(player.getFoodLevel())
                 .build());
         result.setItem(2, new PotionBuilder()
-                .setName(ChatColor.LIGHT_PURPLE + "Effects")
+                .setName(Component.text("Effects", NamedTextColor.LIGHT_PURPLE))
                 .setBase(PotionType.MUNDANE)
                 .setEffects(new ArrayList<>(player.getActivePotionEffects()))
                 .build());

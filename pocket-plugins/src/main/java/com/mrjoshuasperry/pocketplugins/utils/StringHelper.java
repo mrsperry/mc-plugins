@@ -1,28 +1,35 @@
 package com.mrjoshuasperry.pocketplugins.utils;
 
-import java.util.Arrays;
 import java.util.List;
 
-import net.md_5.bungee.api.ChatColor;
+import com.google.common.collect.Lists;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public final class StringHelper {
-    private static final List<ChatColor> rainbowColors = Arrays.asList(ChatColor.RED, ChatColor.GOLD, ChatColor.YELLOW,
-            ChatColor.GREEN, ChatColor.BLUE, ChatColor.LIGHT_PURPLE);
+    private static final List<NamedTextColor> rainbowColors = Lists.newArrayList(
+            NamedTextColor.RED,
+            NamedTextColor.GOLD,
+            NamedTextColor.YELLOW,
+            NamedTextColor.GREEN,
+            NamedTextColor.BLUE,
+            NamedTextColor.LIGHT_PURPLE);
 
-    public static String rainbowify(String str) {
+    public static TextComponent rainbowify(String string) {
+        TextComponent.Builder builder = Component.text();
         int index = 0;
-        StringBuilder result = new StringBuilder();
 
-        for (String s : str.split("")) {
-            if (s.equals(" ")) {
-                result.append(s);
+        for (String part : string.split("")) {
+            if (part.equals(" ")) {
+                builder.append(Component.space());
             } else {
-
-                result.append(rainbowColors.get(index)).append(s);
+                builder.append(Component.text(part, rainbowColors.get(index)));
                 index = (index + 1) % rainbowColors.size();
             }
         }
 
-        return result.toString();
+        return builder.build();
     }
 }

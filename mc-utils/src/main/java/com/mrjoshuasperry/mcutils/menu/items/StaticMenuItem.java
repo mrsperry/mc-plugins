@@ -1,21 +1,19 @@
 package com.mrjoshuasperry.mcutils.menu.items;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.mrjoshuasperry.mcutils.menu.MenuEventContext;
+import com.mrjoshuasperry.mcutils.menu.Menu;
 
 public class StaticMenuItem extends MenuItem {
-    /**
-     * Creates a new static menu item that has no outstanding properties, only an
-     * on-click callback
-     * 
-     * @param slot     The slot for this item
-     * @param item     The item stack to put in the slot
-     * @param callback The consumer that is called when this item is clicked
-     */
-    public StaticMenuItem(int slot, ItemStack item, Consumer<MenuEventContext> callback) {
-        super(slot, item, callback);
+    public StaticMenuItem(Material material, BiConsumer<Player, Menu> onClick) {
+        this(new ItemStack(material), onClick);
+    }
+
+    public StaticMenuItem(ItemStack item, BiConsumer<Player, Menu> onClick) {
+        super(item, onClick);
     }
 }

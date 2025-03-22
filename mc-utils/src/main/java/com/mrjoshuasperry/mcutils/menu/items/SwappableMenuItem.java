@@ -1,54 +1,35 @@
 package com.mrjoshuasperry.mcutils.menu.items;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.function.Consumer;
+import java.util.List;
+import java.util.function.BiConsumer;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.google.common.collect.Lists;
-import com.mrjoshuasperry.mcutils.menu.MenuEventContext;
+import com.mrjoshuasperry.mcutils.menu.Menu;
 
 public class SwappableMenuItem extends MenuItem {
-    // The current index of the item
     private int index;
-    // The list of item stacks that can be swapped
-    private ArrayList<ItemStack> items;
+    private List<ItemStack> items;
 
-    /**
-     * Creates a new swappable menu item that allows an unlimited number of swaps
-     * when clicked (useful for multi-state options)
-     * 
-     * @param slot     The slot for this item
-     * @param item     The item stack to put in the slot
-     * @param callback The consumer that is called when this item is clicked
-     * @param items    Any number of item stacks that can be swapped to
-     */
-    public SwappableMenuItem(int slot, ItemStack item, Consumer<MenuEventContext> callback, ItemStack... items) {
-        super(slot, item, callback);
+    public SwappableMenuItem(List<ItemStack> items, BiConsumer<Player, Menu> onClick) {
+        super(items.get(0), onClick);
 
         this.index = 0;
-        this.items = Lists.newArrayList(item);
-        this.items.addAll(Arrays.asList(items));
+        this.items = items;
     }
 
     @Override
-    public void onClick(MenuEventContext context) {
+    public void onClick(Player player, Menu menu) {
+        super.onClick(player, menu);
         this.swap();
-        super.onClick(context);
     }
 
-    /**
-     * Swaps the current item out with the next in line
-     */
     public void swap() {
-        int index = this.index + 1;
-        if (index >= this.items.size()) {
-            index = 0;
-        }
+        this.index = (this.index + 1) % this.items.size();
 
-        super.setItem(this.items.get(index));
-        this.index = index;
+        super.setItem(this.items.get(this.index));
     }
 
     public void setIndex(int index) {

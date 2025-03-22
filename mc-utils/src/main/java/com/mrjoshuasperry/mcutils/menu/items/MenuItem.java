@@ -1,34 +1,32 @@
 package com.mrjoshuasperry.mcutils.menu.items;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.mrjoshuasperry.mcutils.menu.Menu;
-import com.mrjoshuasperry.mcutils.menu.MenuEventContext;
 
 public abstract class MenuItem {
-    // The owning menu
-    private Menu menu;
-    // The slot this item is in
-    private int slot;
-    // The item stack this item uses
     private ItemStack item;
-    // The on click callback
-    private Consumer<MenuEventContext> callback;
+    private BiConsumer<Player, Menu> onClick;
 
-    public MenuItem(int slot, ItemStack item, Consumer<MenuEventContext> callback) {
-        this.slot = slot;
+    public MenuItem(Material material) {
+        this(new ItemStack(material));
+    }
+
+    public MenuItem(Material material, BiConsumer<Player, Menu> onClick) {
+        this(new ItemStack(material), onClick);
+    }
+
+    public MenuItem(ItemStack item) {
+        this(item, null);
+    }
+
+    public MenuItem(ItemStack item, BiConsumer<Player, Menu> onClick) {
         this.item = item;
-        this.callback = callback;
-    }
-
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
-
-    public int getSlot() {
-        return this.slot;
+        this.onClick = onClick;
     }
 
     public ItemStack getItem() {
@@ -37,13 +35,11 @@ public abstract class MenuItem {
 
     public void setItem(ItemStack item) {
         this.item = item;
-
-        this.menu.updateSlot(this);
     }
 
-    public void onClick(MenuEventContext context) {
-        if (this.callback != null) {
-            this.callback.accept(context);
+    public void onClick(Player player, Menu menu) {
+        if (this.onClick != null) {
+            this.onClick.accept(player, menu);
         }
     }
 }

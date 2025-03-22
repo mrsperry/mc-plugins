@@ -39,6 +39,13 @@ mobgriefing:
   no-sheep-griefing: true
   no-enderman-griefing: true
 
+mobsizes:
+  # 1.0 is default size
+  min-size: 0.85
+  max-size: 1.15
+  # This will size ridable mounts based on their HP pool rather than randomly
+  enable-mount-health-sizing: true
+
 nameping:
   # Ping cooldown is in seconds
   ping-cooldown: 5

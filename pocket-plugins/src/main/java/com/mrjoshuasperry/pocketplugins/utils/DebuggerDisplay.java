@@ -40,7 +40,7 @@ public class DebuggerDisplay {
         TextDisplay display = displays.get(entity);
 
         if (display == null || !display.isValid()) {
-            display = entity.getWorld().spawn(entity.getLocation().add(0, 1.5, 0), TextDisplay.class, td -> {
+            display = entity.getWorld().spawn(entity.getLocation().add(0, 2.5, 0), TextDisplay.class, td -> {
                 td.text(Component.text(text));
                 td.setAlignment(TextAlignment.CENTER);
                 td.setBillboard(Billboard.CENTER);

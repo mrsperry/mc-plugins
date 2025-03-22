@@ -74,6 +74,10 @@ public class ConcreteMixer extends Module {
         ItemStack item = event.getItem();
         Block block = event.getClickedBlock();
 
+        if (block == null) {
+            return;
+        }
+
         if (block.getType() != Material.CAULDRON) {
             return;
         }

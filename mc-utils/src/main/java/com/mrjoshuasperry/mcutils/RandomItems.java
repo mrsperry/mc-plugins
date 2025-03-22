@@ -17,7 +17,6 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
 import com.google.common.collect.Lists;
@@ -141,7 +140,7 @@ public class RandomItems {
      */
     public static ItemStack getRandomPotion() {
         final Random random = RandomItems.random;
-        final ItemStack potion = new PotionBuilder().setBase(RandomItems.getRandomPotionData()).build();
+        final ItemStack potion = new PotionBuilder().setBase(RandomItems.getRandomPotionType()).build();
 
         // Randomly set the potion to a splash or lingering potion
         if (random.nextBoolean()) {
@@ -201,7 +200,7 @@ public class RandomItems {
         final PotionMeta meta = (PotionMeta) arrow.getItemMeta();
 
         if (meta != null) {
-            meta.setBasePotionData(RandomItems.getRandomPotionData());
+            meta.setBasePotionType(RandomItems.getRandomPotionType());
             arrow.setItemMeta(meta);
         }
 
@@ -304,7 +303,7 @@ public class RandomItems {
     /**
      * @return Potion data with a random effect that may be extended or upgraded
      */
-    private static PotionData getRandomPotionData() {
+    private static PotionType getRandomPotionType() {
         final Random random = RandomItems.random;
         // An array of all possible potion effects
         final PotionType[] types = PotionType.values();
@@ -324,7 +323,7 @@ public class RandomItems {
             }
         }
 
-        return new PotionData(type, extend, upgrade);
+        return type;
     }
 
     /**

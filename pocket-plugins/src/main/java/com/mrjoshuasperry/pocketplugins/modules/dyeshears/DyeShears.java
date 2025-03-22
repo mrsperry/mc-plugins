@@ -22,7 +22,8 @@ import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 import com.mrjoshuasperry.pocketplugins.utils.StringHelper;
 
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /** @author TimPCunningham */
 public class DyeShears extends Module {
@@ -54,7 +55,7 @@ public class DyeShears extends Module {
         Sheep sheep = (Sheep) entity;
         ItemStack itemUsed = this.checkAndGet(player);
         Double chanceRoll = this.getPlugin().getRandom().nextDouble();
-        
+
         if (itemUsed.getType().equals(Material.SHEARS) &&
                 ItemMetaHandler.hasKey(itemUsed, this.shearKey, BYTE) &&
                 chanceRoll <= (chance / 100.0)) {
@@ -92,7 +93,8 @@ public class DyeShears extends Module {
 
         ItemStack result = new ItemBuilder(Material.SHEARS)
                 .setName(StringHelper.rainbowify("Improved Shears"))
-                .addLore(ChatColor.GOLD + "Has a " + chance + "% chance to drop dye instead of wool!")
+                .addLore(Component.text("Has a " + chance + "% chance to drop dye instead of wool!",
+                        NamedTextColor.GOLD))
                 .build();
 
         ItemMetaHandler.set(result, this.shearKey, PersistentDataType.BYTE, (byte) 1);
