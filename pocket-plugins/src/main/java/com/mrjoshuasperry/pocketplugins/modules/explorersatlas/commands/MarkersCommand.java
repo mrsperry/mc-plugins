@@ -3,6 +3,7 @@ package com.mrjoshuasperry.pocketplugins.modules.explorersatlas.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.command.Command;
@@ -10,12 +11,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.map.MapCursor;
 import org.bukkit.util.StringUtil;
 
+import com.google.common.collect.Lists;
 import com.mrjoshuasperry.pocketplugins.modules.explorersatlas.Waypoint;
 import com.mrjoshuasperry.pocketplugins.modules.explorersatlas.WaypointManager;
-import com.mrjoshuasperry.pocketplugins.utils.CursorUtils;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -23,9 +27,18 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class MarkersCommand implements CommandExecutor, TabCompleter {
   private final WaypointManager waypointManager;
+  private final Random random;
 
-  public MarkersCommand() {
+  private final List<MapCursor.Type> cursorTypes;
+
+  public MarkersCommand(Random random) {
     this.waypointManager = WaypointManager.getInstance();
+    this.random = random;
+
+    this.cursorTypes = Lists
+        .newArrayList(RegistryAccess.registryAccess().getRegistry(RegistryKey.MAP_DECORATION_TYPE).iterator()).stream()
+        .filter((MapCursor.Type type) -> type.getKey().key().toString().startsWith("BANNER_"))
+        .toList();
   }
 
   @Override
@@ -100,7 +113,7 @@ public class MarkersCommand implements CommandExecutor, TabCompleter {
 
     String markerName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
     Waypoint waypoint = new Waypoint(markerName, player.getLocation());
-    waypoint.setCursorType(CursorUtils.getRandomCursor());
+    waypoint.setCursorType(this.cursorTypes.get(this.random.nextInt(this.cursorTypes.size())));
     waypointManager.addWaypoint(player.getUniqueId(), waypoint);
 
     player.sendMessage(Component.text("Marker '").color(NamedTextColor.GREEN)

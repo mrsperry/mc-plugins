@@ -42,7 +42,7 @@ public class ExplorersAtlas extends Module {
     ATLAS_KEY = this.createKey("explorer_atlas_id");
 
     // Register the markers command
-    MarkersCommand markersCommand = new MarkersCommand();
+    MarkersCommand markersCommand = new MarkersCommand(this.getPlugin().getRandom());
     this.getPlugin().getCommand("markers").setExecutor(markersCommand);
     this.getPlugin().getCommand("markers").setTabCompleter(markersCommand);
 
