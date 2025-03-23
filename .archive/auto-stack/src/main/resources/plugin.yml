@@ -1,0 +1,7 @@
+main: com.mrjoshuasperry.autostack.Main
+name: AutoStack
+version: ${project.version}
+description: Automatically gives you an extra stack of items if you run out.
+authors:
+  - mrsperry
+api-version: "1.21"

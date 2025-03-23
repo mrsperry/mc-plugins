@@ -1,0 +1,5 @@
+# List of entity types that you cannot put into eggs
+blacklist:
+  - "vex"
+  - "vindicator"
+  - "evoker"

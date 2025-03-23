@@ -1,0 +1,7 @@
+main: com.mrjoshuasperry.mobeggs.Main
+name: MobEggs
+version: ${project.version}
+description: Throw eggs at mobs, get mob eggs!
+authors:
+  - mrsperry
+api-version: "1.21"
