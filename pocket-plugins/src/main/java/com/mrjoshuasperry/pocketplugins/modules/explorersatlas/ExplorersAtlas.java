@@ -1,5 +1,6 @@
 package com.mrjoshuasperry.pocketplugins.modules.explorersatlas;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,26 @@ public class ExplorersAtlas extends Module {
     this.getPlugin().getCommand("markers").setExecutor(markersCommand);
     this.getPlugin().getCommand("markers").setTabCompleter(markersCommand);
 
-    registerCraftingRecipes();
+    this.registerCraftingRecipes();
+    this.loadWaypoints();
+  }
+
+  @Override
+  public void onDisable() {
+    super.onDisable();
+    this.saveWaypoints();
+  }
+
+  // TODO: Update to use new config system
+  private void saveWaypoints() {
+    WaypointManager manager = WaypointManager.getInstance();
+    manager.saveWaypoints(new File(this.getPlugin().getDataFolder(), "waypoints.yml"));
+  }
+
+  // TODO: Update to use new config system
+  private void loadWaypoints() {
+    WaypointManager manager = WaypointManager.getInstance();
+    manager.loadWaypoints(new File(this.getPlugin().getDataFolder(), "waypoints.yml"));
   }
 
   private void registerCraftingRecipes() {

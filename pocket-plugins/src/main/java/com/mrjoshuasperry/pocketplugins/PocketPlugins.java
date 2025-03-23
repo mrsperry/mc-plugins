@@ -12,25 +12,24 @@ import java.util.jar.JarFile;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mrjoshuasperry.pocketplugins.modules.craftingkeeper.CraftingKeeperManager;
-import com.mrjoshuasperry.pocketplugins.modules.explorersatlas.WaypointManager;
 import com.mrjoshuasperry.pocketplugins.utils.DebuggerDisplay;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 public class PocketPlugins extends JavaPlugin implements Listener {
     private Random random = new Random();
 
+    // TODO: Remove this from the main class
     private List<NamespacedKey> registeredCraftingKeys;
 
     @Override
     public void onEnable() {
+        // TODO: Remove this from the main class
         this.registeredCraftingKeys = new ArrayList<>();
 
         this.saveDefaultConfig();
@@ -53,15 +52,11 @@ public class PocketPlugins extends JavaPlugin implements Listener {
             module.initialize(readableSection, writableSection);
         }
 
-        loadWaypoints();
-        loadCrafting();
         this.getServer().getPluginManager().registerEvents(this, this);
     }
 
     @Override
     public void onDisable() {
-        saveWaypoints();
-        saveCrafting();
         DebuggerDisplay.getInstance().removeAll();
     }
 
@@ -139,43 +134,12 @@ public class PocketPlugins extends JavaPlugin implements Listener {
         return this.random;
     }
 
-    private void saveCrafting() {
-        CraftingKeeperManager manager = CraftingKeeperManager.getInstance();
-        FileConfiguration config = new YamlConfiguration();
-
-        config.set("tables", manager);
-        try {
-            config.save(new File(getDataFolder(), "crafting_tables.yml"));
-        } catch (Exception e) {
-            getLogger().warning("Error saving crafting tables!");
-        }
-    }
-
-    private void loadCrafting() {
-        try {
-            FileConfiguration config = YamlConfiguration
-                    .loadConfiguration(new File(getDataFolder(), "crafting_tables.yml"));
-            config.get("tables");
-        } catch (Exception e) {
-            getLogger().warning("Error loading crafting tables!");
-            e.printStackTrace();
-        }
-    }
-
-    private void saveWaypoints() {
-        WaypointManager manager = WaypointManager.getInstance();
-        manager.saveWaypoints(new File(getDataFolder(), "waypoints.yml"));
-    }
-
-    private void loadWaypoints() {
-        WaypointManager manager = WaypointManager.getInstance();
-        manager.loadWaypoints(new File(getDataFolder(), "waypoints.yml"));
-    }
-
+    // TODO: Remove this from the main class
     public void addDiscoverableCraftingKey(NamespacedKey key) {
         this.registeredCraftingKeys.add(key);
     }
 
+    // TODO: Remove this from the main class
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         for (NamespacedKey key : registeredCraftingKeys) {

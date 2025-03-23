@@ -1,5 +1,6 @@
 package com.mrjoshuasperry.pocketplugins.modules.craftingkeeper;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -7,6 +8,8 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -28,6 +31,38 @@ public class CraftingKeeper extends Module {
         super("CraftingKeeper");
         this.tableBlocks = new HashMap<>();
         ConfigurationSerialization.registerClass(CraftingKeeperManager.class, "CraftingKeeperManager");
+        this.loadCrafting();
+    }
+
+    @Override
+    public void onDisable() {
+        super.onDisable();
+        this.saveCrafting();
+    }
+
+    // TODO: Update to use new config system
+    private void saveCrafting() {
+        CraftingKeeperManager manager = CraftingKeeperManager.getInstance();
+        FileConfiguration config = new YamlConfiguration();
+
+        config.set("tables", manager);
+        try {
+            config.save(new File(this.getPlugin().getDataFolder(), "crafting_tables.yml"));
+        } catch (Exception e) {
+            this.getPlugin().getLogger().warning("Error saving crafting tables!");
+        }
+    }
+
+    // TODO: Update to use new config system
+    private void loadCrafting() {
+        try {
+            FileConfiguration config = YamlConfiguration
+                    .loadConfiguration(new File(this.getPlugin().getDataFolder(), "crafting_tables.yml"));
+            config.get("tables");
+        } catch (Exception e) {
+            this.getPlugin().getLogger().warning("Error loading crafting tables!");
+            e.printStackTrace();
+        }
     }
 
     @EventHandler
