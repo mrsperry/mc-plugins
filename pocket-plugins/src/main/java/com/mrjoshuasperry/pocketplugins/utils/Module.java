@@ -1,10 +1,16 @@
 package com.mrjoshuasperry.pocketplugins.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.CraftingRecipe;
 
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
@@ -18,6 +24,7 @@ public class Module implements Listener {
 
     private PocketPlugins plugin;
 
+    private List<NamespacedKey> craftingKeys;
     private ConfigurationSection readableConfig;
     private ConfigurationSection writableConfig;
     private boolean enabled;
@@ -29,6 +36,7 @@ public class Module implements Listener {
     }
 
     public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        this.craftingKeys = new ArrayList<>();
         this.readableConfig = readableConfig;
         this.writableConfig = writableConfig;
         this.enabled = readableConfig.getBoolean("enabled", true);
@@ -82,6 +90,20 @@ public class Module implements Listener {
 
     public final NamespacedKey createKey(String name) {
         return new NamespacedKey(this.plugin, name);
+    }
+
+    public void registerCraftingRecipe(CraftingRecipe recipe) {
+        this.craftingKeys.add(recipe.getKey());
+        this.getPlugin().getServer().addRecipe(recipe, true);
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        for (NamespacedKey key : this.craftingKeys) {
+            if (!event.getPlayer().hasDiscoveredRecipe(key)) {
+                event.getPlayer().discoverRecipe(key);
+            }
+        }
     }
 
     public final String getModuleName() {

@@ -2,9 +2,7 @@ package com.mrjoshuasperry.pocketplugins.modules.explorersatlas;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -28,7 +26,6 @@ import org.bukkit.persistence.PersistentDataType;
 import com.mrjoshuasperry.pocketplugins.modules.explorersatlas.commands.MarkersCommand;
 import com.mrjoshuasperry.pocketplugins.modules.explorersatlas.renderers.ExplorersAtlasRenderer;
 import com.mrjoshuasperry.pocketplugins.modules.explorersatlas.renderers.SepiaAtlasRenderer;
-import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
 import com.mrjoshuasperry.pocketplugins.utils.InventoryUtils;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
@@ -72,11 +69,6 @@ public class ExplorersAtlas extends Module {
   }
 
   private void registerCraftingRecipes() {
-    Map<Character, Material> craftingRecipe = new HashMap<>();
-    craftingRecipe.put('C', Material.COMPASS);
-    craftingRecipe.put('M', Material.MAP);
-    craftingRecipe.put('P', Material.PAPER);
-
     ItemStack result = new ItemStack(Material.FILLED_MAP);
     ItemMeta meta = result.getItemMeta();
 
@@ -87,8 +79,12 @@ public class ExplorersAtlas extends Module {
 
     result.setItemMeta(meta);
 
-    CraftingUtil.addShapedCrafting("explorers_atlas", craftingRecipe, result, "PCP", "CMC",
-        "PCP");
+    ShapedRecipe recipe = new ShapedRecipe(this.createKey("explorers-atlas"), result);
+    recipe.shape("PCP", "CMC", "PCP");
+    recipe.setIngredient('C', Material.COMPASS);
+    recipe.setIngredient('M', Material.MAP);
+    recipe.setIngredient('P', Material.PAPER);
+    this.registerCraftingRecipe(recipe);
   }
 
   public boolean isExplorersAtlas(ItemStack item) {

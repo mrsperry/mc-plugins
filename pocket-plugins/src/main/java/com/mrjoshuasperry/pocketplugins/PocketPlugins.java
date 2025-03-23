@@ -10,12 +10,9 @@ import java.util.Random;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mrjoshuasperry.pocketplugins.utils.DebuggerDisplay;
@@ -24,14 +21,8 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 public class PocketPlugins extends JavaPlugin implements Listener {
     private Random random = new Random();
 
-    // TODO: Remove this from the main class
-    private List<NamespacedKey> registeredCraftingKeys;
-
     @Override
     public void onEnable() {
-        // TODO: Remove this from the main class
-        this.registeredCraftingKeys = new ArrayList<>();
-
         this.saveDefaultConfig();
 
         List<Module> modules = this.loadModules();
@@ -132,20 +123,5 @@ public class PocketPlugins extends JavaPlugin implements Listener {
 
     public Random getRandom() {
         return this.random;
-    }
-
-    // TODO: Remove this from the main class
-    public void addDiscoverableCraftingKey(NamespacedKey key) {
-        this.registeredCraftingKeys.add(key);
-    }
-
-    // TODO: Remove this from the main class
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        for (NamespacedKey key : registeredCraftingKeys) {
-            if (!event.getPlayer().hasDiscoveredRecipe(key)) {
-                event.getPlayer().discoverRecipe(key);
-            }
-        }
     }
 }

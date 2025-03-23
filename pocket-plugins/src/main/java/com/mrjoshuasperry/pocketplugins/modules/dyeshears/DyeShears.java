@@ -1,8 +1,5 @@
 package com.mrjoshuasperry.pocketplugins.modules.dyeshears;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -14,12 +11,12 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import com.mrjoshuasperry.mcutils.builders.ItemBuilder;
-import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 import com.mrjoshuasperry.pocketplugins.utils.StringHelper;
 
@@ -90,10 +87,6 @@ public class DyeShears extends Module {
     }
 
     private void initRecipes() {
-        Map<Material, Integer> ingredients = new EnumMap<>(Material.class);
-        ingredients.put(Material.SHEARS, 2);
-        ingredients.put(Material.DIAMOND, 1);
-
         ItemStack result = new ItemBuilder(Material.SHEARS)
                 .setName(StringHelper.rainbowify("Improved Shears"))
                 .addLore(Component.text("Has a " + chance + "% chance to drop dye instead of wool!",
@@ -106,6 +99,9 @@ public class DyeShears extends Module {
         container.set(this.shearKey, PersistentDataType.BYTE, (byte) 1);
         result.setItemMeta(meta);
 
-        CraftingUtil.addShapelessCrafting("Improved_Shears", ingredients, result);
+        ShapelessRecipe recipe = new ShapelessRecipe(this.createKey("improved-shears"), result);
+        recipe.addIngredient(2, Material.SHEARS);
+        recipe.addIngredient(Material.DIAMOND);
+        this.registerCraftingRecipe(recipe);
     }
 }

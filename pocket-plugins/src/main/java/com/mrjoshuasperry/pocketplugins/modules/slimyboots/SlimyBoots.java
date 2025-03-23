@@ -1,8 +1,6 @@
 package com.mrjoshuasperry.pocketplugins.modules.slimyboots;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -12,11 +10,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
-import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 import net.kyori.adventure.text.Component;
@@ -70,10 +68,10 @@ public class SlimyBoots extends Module {
         itemMeta.getPersistentDataContainer().set(bootsKey, BYTE, (byte) 1);
         result.setItemMeta(itemMeta);
 
-        Map<Character, Material> ingredients = new HashMap<>();
-        ingredients.put('B', Material.LEATHER_BOOTS);
-        ingredients.put('S', Material.SLIME_BLOCK);
-
-        CraftingUtil.addShapedCrafting("slimy_boots", ingredients, result, "SSS", "SBS", "SSS");
+        ShapedRecipe recipe = new ShapedRecipe(this.createKey("slimy-boots"), result);
+        recipe.setIngredient('B', Material.LEATHER_BOOTS);
+        recipe.setIngredient('S', Material.SLIME_BLOCK);
+        recipe.shape("SSS", "SBS", "SSS");
+        this.registerCraftingRecipe(recipe);
     }
 }

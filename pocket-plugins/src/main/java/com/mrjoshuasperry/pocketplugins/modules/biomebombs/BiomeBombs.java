@@ -2,9 +2,7 @@ package com.mrjoshuasperry.pocketplugins.modules.biomebombs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -16,12 +14,12 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 import net.kyori.adventure.text.Component;
@@ -63,10 +61,6 @@ public class BiomeBombs extends Module {
     for (BiomeBombData data : biomeBombsData) {
       ItemStack result = new ItemStack(Material.FIREWORK_STAR);
       FireworkEffectMeta meta = (FireworkEffectMeta) result.getItemMeta();
-      Map<Material, Integer> ingredients = new HashMap<>();
-
-      ingredients.put(Material.EGG, 1);
-      ingredients.put(data.getCatalyst(), 8);
 
       meta.displayName(
           Component.text(data.getBiomeName()).color(data.getTextColor())
@@ -83,7 +77,10 @@ public class BiomeBombs extends Module {
       result.setAmount(craftingAmount);
       result.setItemMeta(meta);
 
-      CraftingUtil.addShapelessCrafting("BIOME_BOMB_" + data.getBiomeType(), ingredients, result);
+      ShapelessRecipe recipe = new ShapelessRecipe(this.createKey("biome-bomb-" + data.getBiomeType()), result);
+      recipe.addIngredient(Material.EGG);
+      recipe.addIngredient(8, data.getCatalyst());
+      this.registerCraftingRecipe(recipe);
     }
   }
 
