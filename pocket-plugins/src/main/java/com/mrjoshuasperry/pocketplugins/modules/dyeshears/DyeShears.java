@@ -16,9 +16,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import com.mrjoshuasperry.mcutils.TextColors;
 import com.mrjoshuasperry.mcutils.builders.ItemBuilder;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
-import com.mrjoshuasperry.pocketplugins.utils.StringHelper;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -88,7 +88,7 @@ public class DyeShears extends Module {
 
     private void initRecipes() {
         ItemStack result = new ItemBuilder(Material.SHEARS)
-                .setName(StringHelper.rainbowify("Improved Shears"))
+                .setName(TextColors.rainbowify("Improved Shears"))
                 .addLore(Component.text("Has a " + chance + "% chance to drop dye instead of wool!",
                         NamedTextColor.GOLD))
                 .build();
