@@ -3,7 +3,7 @@ package com.mrjoshuasperry.pocketplugins.modules.easypaintings;
 import java.util.ArrayList;
 
 import org.bukkit.Art;
-import org.bukkit.Registry;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Painting;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -19,11 +19,11 @@ import io.papermc.paper.registry.RegistryKey;
 public class EasyPaintings extends Module {
     protected ArrayList<Art> availableArt;
 
-    public EasyPaintings() {
-        super("EasyPaintings");
+    public EasyPaintings(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
 
-        Registry<Art> art = RegistryAccess.registryAccess().getRegistry(RegistryKey.PAINTING_VARIANT);
-        this.availableArt = Lists.newArrayList(art.iterator());
+        this.availableArt = Lists
+                .newArrayList(RegistryAccess.registryAccess().getRegistry(RegistryKey.PAINTING_VARIANT).iterator());
     }
 
     @EventHandler

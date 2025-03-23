@@ -28,24 +28,19 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 /** @author TimPCunningham */
 public class BiomeBombs extends Module {
-  private final NamespacedKey biomeBombTypeKey;
-  private final NamespacedKey biomeBombColorKey;
+  private NamespacedKey biomeBombTypeKey;
+  private NamespacedKey biomeBombColorKey;
   private int explosionRage;
   private List<BiomeBombData> biomeBombsData;
 
-  public BiomeBombs() {
-    super("BiomeBombs");
-    biomeBombTypeKey = this.createKey("biomb_bomb_type");
-    biomeBombColorKey = this.createKey("biomb_bomb_color");
-  }
+  public BiomeBombs(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
 
-  @Override
-  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-    super.initialize(readableConfig, writableConfig);
-
+    this.biomeBombTypeKey = this.createKey("biomb-bomb-type");
+    this.biomeBombColorKey = this.createKey("biomb-bomb-color");
     this.explosionRage = readableConfig.getInt("bomb-range");
-
-    registerCraftingRecipes(readableConfig, writableConfig);
+  
+    this.registerCraftingRecipes(readableConfig, writableConfig);
     this.getPlugin().getCommand("biomebombs").setExecutor(new BiomeBombCommand(biomeBombsData));
   }
 

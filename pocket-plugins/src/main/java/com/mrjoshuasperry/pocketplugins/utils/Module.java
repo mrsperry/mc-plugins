@@ -29,13 +29,11 @@ public class Module implements Listener {
     private ConfigurationSection writableConfig;
     private boolean enabled;
 
-    public Module(String name) {
-        this.name = name;
+    public Module(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        this.name = this.getClass().getSimpleName();
 
         this.plugin = PocketPlugins.getInstance();
-    }
 
-    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
         this.craftingKeys = new ArrayList<>();
         this.readableConfig = readableConfig;
         this.writableConfig = writableConfig;
@@ -93,8 +91,8 @@ public class Module implements Listener {
     }
 
     public void registerCraftingRecipe(CraftingRecipe recipe) {
-        this.craftingKeys.add(recipe.getKey());
-        this.getPlugin().getServer().addRecipe(recipe, true);
+        // this.craftingKeys.add(recipe.getKey());
+        // this.getPlugin().getServer().addRecipe(recipe);
     }
 
     @EventHandler

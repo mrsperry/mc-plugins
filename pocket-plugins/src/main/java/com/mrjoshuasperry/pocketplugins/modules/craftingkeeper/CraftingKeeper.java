@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -25,10 +26,11 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 /** @author TimPCunningham */
 public class CraftingKeeper extends Module {
-    Map<UUID, Location> tableBlocks;
+    protected Map<UUID, Location> tableBlocks;
 
-    public CraftingKeeper() {
-        super("CraftingKeeper");
+    public CraftingKeeper(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
+
         this.tableBlocks = new HashMap<>();
         ConfigurationSerialization.registerClass(CraftingKeeperManager.class, "CraftingKeeperManager");
         this.loadCrafting();

@@ -3,6 +3,7 @@ package com.mrjoshuasperry.pocketplugins.modules.leadattacher;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LeashHitch;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -15,8 +16,8 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 /** @author TimPCunningham */
 public class LeadAttacher extends Module {
-    public LeadAttacher() {
-        super("LeadAttacherListener");
+    public LeadAttacher(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
     }
 
     private ItemStack getItemInHand(EquipmentSlot handType, PlayerInventory playerInventory) {

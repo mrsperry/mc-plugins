@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -36,10 +37,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class ExplorersAtlas extends Module {
   private final NamespacedKey ATLAS_KEY;
 
-  public ExplorersAtlas() {
-    super("ExplorersAtlas");
+  public ExplorersAtlas(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
 
-    ATLAS_KEY = this.createKey("explorer_atlas_id");
+    this.ATLAS_KEY = this.createKey("explorer-atlas-id");
 
     // Register the markers command
     MarkersCommand markersCommand = new MarkersCommand(this.getPlugin().getRandom());

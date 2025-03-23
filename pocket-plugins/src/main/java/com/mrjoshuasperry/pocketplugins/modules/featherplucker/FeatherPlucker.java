@@ -17,19 +17,13 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 /** @author mrsperry */
 public class FeatherPlucker extends Module {
-    private final NamespacedKey key;
+    private NamespacedKey key;
     private int cooldown;
 
-    public FeatherPlucker() {
-        super("FeatherPlucker");
+    public FeatherPlucker(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
 
         this.key = this.createKey("feather-plucked");
-    }
-
-    @Override
-    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfigg) {
-        super.initialize(readableConfig, writableConfigg);
-
         this.cooldown = readableConfig.getInt("cooldown", 300) * 20;
     }
 

@@ -2,6 +2,7 @@ package com.mrjoshuasperry.pocketplugins.modules.armorswapper;
 
 import java.util.List;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -14,8 +15,8 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 /** @author mrsperry */
 public class ArmorSwapper extends Module {
-  public ArmorSwapper() {
-    super("ArmorSwapper");
+  public ArmorSwapper(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
   }
 
   @EventHandler

@@ -33,17 +33,12 @@ public class AutoBreeding extends Module {
   private double maxDelay;
   private double range;
 
-  public AutoBreeding() {
-    super("AutoBreeding");
+  public AutoBreeding(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
 
     this.plugin = PocketPlugins.getInstance();
     this.random = new Random();
     this.breedingTargets = new HashMap<>();
-  }
-
-  @Override
-  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-    super.initialize(readableConfig, writableConfig);
 
     this.minDelay = readableConfig.getDouble("min-delay", 0.25f);
     this.maxDelay = readableConfig.getDouble("max-delay", 2f);

@@ -26,17 +26,12 @@ import net.kyori.adventure.text.format.NamedTextColor;
 /** @author TimPCunningham */
 public class DyeShears extends Module {
     private int chance;
-    private final NamespacedKey shearKey;
-    private static final PersistentDataType<Byte, Byte> BYTE = PersistentDataType.BYTE;
+    private NamespacedKey shearKey;
 
-    public DyeShears() {
-        super("ImprovedShears");
+    public DyeShears(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
+
         this.shearKey = this.createKey("Improved_Shears");
-    }
-
-    @Override
-    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-        super.initialize(readableConfig, writableConfig);
         this.chance = readableConfig.getInt("dye-chance", 25);
         this.initRecipes();
     }
@@ -57,7 +52,7 @@ public class DyeShears extends Module {
         Double chanceRoll = this.getPlugin().getRandom().nextDouble();
 
         if (itemUsed.getType().equals(Material.SHEARS) &&
-                container.has(this.shearKey, BYTE) &&
+                container.has(this.shearKey, PersistentDataType.BYTE) &&
                 chanceRoll <= (chance / 100.0)) {
 
             DyeColor color = sheep.getColor();

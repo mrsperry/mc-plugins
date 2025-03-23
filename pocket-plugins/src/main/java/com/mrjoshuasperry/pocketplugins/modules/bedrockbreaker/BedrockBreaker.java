@@ -13,6 +13,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Beacon;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -26,8 +27,8 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 public class BedrockBreaker extends Module {
   protected List<Location> bedrockToRemove;
 
-  public BedrockBreaker() {
-    super("BedrockBreaker");
+  public BedrockBreaker(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
 
     this.bedrockToRemove = new ArrayList<>();
   }

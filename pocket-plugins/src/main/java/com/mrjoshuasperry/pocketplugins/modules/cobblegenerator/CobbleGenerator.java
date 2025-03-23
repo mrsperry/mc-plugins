@@ -18,15 +18,10 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 public class CobbleGenerator extends Module {
     private final Map<Material, Double> materials;
 
-    public CobbleGenerator() {
-        super("CobbleGenerator");
+    public CobbleGenerator(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
 
         this.materials = new HashMap<>();
-    }
-
-    @Override
-    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-        super.initialize(readableConfig, writableConfig);
 
         ConfigurationSection section = readableConfig.getConfigurationSection("blocks");
         if (section == null) {

@@ -14,13 +14,8 @@ public class MobGriefing extends Module {
   protected boolean noSheepGriefing;
   protected boolean noEndermanGriefing;
 
-  public MobGriefing() {
-    super("MobGriefing");
-  }
-
-  @Override
-  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-    super.initialize(readableConfig, writableConfig);
+  public MobGriefing(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
 
     this.noSheepGriefing = readableConfig.getBoolean("no-sheep-griefing", true);
     this.noEndermanGriefing = readableConfig.getBoolean("no-enderman-griefing", true);

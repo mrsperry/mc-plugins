@@ -11,6 +11,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+/** @author mrsperry */
 public class MobSizes extends Module {
   protected final int maxMountHealth = 30;
   protected final int minMountHealth = 15;
@@ -19,13 +20,8 @@ public class MobSizes extends Module {
   protected double maxSize;
   protected boolean enableMountHealthSizing = true;
 
-  public MobSizes() {
-    super("MobSizes");
-  }
-
-  @Override
-  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-    super.initialize(readableConfig, writableConfig);
+  public MobSizes(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
 
     this.minSize = readableConfig.getDouble("min-size", 0.85);
     this.maxSize = readableConfig.getDouble("max-size", 1.15);

@@ -1,6 +1,7 @@
 package com.mrjoshuasperry.pocketplugins.modules.armorstandposer;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -14,8 +15,8 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 /** @author TimPCunningham */
 public class ArmorStandPoser extends Module {
-    public ArmorStandPoser() {
-        super("ArmorStands");
+    public ArmorStandPoser(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
     }
 
     @EventHandler

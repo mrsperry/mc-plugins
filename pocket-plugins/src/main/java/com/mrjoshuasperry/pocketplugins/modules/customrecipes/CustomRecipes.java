@@ -22,18 +22,14 @@ import net.kyori.adventure.text.format.NamedTextColor;
 // name tags
 //chain mail
 
+/** @author mrsperry */
 public class CustomRecipes extends Module implements BasicCommand {
   protected static List<CraftingRecipe> recipes = new ArrayList<>();
 
-  public CustomRecipes() {
-    super("CustomRecipes");
+  public CustomRecipes(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
 
     this.registerBasicCommand("customrecipes", this);
-  }
-
-  @Override
-  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-    super.initialize(readableConfig, writableConfig);
   }
 
   @Override

@@ -11,14 +11,10 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 public class CommandMacros extends Module {
   private final Map<String, MacroData> macros;
 
-  public CommandMacros() {
-    super("commandmacros");
+  public CommandMacros(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
     this.macros = new HashMap<>();
-  }
 
-  @Override
-  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-    super.initialize(readableConfig, writableConfig);
     this.loadMacros(writableConfig);
     MacrosCommand executor = new MacrosCommand(macros);
     this.getPlugin().getCommand("macro").setExecutor(executor);

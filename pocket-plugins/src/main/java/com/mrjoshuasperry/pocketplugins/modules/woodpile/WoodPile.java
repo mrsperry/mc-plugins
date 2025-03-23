@@ -20,14 +20,10 @@ public class WoodPile extends Module {
     private final Map<WoodPileConstruct, BukkitRunnable> woodPiles;
     private int logConvertTime;
 
-    public WoodPile() {
-        super("WoodPile");
-        woodPiles = new HashMap<>();
-    }
+    public WoodPile(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
 
-    @Override
-    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-        super.initialize(readableConfig, writableConfig);
+        this.woodPiles = new HashMap<>();
         this.logConvertTime = readableConfig.getInt("log-convert-time", 5);
     }
 

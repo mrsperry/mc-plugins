@@ -36,13 +36,8 @@ public class ConcreteMixer extends Module {
 
     private int waterUseChance;
 
-    public ConcreteMixer() {
-        super("ConcreteMixer");
-    }
-
-    @Override
-    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-        super.initialize(readableConfig, writableConfig);
+    public ConcreteMixer(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
 
         this.waterUseChance = readableConfig.getInt("water-use-chance", 5);
     }

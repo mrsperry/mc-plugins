@@ -12,38 +12,18 @@ import java.util.jar.JarFile;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mrjoshuasperry.pocketplugins.utils.DebuggerDisplay;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
-public class PocketPlugins extends JavaPlugin implements Listener {
+public class PocketPlugins extends JavaPlugin {
     private Random random = new Random();
 
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
-
-        List<Module> modules = this.loadModules();
-
-        for (Module module : modules) {
-            String moduleName = module.getModuleName().toLowerCase();
-            YamlConfiguration writableConfig = this.loadWritableConfig(moduleName);
-
-            ConfigurationSection readableSection = this.getConfig().getConfigurationSection(moduleName);
-            ConfigurationSection writableSection = writableConfig.getRoot();
-
-            if (readableSection == null) {
-                YamlConfiguration config = new YamlConfiguration();
-                config.set("enabled", true);
-                readableSection = config.getRoot();
-            }
-
-            module.initialize(readableSection, writableSection);
-        }
-
-        this.getServer().getPluginManager().registerEvents(this, this);
+        this.loadModules();
     }
 
     @Override
@@ -93,7 +73,22 @@ public class PocketPlugins extends JavaPlugin implements Listener {
                         continue;
                     }
 
-                    Module moduleInstance = (Module) clazz.getDeclaredConstructor().newInstance();
+                    String moduleName = clazz.getSimpleName().toLowerCase();
+                    YamlConfiguration writableConfig = this.loadWritableConfig(moduleName);
+
+                    ConfigurationSection readableSection = this.getConfig().getConfigurationSection(moduleName);
+                    ConfigurationSection writableSection = writableConfig.getRoot();
+
+                    if (readableSection == null) {
+                        YamlConfiguration config = new YamlConfiguration();
+                        config.set("enabled", true);
+                        readableSection = config.getRoot();
+                    }
+
+                    Module moduleInstance = (Module) clazz
+                            .getDeclaredConstructor(ConfigurationSection.class, ConfigurationSection.class)
+                            .newInstance(readableSection,
+                                    writableSection);
                     modules.add(moduleInstance);
                 }
             }

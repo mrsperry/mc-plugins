@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,10 +29,12 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 /** @author mrsperry */
 public class InventoryInspector extends Module {
-    private final ArrayList<Inventory> inventories = new ArrayList<>();
+    private final ArrayList<Inventory> inventories;
 
-    public InventoryInspector() {
-        super("InventoryInspector");
+    public InventoryInspector(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
+
+        this.inventories = new ArrayList<>();
     }
 
     @EventHandler

@@ -21,13 +21,8 @@ public class IgneousGenerator extends Module {
 
     protected int maxConversionTime;
 
-    public IgneousGenerator() {
-        super("IgneousGenerator");
-    }
-
-    @Override
-    public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-        super.initialize(readableConfig, writableConfig);
+    public IgneousGenerator(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
 
         this.maxConversionTime = readableConfig.getInt("max-conversion-time", 2) * 20;
     }

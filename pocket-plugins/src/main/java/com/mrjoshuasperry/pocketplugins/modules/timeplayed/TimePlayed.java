@@ -22,18 +22,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class TimePlayed extends Module implements BasicCommand {
   protected Map<UUID, Long> timePlayed;
 
-  public TimePlayed() {
-    super("TimePlayed");
-
+  public TimePlayed(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
     this.timePlayed = new HashMap<>();
-
-    this.registerBasicCommand("timeplayed", this);
-    this.startTimer();
-  }
-
-  @Override
-  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-    super.initialize(readableConfig, writableConfig);
 
     ConfigurationSection savedPlayers = writableConfig.getConfigurationSection("players");
     if (savedPlayers == null) {
@@ -46,6 +37,9 @@ public class TimePlayed extends Module implements BasicCommand {
 
       this.timePlayed.put(uuid, time);
     }
+
+    this.registerBasicCommand("timeplayed", this);
+    this.startTimer();
   }
 
   @Override

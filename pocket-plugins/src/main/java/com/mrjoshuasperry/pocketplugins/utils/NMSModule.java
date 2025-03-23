@@ -19,15 +19,9 @@ public class NMSModule extends Module {
     // nmsModuleHandlers.put("V_1_21_R1", MyModule.class)
   }
 
-  public NMSModule(String name) {
-    super(name);
-
+  public NMSModule(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
     this.bukkitVersion = Bukkit.getBukkitVersion();
-  }
-
-  @Override
-  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-    super.initialize(readableConfig, writableConfig);
 
     if (!this.isEnabled()) {
       return;
@@ -43,10 +37,8 @@ public class NMSModule extends Module {
 
     Class<? extends Module> handlerClass = nmsModuleHandlers.get(bukkitVersion);
     try {
-      Module module = handlerClass.getDeclaredConstructor(String.class, NMSModule.class)
-          .newInstance(this.getModuleName() + "_" + bukkitVersion, this);
-
-      module.initialize(readableConfig, writableConfig);
+      handlerClass.getDeclaredConstructor(ConfigurationSection.class, ConfigurationSection.class)
+          .newInstance(readableConfig, writableConfig);
     } catch (Exception ex) {
       logger.warning("An error occurred while enabling: \"" + this.getModuleName() + "_" + bukkitVersion);
       ex.printStackTrace();

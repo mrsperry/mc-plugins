@@ -37,20 +37,15 @@ public class BeePlanter extends Module {
   protected Set<Bee> plantingBees;
   protected Set<Location> reservedFarmland;
 
-  public BeePlanter() {
-    super("BeePlanter");
+  public BeePlanter(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
 
     this.random = new Random();
 
+    this.searchRadius = readableConfig.getInt("search-radius", 4);
+
     this.plantingBees = new HashSet<>();
     this.reservedFarmland = new HashSet<>();
-  }
-
-  @Override
-  public void initialize(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
-    super.initialize(readableConfig, writableConfig);
-
-    this.searchRadius = readableConfig.getInt("search-radius", 4);
   }
 
   @EventHandler

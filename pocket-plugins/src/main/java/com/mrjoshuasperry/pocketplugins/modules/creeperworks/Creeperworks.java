@@ -3,6 +3,7 @@ package com.mrjoshuasperry.pocketplugins.modules.creeperworks;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -13,9 +14,10 @@ import org.bukkit.inventory.meta.FireworkMeta;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+/** @author mrsperry */
 public class Creeperworks extends Module {
-  public Creeperworks() {
-    super("Creeperworks");
+  public Creeperworks(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    super(readableConfig, writableConfig);
   }
 
   @EventHandler

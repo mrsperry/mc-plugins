@@ -126,10 +126,6 @@
             <id>survival</id>
             <modules>
                 <module>mc-utils</module>
-                <module>auto-stack</module>
-                <module>death-chest</module>
-                <module>magic</module>
-                <module>mob-eggs</module>
                 <module>pocket-plugins</module>
             </modules>
         </profile>

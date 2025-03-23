@@ -6,6 +6,7 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -25,10 +26,10 @@ public class SlimyBoots extends Module {
     private final NamespacedKey bootsKey;
     private static final PersistentDataType<Byte, Byte> BYTE = PersistentDataType.BYTE;
 
-    public SlimyBoots() {
-        super("SlimyBoots");
-        bootsKey = this.createKey("SlimyBoots");
-        initRecipes();
+    public SlimyBoots(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+        super(readableConfig, writableConfig);
+        this.bootsKey = this.createKey("slimy-boots");
+        this.initRecipes();
     }
 
     @EventHandler
@@ -69,9 +70,9 @@ public class SlimyBoots extends Module {
         result.setItemMeta(itemMeta);
 
         ShapedRecipe recipe = new ShapedRecipe(this.createKey("slimy-boots"), result);
+        recipe.shape("SSS", "SBS", "SSS");
         recipe.setIngredient('B', Material.LEATHER_BOOTS);
         recipe.setIngredient('S', Material.SLIME_BLOCK);
-        recipe.shape("SSS", "SBS", "SSS");
         this.registerCraftingRecipe(recipe);
     }
 }
