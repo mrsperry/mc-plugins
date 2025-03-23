@@ -1,5 +1,6 @@
 package com.mrjoshuasperry.mcutils.sound;
 
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 
 public class SoundByte {
@@ -17,6 +18,9 @@ public class SoundByte {
 
     @Override
     public String toString() {
-        return "S: " + this.sound.name() + " V: " + this.volume + " P: " + this.pitch + " D: " + this.delay;
+        return "S: " + Registry.SOUNDS.getKeyOrThrow(this.sound).key()
+                + " V: " + this.volume
+                + " P: " + this.pitch
+                + " D: " + this.delay;
     }
 }

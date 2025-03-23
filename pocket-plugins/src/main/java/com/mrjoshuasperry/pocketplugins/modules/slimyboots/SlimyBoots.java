@@ -16,7 +16,6 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
-import com.mrjoshuasperry.mcutils.ItemMetaHandler;
 import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
@@ -45,7 +44,8 @@ public class SlimyBoots extends Module {
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
             ItemStack boots = player.getInventory().getBoots();
-            if (player.isSneaking() || boots == null || !ItemMetaHandler.hasKey(boots, bootsKey, BYTE)) {
+            if (player.isSneaking() || boots == null
+                    || !boots.getItemMeta().getPersistentDataContainer().has(this.bootsKey, BYTE)) {
                 return;
             }
 
@@ -62,14 +62,14 @@ public class SlimyBoots extends Module {
     private void initRecipes() {
         ItemStack result = new ItemStack(Material.LEATHER_BOOTS);
         LeatherArmorMeta itemMeta = (LeatherArmorMeta) result.getItemMeta();
-        if (itemMeta != null) {
-            itemMeta.setColor(Color.fromRGB(100, 255, 100));
-            itemMeta.displayName(Component.text(ChatColor.GREEN + "Slimy Boots"));
-            itemMeta.lore(List.of(Component.text(ChatColor.GRAY + "A bit squishy but it should protect from falls")));
-        }
 
+        itemMeta.setColor(Color.fromRGB(100, 255, 100));
+        itemMeta.displayName(Component.text(ChatColor.GREEN + "Slimy Boots"));
+        itemMeta.lore(List.of(Component.text(ChatColor.GRAY + "A bit squishy but it should protect from falls")));
+
+        itemMeta.getPersistentDataContainer().set(bootsKey, BYTE, (byte) 1);
         result.setItemMeta(itemMeta);
-        ItemMetaHandler.set(result, bootsKey, BYTE, (byte) 1);
+
         Map<Character, Material> ingredients = new HashMap<>();
         ingredients.put('B', Material.LEATHER_BOOTS);
         ingredients.put('S', Material.SLIME_BLOCK);

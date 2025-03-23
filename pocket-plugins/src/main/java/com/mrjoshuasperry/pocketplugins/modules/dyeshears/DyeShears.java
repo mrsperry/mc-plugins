@@ -14,9 +14,10 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import com.mrjoshuasperry.mcutils.ItemMetaHandler;
 import com.mrjoshuasperry.mcutils.builders.ItemBuilder;
 import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
@@ -54,10 +55,12 @@ public class DyeShears extends Module {
         Player player = event.getPlayer();
         Sheep sheep = (Sheep) entity;
         ItemStack itemUsed = this.checkAndGet(player);
+        ItemMeta meta = itemUsed.getItemMeta();
+        PersistentDataContainer container = meta.getPersistentDataContainer();
         Double chanceRoll = this.getPlugin().getRandom().nextDouble();
 
         if (itemUsed.getType().equals(Material.SHEARS) &&
-                ItemMetaHandler.hasKey(itemUsed, this.shearKey, BYTE) &&
+                container.has(this.shearKey, BYTE) &&
                 chanceRoll <= (chance / 100.0)) {
 
             DyeColor color = sheep.getColor();
@@ -97,7 +100,12 @@ public class DyeShears extends Module {
                         NamedTextColor.GOLD))
                 .build();
 
-        ItemMetaHandler.set(result, this.shearKey, PersistentDataType.BYTE, (byte) 1);
+        ItemMeta meta = result.getItemMeta();
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+
+        container.set(this.shearKey, PersistentDataType.BYTE, (byte) 1);
+        result.setItemMeta(meta);
+
         CraftingUtil.addShapelessCrafting("Improved_Shears", ingredients, result);
     }
 }

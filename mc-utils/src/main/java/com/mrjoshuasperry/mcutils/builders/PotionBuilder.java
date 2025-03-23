@@ -20,7 +20,11 @@ public class PotionBuilder extends ItemBuilder {
     private List<PotionEffect> effects;
 
     public PotionBuilder() {
-        super(Material.POTION);
+        this(Material.POTION);
+    }
+
+    public PotionBuilder(Material potionType) {
+        super(potionType);
 
         this.potionMeta = (PotionMeta) this.meta;
         this.effects = new ArrayList<>();

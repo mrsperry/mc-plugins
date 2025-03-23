@@ -3,11 +3,13 @@ package com.mrjoshuasperry.mcutils.sound;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class SoundSynth {
     List<SoundByte> soundBytes;
@@ -31,7 +33,8 @@ public class SoundSynth {
     public void list(Player player) {
         int index = 0;
         for (SoundByte soundByte : this.soundBytes) {
-            player.sendMessage("[" + index + "] " + ChatColor.GRAY + soundByte.toString());
+            player.sendMessage(Component.text("[" + index + "] ")
+                    .append(Component.text(soundByte.toString(), NamedTextColor.GRAY)));
             index++;
         }
     }

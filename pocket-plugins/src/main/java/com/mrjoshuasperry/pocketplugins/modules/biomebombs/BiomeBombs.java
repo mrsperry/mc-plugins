@@ -18,9 +18,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import com.mrjoshuasperry.mcutils.ItemMetaHandler;
 import com.mrjoshuasperry.pocketplugins.utils.CraftingUtil;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
@@ -91,12 +91,12 @@ public class BiomeBombs extends Module {
   public void onItemCraft(CraftItemEvent event) {
     ItemStack result = event.getCurrentItem();
 
-    if (!result.displayName().toString().contains("Biome Bomb"))
+    if (!result.displayName().toString().contains("Biome Bomb")) {
       return;
+    }
 
     ItemMeta meta = result.getItemMeta();
-    if (meta == null)
-      return;
+    PersistentDataContainer container = meta.getPersistentDataContainer();
 
     List<Component> lore = meta.lore();
     List<Component> updatedLore = new ArrayList<>();
@@ -107,10 +107,10 @@ public class BiomeBombs extends Module {
 
       if (loreLine.contains("biome_bomb_type")) {
         String type = loreLine.split(":")[1];
-        meta.getPersistentDataContainer().set(biomeBombTypeKey, PersistentDataType.STRING, type);
+        container.set(biomeBombColorKey, PersistentDataType.STRING, type);
       } else if (loreLine.contains("biome_bomb_color")) {
         int color = Integer.parseInt(loreLine.split(":")[1]);
-        meta.getPersistentDataContainer().set(biomeBombColorKey, PersistentDataType.INTEGER, color);
+        container.set(biomeBombColorKey, PersistentDataType.INTEGER, color);
       } else {
         updatedLore.add(comp);
       }
@@ -126,12 +126,22 @@ public class BiomeBombs extends Module {
       return;
 
     ItemStack item = event.getItem();
+    if (item == null) {
+      return;
+    }
 
-    if (item == null || !ItemMetaHandler.hasKey(item, biomeBombTypeKey, PersistentDataType.STRING))
+    ItemMeta meta = item.getItemMeta();
+    if (meta == null) {
+      return;
+    }
+
+    PersistentDataContainer container = meta.getPersistentDataContainer();
+
+    if (!container.has(biomeBombTypeKey, PersistentDataType.STRING))
       return;
 
-    String type = (String) ItemMetaHandler.get(item, biomeBombTypeKey, PersistentDataType.STRING);
-    int color = (int) ItemMetaHandler.get(item, biomeBombColorKey, PersistentDataType.INTEGER);
+    String type = (String) container.get(biomeBombTypeKey, PersistentDataType.STRING);
+    int color = (int) container.get(biomeBombColorKey, PersistentDataType.INTEGER);
 
     BiomeBombProjectile projectile = new BiomeBombProjectile(this.explosionRage, type, Color.fromARGB(color),
         item.clone());

@@ -3,7 +3,6 @@ package com.mrjoshuasperry.mcutils.menu.items;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

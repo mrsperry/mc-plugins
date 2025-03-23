@@ -24,6 +24,9 @@ import com.mrjoshuasperry.mcutils.builders.ItemBuilder;
 import com.mrjoshuasperry.mcutils.builders.PotionBuilder;
 import com.mrjoshuasperry.mcutils.types.ColorTypes;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+
 public class RandomItems {
     private static final Random random = new Random();
 
@@ -139,15 +142,12 @@ public class RandomItems {
      *         effect that may be extended or upgraded
      */
     public static ItemStack getRandomPotion() {
+        final List<Material> potionTypes = Lists.newArrayList(Material.POTION, Material.LINGERING_POTION,
+                Material.SPLASH_POTION);
         final Random random = RandomItems.random;
-        final ItemStack potion = new PotionBuilder().setBase(RandomItems.getRandomPotionType()).build();
 
-        // Randomly set the potion to a splash or lingering potion
-        if (random.nextBoolean()) {
-            potion.setType(random.nextBoolean() ? Material.SPLASH_POTION : Material.LINGERING_POTION);
-        }
-
-        return potion;
+        return new PotionBuilder(potionTypes.get(random.nextInt(potionTypes.size())))
+                .setBase(RandomItems.getRandomPotionType()).build();
     }
 
     /**
@@ -157,7 +157,8 @@ public class RandomItems {
     public static ItemStack getRandomEnchantedBook(final int enchantments) {
         final Random random = RandomItems.random;
         // Array of all possible enchantments
-        final Enchantment[] allEnchants = Enchantment.values();
+        final List<Enchantment> allEnchants = Lists
+                .newArrayList(RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT).iterator());
 
         // Map of all current enchantments and their level
         final HashMap<Enchantment, Integer> enchants = new HashMap<>();
@@ -170,7 +171,7 @@ public class RandomItems {
 
             do {
                 // Get a new random enchantment
-                enchant = allEnchants[random.nextInt(allEnchants.length)];
+                enchant = allEnchants.get(random.nextInt(allEnchants.size()));
                 conflict = false;
 
                 // Check for conflicts
@@ -251,7 +252,8 @@ public class RandomItems {
         // Colors that a base banner can be set to
         final DyeColor[] colors = DyeColor.values();
         // Pattern types that can be applied to a banner
-        final PatternType[] types = PatternType.values();
+        final List<PatternType> types = Lists
+                .newArrayList(RegistryAccess.registryAccess().getRegistry(RegistryKey.BANNER_PATTERN).iterator());
 
         // Get a banner of a random base color
         final ItemStack banner = new ItemStack(
@@ -262,7 +264,7 @@ public class RandomItems {
             for (int index = 0; index < patterns; index++) {
                 // Add a new pattern with a random color and type
                 meta.addPattern(
-                        new Pattern(colors[random.nextInt(colors.length)], types[random.nextInt(types.length)]));
+                        new Pattern(colors[random.nextInt(colors.length)], types.get(random.nextInt(types.size()))));
             }
 
             banner.setItemMeta(meta);
@@ -309,21 +311,7 @@ public class RandomItems {
         final PotionType[] types = PotionType.values();
 
         // Get a random potion type
-        PotionType type = types[random.nextInt(types.length)];
-
-        boolean extend = false;
-        boolean upgrade = false;
-
-        // Randomly extend and upgrade the potion
-        if (random.nextBoolean()) {
-            if (random.nextBoolean() && type.isExtendable()) {
-                extend = true;
-            } else if (type.isUpgradeable()) {
-                upgrade = true;
-            }
-        }
-
-        return type;
+        return types[random.nextInt(types.length)];
     }
 
     /**
