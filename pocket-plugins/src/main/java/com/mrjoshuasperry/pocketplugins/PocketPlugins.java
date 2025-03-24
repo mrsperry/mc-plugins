@@ -28,7 +28,7 @@ public class PocketPlugins extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        DebuggerDisplay.getInstance().removeAll();
+        DebuggerDisplay.removeAll();
     }
 
     private List<Module> loadModules() {

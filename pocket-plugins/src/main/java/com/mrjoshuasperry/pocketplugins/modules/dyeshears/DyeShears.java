@@ -31,7 +31,7 @@ public class DyeShears extends Module {
     public DyeShears(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
         super(readableConfig, writableConfig);
 
-        this.shearKey = this.createKey("Improved_Shears");
+        this.shearKey = this.createKey("improved-shears");
         this.chance = readableConfig.getInt("dye-chance", 25);
         this.initRecipes();
     }
@@ -94,7 +94,7 @@ public class DyeShears extends Module {
         container.set(this.shearKey, PersistentDataType.BYTE, (byte) 1);
         result.setItemMeta(meta);
 
-        ShapelessRecipe recipe = new ShapelessRecipe(this.createKey("improved-shears"), result);
+        ShapelessRecipe recipe = new ShapelessRecipe(this.shearKey, result);
         recipe.addIngredient(2, Material.SHEARS);
         recipe.addIngredient(Material.DIAMOND);
         this.registerCraftingRecipe(recipe);

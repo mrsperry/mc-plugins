@@ -15,29 +15,21 @@ import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 import net.kyori.adventure.text.Component;
 
 public class DebuggerDisplay {
-    private static DebuggerDisplay self;
-    private final Map<Entity, TextDisplay> displays = new HashMap<>();
+    private static final Map<Entity, TextDisplay> displays = new HashMap<>();
 
-    private DebuggerDisplay() {
+    public DebuggerDisplay() {
         Bukkit.getScheduler().runTaskTimer(PocketPlugins.getInstance(), () -> {
             cleanup();
-            for (Entity entity : this.displays.keySet()) {
-                TextDisplay display = this.displays.get(entity);
+            for (Entity entity : DebuggerDisplay.displays.keySet()) {
+                TextDisplay display = DebuggerDisplay.displays.get(entity);
                 display.teleport(entity.getLocation().add(0, 1.5, 0));
             }
         }, 0, 1);
     }
 
-    public static DebuggerDisplay getInstance() {
-        if (self == null) {
-            self = new DebuggerDisplay();
-        }
-        return self;
-    }
-
     public void updateDisplay(Entity entity, boolean concat, String... lines) {
         String text = String.join("\n", lines);
-        TextDisplay display = displays.get(entity);
+        TextDisplay display = DebuggerDisplay.displays.get(entity);
 
         if (display == null || !display.isValid()) {
             display = entity.getWorld().spawn(entity.getLocation().add(0, 2.5, 0), TextDisplay.class, td -> {
@@ -46,7 +38,7 @@ public class DebuggerDisplay {
                 td.setBillboard(Billboard.CENTER);
                 td.setBackgroundColor(Color.BLACK);
             });
-            displays.put(entity, display);
+            DebuggerDisplay.displays.put(entity, display);
         } else {
             if (concat) {
                 Component component = display.text();
@@ -60,7 +52,7 @@ public class DebuggerDisplay {
     }
 
     public void cleanup() {
-        displays.entrySet().removeIf(entry -> {
+        DebuggerDisplay.displays.entrySet().removeIf(entry -> {
             if (!entry.getKey().isValid() || !entry.getValue().isValid()) {
                 entry.getValue().remove();
                 return true;
@@ -70,11 +62,11 @@ public class DebuggerDisplay {
     }
 
     public void removeEntity(Entity entity) {
-        this.displays.remove(entity);
+        DebuggerDisplay.displays.remove(entity);
     }
 
-    public void removeAll() {
-        displays.values().forEach(TextDisplay::remove);
-        displays.clear();
+    public static void removeAll() {
+        DebuggerDisplay.displays.values().forEach(TextDisplay::remove);
+        DebuggerDisplay.displays.clear();
     }
 }
