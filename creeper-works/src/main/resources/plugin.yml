@@ -1,7 +1,0 @@
-main: com.mrjoshuasperry.creeperworks.Main
-name: Creeperworks
-version: ${project.version}
-description: Adds a colorful firework to creeper explosions
-authors:
-  - mrsperry
-api-version: "1.21"
