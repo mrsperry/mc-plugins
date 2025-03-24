@@ -1,0 +1,8 @@
+main: com.mrjoshuasperry.chat.Chat
+name: Chat
+version: ${project.version}
+description: A minimal chat handler
+authors:
+  - mrsperry
+  - TimPCunningham
+api-version: "1.21"

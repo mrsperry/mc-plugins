@@ -125,6 +125,7 @@
         <profile>
             <id>survival</id>
             <modules>
+                <module>chat</module>
                 <module>mc-utils</module>
                 <module>pocket-plugins</module>
             </modules>
@@ -132,6 +133,7 @@
         <profile>
             <id>creative</id>
             <modules>
+                <module>chat</module>
                 <module>mc-utils</module>
             </modules>
         </profile>

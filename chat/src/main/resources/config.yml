@@ -1,0 +1,16 @@
+# Seperates the name from the message. A space is added after the delimiter, but not before
+message-delimiter: " »"
+# Any of these colors can be hex strings or named colors (e.g. "red", "blue")
+delimiter-color: "#cccccc"
+message-color: "#ededed"
+# This color represents when the console uses /say
+console-color: "red"
+# This color represents when a player highlights their coordinates or items
+highlight-color: "aqua"
+# This color will be given to players who do not have any name colors set
+default-name-color: "#6b6bff"
+# The cooldown in seconds for pinging another player
+ping-cooldown: 5
+
+# The following colors are used for player names
+player-name-colors:
