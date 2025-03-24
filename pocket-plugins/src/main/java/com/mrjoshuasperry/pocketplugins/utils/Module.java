@@ -2,6 +2,7 @@ package com.mrjoshuasperry.pocketplugins.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -12,9 +13,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingRecipe;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
 import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -67,6 +71,16 @@ public class Module implements Listener {
         this.onDisable();
     }
 
+    public final void registerCommand(Supplier<LiteralArgumentBuilder<CommandSourceStack>> commandSupplier) {
+        this.registerCommand(commandSupplier.get().build());
+    }
+
+    public final void registerCommand(LiteralCommandNode<CommandSourceStack> command) {
+        this.plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
+                (ReloadableRegistrarEvent<Commands> event) -> event.registrar().register(command));
+    }
+
+    // TODO: remove in favor of non-basic commands
     public final void registerBasicCommand(String command, BasicCommand commandClass) {
         this.plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
                 (ReloadableRegistrarEvent<Commands> event) -> event.registrar().register(command, commandClass));
@@ -90,6 +104,7 @@ public class Module implements Listener {
         return new NamespacedKey(this.plugin, name);
     }
 
+    // TODO: Fix recipe registration
     public void registerCraftingRecipe(CraftingRecipe recipe) {
         // this.craftingKeys.add(recipe.getKey());
         // this.getPlugin().getServer().addRecipe(recipe);

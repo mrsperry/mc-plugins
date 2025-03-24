@@ -44,7 +44,8 @@ public class TextColors {
 
     TextColor startColor = colorStops.get(0);
     TextColor endColor = colorStops.get(0);
-    int stepEvery = (trimmedString.length() - 1) / (colorStops.size() - 1);
+
+    int stepEvery = (int) Math.ceil((trimmedString.length() - 1f) / (colorStops.size() - 1f));
 
     for (int index = 0; index < trimmedString.length(); index++) {
       if (index % stepEvery == 0) {
@@ -56,11 +57,34 @@ public class TextColors {
       characterColors.add(TextColor.lerp(ratio, startColor, endColor));
     }
 
-    Bukkit.getLogger().info("Colors: " + characterColors.toString());
     return TextColors.sequence(string, characterColors);
   }
 
   public static TextComponent rainbowify(String string) {
-    return TextColors.sequence(string, TextColors.rainbowColors);
+    return TextColors.gradient(string, TextColors.rainbowColors);
+  }
+
+  public static TextColor parseTextColor(String colorString) {
+    return TextColors.parseTextColor(colorString, null);
+  }
+
+  public static TextColor parseTextColor(String colorString, TextColor defaultColor) {
+    if (colorString == null) {
+      return defaultColor;
+    }
+
+    if (colorString.startsWith("#")) {
+      TextColor color = TextColor.fromHexString(colorString);
+
+      if (color == null) {
+        Bukkit.getLogger().warning("Invalid hex color: " + colorString);
+        return defaultColor;
+      }
+
+      return color;
+    }
+
+    TextColor namedColor = NamedTextColor.NAMES.value(colorString);
+    return namedColor == null ? defaultColor : namedColor;
   }
 }
