@@ -19,16 +19,26 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 public class PocketPlugins extends JavaPlugin {
     private Random random = new Random();
+    private List<Module> modules;
 
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
-        this.loadModules();
+        this.modules = this.loadModules();
     }
 
     @Override
     public void onDisable() {
         DebuggerDisplay.removeAll();
+
+        for (Module module : this.modules) {
+            try {
+                module.onDisable();
+            } catch (Exception ex) {
+                this.getLogger().severe("Failed to disable module: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        }
     }
 
     private List<Module> loadModules() {
@@ -85,11 +95,16 @@ public class PocketPlugins extends JavaPlugin {
                         readableSection = config.getRoot();
                     }
 
-                    Module moduleInstance = (Module) clazz
-                            .getDeclaredConstructor(ConfigurationSection.class, ConfigurationSection.class)
-                            .newInstance(readableSection,
-                                    writableSection);
-                    modules.add(moduleInstance);
+                    try {
+                        Module moduleInstance = (Module) clazz
+                                .getDeclaredConstructor(ConfigurationSection.class, ConfigurationSection.class)
+                                .newInstance(readableSection,
+                                        writableSection);
+                        modules.add(moduleInstance);
+                    } catch (Exception ex) {
+                        this.getLogger().severe("Failed to load module: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
                 }
             }
         } catch (Exception ex) {
