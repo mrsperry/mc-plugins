@@ -84,16 +84,7 @@ public class DisplayNameConfig {
     }
 
     public void setPrefix(String prefix) {
-        if (prefix == null) {
-            this.prefix = null;
-            return;
-        }
-
         this.prefix = prefix.trim();
-
-        if (this.prefix.isEmpty()) {
-            this.prefix = null;
-        }
     }
 
     public List<TextColor> getPrefixColors() {
@@ -109,16 +100,7 @@ public class DisplayNameConfig {
     }
 
     public void setSuffix(String suffix) {
-        if (suffix == null) {
-            this.suffix = null;
-            return;
-        }
-
         this.suffix = suffix.trim();
-
-        if (this.suffix.isEmpty()) {
-            this.suffix = null;
-        }
     }
 
     public List<TextColor> getSuffixColors() {

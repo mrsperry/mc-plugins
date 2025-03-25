@@ -25,6 +25,10 @@ public class TextColors {
     TextComponent.Builder builder = Component.text();
     int index = 0;
 
+    if (colors.isEmpty()) {
+      return Component.text(string);
+    }
+
     for (String part : string.split("")) {
       if (part.equals(" ")) {
         builder.append(Component.space());

@@ -221,26 +221,26 @@ public class DisplayNameCommand implements Listener {
     TextComponent.Builder displayName = Component.text();
     String fullName = originalName;
 
-    if (prefixColors.size() == 0 && prefix != null) {
+    if (prefixColors.size() == 0 && !prefix.isEmpty()) {
       fullName = prefix + " " + fullName;
     }
 
-    if (suffixColors.size() == 0 && suffix != null) {
+    if (suffixColors.size() == 0 && !suffix.isEmpty()) {
       fullName = fullName + " " + suffix;
     }
 
-    if (prefixColors.size() != 0 && prefix != null) {
-      displayName.append(TextColors.gradient(prefix, prefixColors)).append(Component.space());
+    if (prefixColors.size() != 0 && !prefix.isEmpty()) {
+      displayName.append(TextColors.gradient(prefix.trim(), prefixColors)).append(Component.space());
     }
 
     if (nameColors.size() == 0) {
-      displayName.append(Component.text(fullName, this.defaultNameColor));
+      displayName.append(Component.text(fullName.trim(), this.defaultNameColor));
     } else {
-      displayName.append(TextColors.gradient(fullName, nameColors));
+      displayName.append(TextColors.gradient(fullName.trim(), nameColors));
     }
 
-    if (suffixColors.size() != 0 && suffix != null) {
-      displayName.append(Component.space()).append(TextColors.gradient(suffix, suffixColors));
+    if (suffixColors.size() != 0 && !suffix.isEmpty()) {
+      displayName.append(Component.space()).append(TextColors.gradient(suffix.trim(), suffixColors));
     }
 
     Component displayNameComponent = displayName.build();
@@ -423,7 +423,7 @@ public class DisplayNameCommand implements Listener {
         new DisplayNameConfig());
 
     String prefix = displayNameConfig.getPrefix();
-    if (prefix == null) {
+    if (prefix.isEmpty()) {
       player.sendMessage(Component.text("You have no prefix set", NamedTextColor.GRAY));
     } else {
       player.sendMessage(Component.text("Your prefix is: " + prefix, NamedTextColor.GRAY));
@@ -459,7 +459,7 @@ public class DisplayNameCommand implements Listener {
     DisplayNameConfig displayNameConfig = this.displayNameConfigs.getOrDefault(player.getUniqueId(),
         new DisplayNameConfig());
 
-    displayNameConfig.setPrefix(null);
+    displayNameConfig.setPrefix("");
     this.displayNameConfigs.put(player.getUniqueId(), displayNameConfig);
 
     this.updateNameColor(player);
@@ -624,7 +624,7 @@ public class DisplayNameCommand implements Listener {
         new DisplayNameConfig());
 
     String suffix = displayNameConfig.getSuffix();
-    if (suffix == null) {
+    if (suffix.isEmpty()) {
       player.sendMessage(Component.text("You have no suffix set", NamedTextColor.GRAY));
     } else {
       player.sendMessage(Component.text("Your suffix is: " + suffix, NamedTextColor.GRAY));
@@ -659,7 +659,7 @@ public class DisplayNameCommand implements Listener {
     DisplayNameConfig displayNameConfig = this.displayNameConfigs.getOrDefault(player.getUniqueId(),
         new DisplayNameConfig());
 
-    displayNameConfig.setSuffix(null);
+    displayNameConfig.setSuffix("");
     this.displayNameConfigs.put(player.getUniqueId(), displayNameConfig);
 
     this.updateNameColor(player);
