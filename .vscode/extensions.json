@@ -9,7 +9,6 @@
 		"redhat.java",
 		"vscjava.vscode-maven",
 		"vscjava.vscode-java-dependency",
-		"redhat.fabric8-analytics",
 		"sonarsource.sonarlint-vscode",
 		"vscjava.vscode-java-test",
 		"redhat.vscode-xml",

@@ -57,6 +57,16 @@ public class MessageHandler implements Listener {
   }
 
   protected void sendFormattedMessage(Player sender, Component name, Component message) {
+    this.sendFormattedMessage(sender, name, message, null, null, true);
+  }
+
+  protected void sendFormattedMessage(Player sender, Component name, Component message, Component prefix,
+      Component suffix) {
+    this.sendFormattedMessage(sender, name, message, prefix, suffix, true);
+  }
+
+  protected void sendFormattedMessage(Player sender, Component name, Component message, Component prefix,
+      Component suffix, boolean includeDelimiter) {
     Component delimiter = Component.text(this.messageDelimiter, this.delimiterColor);
 
     if (sender != null) {
@@ -72,15 +82,32 @@ public class MessageHandler implements Listener {
                 return Component.text(result.group());
               })
               .build());
+
+      name = name.clickEvent(ClickEvent.suggestCommand("/tell " + sender.getName() + " "));
     }
 
-    Component formattedMessage = Component.text()
-        .append(name.colorIfAbsent(this.defaultNameColor))
-        .append(delimiter.colorIfAbsent(this.delimiterColor))
-        .append(message.colorIfAbsent(this.defaultMessageColor))
-        .build();
+    TextComponent.Builder formattedMessage = Component.text();
+    if (prefix != null) {
+      formattedMessage
+          .append(Component.space())
+          .append(prefix);
+    }
 
-    Bukkit.getServer().sendMessage(formattedMessage);
+    formattedMessage.append(name.colorIfAbsent(this.defaultNameColor));
+
+    if (suffix != null) {
+      formattedMessage
+          .append(Component.space())
+          .append(suffix);
+    }
+
+    if (includeDelimiter) {
+      formattedMessage.append(delimiter.colorIfAbsent(this.delimiterColor));
+    }
+
+    formattedMessage.append(message.colorIfAbsent(this.defaultMessageColor));
+
+    Bukkit.getServer().sendMessage(formattedMessage.build());
   }
 
   protected Component replaceText(Player sender, MatchResult result, TextComponent.Builder builder) {
@@ -235,9 +262,11 @@ public class MessageHandler implements Listener {
   public void onPlayerJoin(PlayerJoinEvent event) {
     event.joinMessage(Component.text()
         .decorate(TextDecoration.ITALIC)
-        .append(Component.text("→ "))
+        .append(Component.text("⮩").decorate(TextDecoration.BOLD))
+        .append(Component.space())
         .append(event.getPlayer().displayName())
-        .append(Component.text(" joined the game", this.defaultMessageColor))
+        .append(Component.space())
+        .append(Component.text("joined the game", this.defaultMessageColor))
         .build());
   }
 
@@ -245,9 +274,11 @@ public class MessageHandler implements Listener {
   public void onPlayerQuit(PlayerQuitEvent event) {
     event.quitMessage(Component.text()
         .decorate(TextDecoration.ITALIC)
-        .append(Component.text("← "))
+        .append(Component.text("⮨").decorate(TextDecoration.BOLD))
+        .append(Component.space())
         .append(event.getPlayer().displayName())
-        .append(Component.text(" left the game", this.defaultMessageColor))
+        .append(Component.space())
+        .append(Component.text("left the game", this.defaultMessageColor))
         .build());
   }
 
@@ -255,9 +286,11 @@ public class MessageHandler implements Listener {
   public void onPlayerDeath(PlayerDeathEvent event) {
     event.deathMessage(Component.text()
         .color(NamedTextColor.RED)
-        .append(Component.text("† ", Style.style(TextDecoration.BOLD)))
+        .append(Component.text("💀"))
+        .append(Component.space())
         .append(event.deathMessage().decorate(TextDecoration.ITALIC))
-        .append(Component.text(" †", Style.style(TextDecoration.BOLD)))
+        .append(Component.space())
+        .append(Component.text("💀"))
         .build()
         .replaceText(TextReplacementConfig.builder()
             .matchLiteral(event.getPlayer().getName())

@@ -46,6 +46,9 @@ public class TextColors {
     TextColor endColor = colorStops.get(0);
 
     int stepEvery = (int) Math.ceil((trimmedString.length() - 1f) / (colorStops.size() - 1f));
+    if (stepEvery <= 0) {
+      stepEvery = 1;
+    }
 
     for (int index = 0; index < trimmedString.length(); index++) {
       if (index % stepEvery == 0) {
