@@ -23,6 +23,10 @@ concretemixer:
   # Use change is out of 100
   water-use-chance: 5
 
+dispensery:
+  placeable-materials:
+    - "anvil"
+
 dyeshears:
   # Dye change is out of 100
   dye-chance: 50
