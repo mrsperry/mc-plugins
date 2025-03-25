@@ -2,6 +2,7 @@ package com.mrjoshuasperry.pocketplugins.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import org.bukkit.NamespacedKey;
@@ -88,7 +89,13 @@ public class Module implements Listener {
 
     public final void saveConfig() {
         YamlConfiguration config = new YamlConfiguration();
-        for (String key : this.writableConfig.getKeys(false)) {
+        Set<String> keys = this.writableConfig.getKeys(false);
+
+        if (keys.isEmpty()) {
+            return;
+        }
+
+        for (String key : keys) {
             config.set(key, this.writableConfig.get(key));
         }
 
