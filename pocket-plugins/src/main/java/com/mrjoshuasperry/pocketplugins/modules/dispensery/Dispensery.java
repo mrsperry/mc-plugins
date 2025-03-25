@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.data.BlockData;
@@ -49,8 +50,38 @@ public class Dispensery extends Module {
     }, 0);
   }
 
+  protected void removeItemInDispenser(Block block, Material material) {
+    this.runDispenserOperation(block, material,
+        (ItemStack item) -> {
+          int amount = item.getAmount() - 1;
+          if (amount == 0) {
+            return new ItemStack(Material.AIR);
+          }
+
+          return new ItemStack(item.getType(), item.getAmount() - 1);
+        });
+  }
+
   protected void updateItemInDispenser(Block block, Material oldType, Material newType) {
-    this.runDispenserOperation(block, oldType, item -> new ItemStack(newType, item.getAmount()));
+    this.runDispenserOperation(block, oldType, (ItemStack item) -> new ItemStack(newType, item.getAmount()));
+  }
+
+  protected Sound getFillSoundForBucket(Material bucketType) {
+    return switch (bucketType) {
+      case WATER_BUCKET -> Sound.ITEM_BUCKET_FILL;
+      case LAVA_BUCKET -> Sound.ITEM_BUCKET_FILL_LAVA;
+      case POWDER_SNOW_BUCKET -> Sound.ITEM_BUCKET_FILL_POWDER_SNOW;
+      default -> Sound.ITEM_BUCKET_FILL;
+    };
+  }
+
+  protected Sound getEmptySoundForBucket(Material cauldronType) {
+    return switch (cauldronType) {
+      case WATER_CAULDRON -> Sound.ITEM_BUCKET_EMPTY;
+      case LAVA_CAULDRON -> Sound.ITEM_BUCKET_EMPTY_LAVA;
+      case POWDER_SNOW_CAULDRON -> Sound.ITEM_BUCKET_EMPTY_POWDER_SNOW;
+      default -> Sound.ITEM_BUCKET_EMPTY;
+    };
   }
 
   protected Material getCauldronTypeForBucket(Material bucketType) {
@@ -105,8 +136,10 @@ public class Dispensery extends Module {
 
     if (placeableMaterials.contains(itemType) && relativeType.isAir()) {
       relative.setType(itemType);
+      relative.getWorld().playSound(relative.getLocation(), relative.getBlockSoundGroup().getPlaceSound(), 1, 1);
+
       event.setCancelled(true);
-      this.updateItemInDispenser(block, itemType, itemType);
+      this.removeItemInDispenser(block, itemType);
       return;
     }
 
@@ -116,7 +149,9 @@ public class Dispensery extends Module {
 
     switch (itemType) {
       case WATER_BUCKET, LAVA_BUCKET, POWDER_SNOW_BUCKET -> {
+        relative.getWorld().playSound(relative.getLocation(), this.getFillSoundForBucket(itemType), 1, 1);
         relative.setType(this.getCauldronTypeForBucket(itemType));
+
         BlockData data = relative.getBlockData();
         if (data instanceof Levelled levelled) {
           levelled.setLevel(levelled.getMaximumLevel());
@@ -128,7 +163,9 @@ public class Dispensery extends Module {
       }
       case BUCKET -> {
         if (this.isFilledCauldron(relative)) {
+          relative.getWorld().playSound(relative.getLocation(), this.getEmptySoundForBucket(relative.getType()), 1, 1);
           relative.setType(Material.CAULDRON);
+
           event.setCancelled(true);
           this.updateItemInDispenser(block, itemType, this.getBucketTypeForCauldron(relativeType));
         }
