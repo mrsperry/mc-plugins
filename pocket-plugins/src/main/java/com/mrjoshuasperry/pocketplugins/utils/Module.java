@@ -111,10 +111,9 @@ public class Module implements Listener {
         return new NamespacedKey(this.plugin, name);
     }
 
-    // TODO: Fix recipe registration
     public void registerCraftingRecipe(CraftingRecipe recipe) {
-        // this.craftingKeys.add(recipe.getKey());
-        // this.getPlugin().getServer().addRecipe(recipe);
+        this.craftingKeys.add(recipe.getKey());
+        this.getPlugin().getServer().addRecipe(recipe);
     }
 
     @EventHandler

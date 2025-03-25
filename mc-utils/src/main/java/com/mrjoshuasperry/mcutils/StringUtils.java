@@ -16,4 +16,12 @@ public class StringUtils {
 
     return String.join(" ", parts);
   }
+
+  public static String toEnumName(String name) {
+    if (name == null) {
+      return name;
+    }
+
+    return name.toUpperCase().replaceAll(" ", "_");
+  }
 }

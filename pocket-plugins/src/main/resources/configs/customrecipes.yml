@@ -1,1 +1,30 @@
+# Category refers to the recipe book category during survival crafting.
+# Accepted values: "building", "equipment", "redstone" "misc" (default)
+#
+# Category and output amount are optional
+#
+# Example recipes:
+#
+# recipes:
+#   test:
+#     type: "shaped"
+#     category: "building"
+#     output:
+#       type: "stone"
+#       amount: 1
+#     shape:
+#       - "###"
+#       - "###"
+#       - "###"
+#     ingredients:
+#       "#": "cobblestone"
+#   test2:
+#     type: "shapeless"
+#     output:
+#       type: "stone"
+#     ingredients:
+#       - "cobblestone"
+#       - "cobblestone"
+#       - "cobblestone"
+
 recipes:
