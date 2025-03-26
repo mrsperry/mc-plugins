@@ -97,7 +97,10 @@ public class PathfinderUtil {
     Consumer<Boolean> onPathComplete = (Boolean reachedTarget) -> {
       this.scheduler.cancelTask(this.taskId);
       pathfinder.stopPathfinding();
-      callback.accept(reachedTarget);
+
+      if (callback != null) {
+        callback.accept(reachedTarget);
+      }
     };
 
     this.taskId = this.scheduler.runTaskTimer(this.plugin, () -> {
