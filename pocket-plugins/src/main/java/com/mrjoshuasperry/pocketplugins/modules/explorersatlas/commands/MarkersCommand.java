@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -36,9 +35,9 @@ public class MarkersCommand implements CommandExecutor, TabCompleter {
     this.random = random;
 
     this.cursorTypes = RegistryAccess.registryAccess().getRegistry(RegistryKey.MAP_DECORATION_TYPE)
-        .stream().filter((type) -> {
+        .stream().filter((MapCursor.Type type) -> {
           return type.toString().startsWith("BANNER_");
-        }).collect(Collectors.toList());
+        }).toList();
   }
 
   @Override

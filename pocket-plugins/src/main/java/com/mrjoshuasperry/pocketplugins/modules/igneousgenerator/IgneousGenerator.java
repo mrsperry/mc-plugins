@@ -31,15 +31,16 @@ public class IgneousGenerator extends Module {
         Block from = event.getBlock();
         Block to = event.getToBlock();
 
-        if (!isWet(from) || !BlockUtils.isNextTo(to, Material.MAGMA_BLOCK)) {
+        if (!this.isWet(from) || !BlockUtils.isNextTo(to, Material.MAGMA_BLOCK)) {
             return;
         }
 
         Material rock = this.igneousMaterials.get(this.getPlugin().getRandom().nextInt(this.igneousMaterials.size()));
 
         Bukkit.getScheduler().runTaskLater(this.getPlugin(), () -> {
-            if (!isWet(from) || !BlockUtils.isNextTo(to, Material.MAGMA_BLOCK)
-                    || (!to.getType().equals(Material.AIR) && !to.getType().equals(Material.WATER))) {
+            Material type = to.getType();
+            if (!this.isWet(from) || !BlockUtils.isNextTo(to, Material.MAGMA_BLOCK)
+                    || (!type.isAir() && type != Material.WATER)) {
                 return;
             }
 
@@ -50,6 +51,6 @@ public class IgneousGenerator extends Module {
     }
 
     private boolean isWet(Block block) {
-        return block.getType().equals(Material.WATER) || (block.getBlockData() instanceof Waterlogged);
+        return block.getType() == Material.WATER || (block.getBlockData() instanceof Waterlogged);
     }
 }
