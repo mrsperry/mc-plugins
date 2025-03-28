@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.map.MapCursor;
 import org.bukkit.util.StringUtil;
 
-import com.google.common.collect.Lists;
 import com.mrjoshuasperry.pocketplugins.modules.explorersatlas.Waypoint;
 import com.mrjoshuasperry.pocketplugins.modules.explorersatlas.WaypointManager;
 
@@ -35,10 +35,10 @@ public class MarkersCommand implements CommandExecutor, TabCompleter {
     this.waypointManager = WaypointManager.getInstance();
     this.random = random;
 
-    this.cursorTypes = Lists
-        .newArrayList(RegistryAccess.registryAccess().getRegistry(RegistryKey.MAP_DECORATION_TYPE).iterator()).stream()
-        .filter((MapCursor.Type type) -> type.getKey().key().toString().startsWith("BANNER_"))
-        .toList();
+    this.cursorTypes = RegistryAccess.registryAccess().getRegistry(RegistryKey.MAP_DECORATION_TYPE)
+        .stream().filter((type) -> {
+          return type.toString().startsWith("BANNER_");
+        }).collect(Collectors.toList());
   }
 
   @Override

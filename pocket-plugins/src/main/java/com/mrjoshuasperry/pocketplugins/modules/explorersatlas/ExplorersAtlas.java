@@ -142,7 +142,7 @@ public class ExplorersAtlas extends Module {
 
     ShapedRecipe recipe = (ShapedRecipe) event.getRecipe();
 
-    if (!recipe.getKey().getKey().equalsIgnoreCase("explorers_atlas"))
+    if (!recipe.getKey().getKey().equalsIgnoreCase("explorers-atlas"))
       return;
 
     Player player = (Player) event.getWhoClicked();
