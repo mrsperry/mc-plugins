@@ -1,17 +1,16 @@
 package com.mrjoshuasperry.pocketplugins.modules.igneousgenerator;
 
 import java.util.List;
-import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockFromToEvent;
 
-import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 import com.mrjoshuasperry.pocketplugins.utils.BlockUtils;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
@@ -29,20 +28,28 @@ public class IgneousGenerator extends Module {
 
     @EventHandler
     public void onBlockFromTo(BlockFromToEvent event) {
+        Block from = event.getBlock();
         Block to = event.getToBlock();
-        if (!(event.getBlock().getType().equals(Material.WATER) && BlockUtils.isNextTo(to, Material.MAGMA_BLOCK))) {
+
+        if (!isWet(from) || !BlockUtils.isNextTo(to, Material.MAGMA_BLOCK)) {
             return;
         }
 
-        event.setCancelled(true);
+        Material rock = this.igneousMaterials.get(this.getPlugin().getRandom().nextInt(this.igneousMaterials.size()));
 
-        PocketPlugins plugin = this.getPlugin();
-        Random random = plugin.getRandom();
-        Material rock = this.igneousMaterials.get(random.nextInt(this.igneousMaterials.size()));
+        Bukkit.getScheduler().runTaskLater(this.getPlugin(), () -> {
+            if (!isWet(from) || !BlockUtils.isNextTo(to, Material.MAGMA_BLOCK)
+                    || (!to.getType().equals(Material.AIR) && !to.getType().equals(Material.WATER))) {
+                return;
+            }
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
             to.setType(rock);
             to.getWorld().playSound(to.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 0.25f, 0.25f);
-        }, random.nextInt(this.maxConversionTime));
+        }, this.getPlugin().getRandom().nextInt(this.maxConversionTime));
+
+    }
+
+    private boolean isWet(Block block) {
+        return block.getType().equals(Material.WATER) || (block.getBlockData() instanceof Waterlogged);
     }
 }
