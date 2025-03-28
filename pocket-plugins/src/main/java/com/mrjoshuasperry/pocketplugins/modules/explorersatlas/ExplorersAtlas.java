@@ -32,6 +32,7 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 
 /** @author TimPCunningham */
 public class ExplorersAtlas extends Module {
@@ -150,9 +151,7 @@ public class ExplorersAtlas extends Module {
     MapMeta meta = (MapMeta) result.getItemMeta();
     MapView view = Bukkit.createMap(player.getWorld());
 
-    List<Component> lore = meta.lore();
-    lore.add(Component.text("Atlas Owner: " + player.getName()).color(NamedTextColor.AQUA));
-    meta.lore(lore);
+    meta.displayName(Component.text(player.getName() + "'s Atlas", TextColor.color(255, 170, 0)));
 
     view.setScale(Scale.CLOSEST);
     view.setCenterX(player.getLocation().getBlockX());
