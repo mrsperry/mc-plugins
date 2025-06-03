@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+/** @author mrsperry */
 public class Dispensery extends Module {
   private final List<Material> placeableMaterials;
 
