@@ -20,8 +20,6 @@ public class EntityListener implements Listener {
 
   @EventHandler
   public void onEntityExplode(EntityExplodeEvent event) {
-    Bukkit.getLogger().info("Entity explode event");
-
     event.blockList().removeIf(block -> {
       if (block.getType() != Material.CHEST) {
         return false;
