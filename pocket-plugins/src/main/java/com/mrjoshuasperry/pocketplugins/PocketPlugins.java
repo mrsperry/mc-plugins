@@ -95,6 +95,12 @@ public class PocketPlugins extends JavaPlugin {
                         readableSection = config.getRoot();
                     }
 
+                    boolean enabled = readableSection.getBoolean("enabled", true);
+
+                    if (!enabled) {
+                        continue;
+                    }
+                    
                     try {
                         Module moduleInstance = (Module) clazz
                                 .getDeclaredConstructor(ConfigurationSection.class, ConfigurationSection.class)
