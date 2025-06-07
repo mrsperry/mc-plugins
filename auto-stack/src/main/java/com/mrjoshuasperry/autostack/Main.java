@@ -10,8 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mrjoshuasperry.mcutils.types.ToolTypes;
-
 public class Main extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
@@ -25,6 +23,10 @@ public class Main extends JavaPlugin implements Listener {
         ItemStack item = event.getItemInHand();
         EquipmentSlot hand = event.getHand();
 
+        if (hand == EquipmentSlot.OFF_HAND) {
+            item = inventory.getItemInOffHand();
+        }
+
         if (player.getGameMode() != GameMode.SURVIVAL) {
             return;
         }
@@ -34,13 +36,17 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
 
-        // Disallow stacking of tools
-        if (ToolTypes.getAllToolTypes().contains((item.getType()))) {
+        ItemStack[] contents = inventory.getContents();
+        if (contents == null || contents.length == 0) {
             return;
         }
 
-        for (ItemStack stack : inventory.getContents()) {
-            if (stack == item) {
+        for (ItemStack stack : contents) {
+            if (stack == null) {
+                continue;
+            }
+
+            if (stack.equals(item)) {
                 continue;
             }
 
