@@ -23,6 +23,9 @@ concretemixer:
   # Use change is out of 100
   water-use-chance: 5
 
+croptweaks:
+  can-blaze-powder-nether-wart: true
+
 dispensery:
   placeable-materials:
     - "anvil"
