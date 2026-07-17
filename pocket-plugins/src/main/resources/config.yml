@@ -53,6 +53,11 @@ mobsizes:
   # This will size ridable mounts based on their HP pool rather than randomly
   enable-mount-health-sizing: true
 
+timeplayed:
+  # How many seconds between writes to disk; play time is tracked every second
+  # regardless, so this only bounds what a server crash can lose
+  save-interval: 300
+
 woodpile:
   # How many seconds it takes to convert a single log
   log-convert-time: 5
