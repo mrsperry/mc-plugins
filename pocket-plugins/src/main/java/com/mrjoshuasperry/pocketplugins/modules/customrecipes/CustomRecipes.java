@@ -111,20 +111,20 @@ public class CustomRecipes extends Module {
     String recipeName = recipeSection.getName();
 
     List<String> shape = recipeSection.getStringList("shape");
-    if (shape == null) {
+    if (shape.isEmpty()) {
       logger.warning("Recipe '" + recipeName + "' does not have a shape");
       return null;
     }
 
     if (shape.size() != 3) {
-      logger.warning("Recipe shapes must have three rows");
+      logger.warning("Recipe '" + recipeName + "' must have exactly three rows in its shape");
       return null;
     }
 
     List<String> uniqueIngredientKeys = new ArrayList<>();
     for (String row : shape) {
       if (row.length() != 3) {
-        logger.warning("Recipe rows must have exactly three columns");
+        logger.warning("Recipe '" + recipeName + "' must have exactly three columns in every shape row");
         return null;
       }
 
@@ -153,6 +153,11 @@ public class CustomRecipes extends Module {
     recipe.setCategory(category);
 
     ConfigurationSection ingredients = recipeSection.getConfigurationSection("ingredients");
+    if (ingredients == null) {
+      logger.warning("Recipe '" + recipeName + "' does not have any ingredients");
+      return null;
+    }
+
     for (String key : ingredients.getKeys(false)) {
       if (key.length() != 1) {
         logger
@@ -199,7 +204,7 @@ public class CustomRecipes extends Module {
     recipe.setCategory(category);
 
     List<String> ingredients = recipeSection.getStringList("ingredients");
-    if (ingredients == null || ingredients.isEmpty()) {
+    if (ingredients.isEmpty()) {
       logger.warning("Recipe '" + recipeName + "' does not have any ingredients");
       return null;
     }
