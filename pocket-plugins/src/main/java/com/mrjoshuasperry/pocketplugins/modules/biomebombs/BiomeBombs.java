@@ -1,7 +1,6 @@
 package com.mrjoshuasperry.pocketplugins.modules.biomebombs;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -11,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +24,6 @@ import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 /** @author TimPCunningham */
@@ -88,11 +85,13 @@ public class BiomeBombs extends Module {
       meta.displayName(
           Component.text(data.getBiomeName()).color(data.getTextColor())
               .append(Component.text(" Biome Bomb").color(NamedTextColor.GRAY)));
-      meta.lore(Arrays.asList(
+      meta.lore(List.of(
           Component.text("Type: ").color(NamedTextColor.GRAY).append(
-              Component.text(data.getBiomeName()).color(NamedTextColor.GOLD)),
-          Component.text("biome_bomb_type:" + data.getBiomeType()),
-          Component.text("biome_bomb_color:" + data.getColor().asARGB())));
+              Component.text(data.getBiomeName()).color(NamedTextColor.GOLD))));
+
+      PersistentDataContainer container = meta.getPersistentDataContainer();
+      container.set(this.biomeBombTypeKey, PersistentDataType.STRING, data.getBiomeType());
+      container.set(this.biomeBombColorKey, PersistentDataType.INTEGER, data.getColor().asARGB());
 
       FireworkEffect effect = FireworkEffect.builder().withColor(data.getColor()).build();
       meta.setEffect(effect);
@@ -105,39 +104,6 @@ public class BiomeBombs extends Module {
       recipe.addIngredient(8, data.getCatalyst());
       this.registerCraftingRecipe(recipe);
     }
-  }
-
-  @EventHandler
-  public void onItemCraft(CraftItemEvent event) {
-    ItemStack result = event.getCurrentItem();
-
-    if (!result.displayName().toString().contains("Biome Bomb")) {
-      return;
-    }
-
-    ItemMeta meta = result.getItemMeta();
-    PersistentDataContainer container = meta.getPersistentDataContainer();
-
-    List<Component> lore = meta.lore();
-    List<Component> updatedLore = new ArrayList<>();
-
-    for (Component comp : lore) {
-      TextComponent text = (TextComponent) comp;
-      String loreLine = text.content();
-
-      if (loreLine.contains("biome_bomb_type")) {
-        String type = loreLine.split(":")[1];
-        container.set(biomeBombTypeKey, PersistentDataType.STRING, type);
-      } else if (loreLine.contains("biome_bomb_color")) {
-        int color = Integer.parseInt(loreLine.split(":")[1]);
-        container.set(biomeBombColorKey, PersistentDataType.INTEGER, color);
-      } else {
-        updatedLore.add(comp);
-      }
-    }
-
-    meta.lore(updatedLore);
-    result.setItemMeta(meta);
   }
 
   @EventHandler
