@@ -1,6 +1,7 @@
 package com.mrjoshuasperry.pocketplugins.modules.woodpile;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -70,11 +71,15 @@ public class WoodPile extends Module {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        for (Entry<WoodPileConstruct, BukkitRunnable> entry : woodPiles.entrySet()) {
-            WoodPileConstruct woodPile = entry.getKey();
-            if (woodPile.contains(event.getBlock())) {
-                woodPiles.get(woodPile).cancel();
-                woodPiles.remove(woodPile);
+        Iterator<Entry<WoodPileConstruct, BukkitRunnable>> iterator = woodPiles.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Entry<WoodPileConstruct, BukkitRunnable> entry = iterator.next();
+
+            // Adjacent piles can share a covering block, so every match has to be checked
+            if (entry.getKey().contains(event.getBlock())) {
+                entry.getValue().cancel();
+                iterator.remove();
                 event.getBlock().setType(Material.FIRE);
             }
         }
