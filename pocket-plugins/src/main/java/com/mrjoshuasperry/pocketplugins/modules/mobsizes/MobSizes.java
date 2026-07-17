@@ -35,13 +35,13 @@ public class MobSizes extends Module {
       return;
     }
 
-    if (entity instanceof AbstractHorse) {
+    if (this.enableMountHealthSizing && entity instanceof AbstractHorse) {
       this.setMountScale((AbstractHorse) entity);
       return;
     }
 
     double scale = this.getPlugin().getRandom().nextDouble(this.minSize, this.maxSize);
-    entity.getAttribute(Attribute.SCALE).setBaseValue(scale);
+    this.setScale(entity, scale);
   }
 
   protected void setMountScale(AbstractHorse entity) {
@@ -56,6 +56,15 @@ public class MobSizes extends Module {
     double scale = minSize + (maxHealth - this.minMountHealth) * (this.maxSize - this.minSize)
         / (this.maxMountHealth - this.minMountHealth);
 
-    entity.getAttribute(Attribute.SCALE).setBaseValue(Math.max(this.minSize, Math.min(this.maxSize, scale)));
+    this.setScale(entity, Math.max(this.minSize, Math.min(this.maxSize, scale)));
+  }
+
+  private void setScale(LivingEntity entity, double scale) {
+    AttributeInstance scaleAttribute = entity.getAttribute(Attribute.SCALE);
+    if (scaleAttribute == null) {
+      return;
+    }
+
+    scaleAttribute.setBaseValue(scale);
   }
 }
