@@ -38,7 +38,7 @@ public class InventoryInspector extends Module {
     }
 
     @EventHandler
-    private void onPlayerInteractEntity(final PlayerInteractEntityEvent event) {
+    public void onPlayerInteractEntity(final PlayerInteractEntityEvent event) {
         if (event.getHand() == EquipmentSlot.OFF_HAND) {
             return;
         }
@@ -104,14 +104,14 @@ public class InventoryInspector extends Module {
     }
 
     @EventHandler
-    private void onInventoryDrag(final InventoryDragEvent event) {
+    public void onInventoryDrag(final InventoryDragEvent event) {
         if (this.inventories.contains(event.getInventory())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
-    private void onInventoryClick(final InventoryClickEvent event) {
+    public void onInventoryClick(final InventoryClickEvent event) {
         final boolean regular = this.inventories.contains(event.getWhoClicked().getOpenInventory().getTopInventory());
         final boolean clicked = this.inventories.contains(event.getClickedInventory());
 
@@ -133,14 +133,14 @@ public class InventoryInspector extends Module {
     }
 
     @EventHandler
-    private void onInventoryMoveItem(final InventoryMoveItemEvent event) {
+    public void onInventoryMoveItem(final InventoryMoveItemEvent event) {
         if (this.inventories.contains(event.getDestination())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
-    private void onInventoryClose(final InventoryCloseEvent event) {
+    public void onInventoryClose(final InventoryCloseEvent event) {
         this.inventories.removeIf(inventory -> inventory == event.getInventory());
     }
 }
