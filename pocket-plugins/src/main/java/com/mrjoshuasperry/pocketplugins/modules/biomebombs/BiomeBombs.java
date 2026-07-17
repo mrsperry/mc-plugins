@@ -20,8 +20,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import com.mojang.brigadier.Command;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -41,7 +43,13 @@ public class BiomeBombs extends Module {
     this.explosionRange = readableConfig.getInt("bomb-range");
   
     this.registerCraftingRecipes(readableConfig, writableConfig);
-    this.getPlugin().getCommand("biomebombs").setExecutor(new BiomeBombCommand(biomeBombsData));
+
+    BiomeBombCommand biomeBombCommand = new BiomeBombCommand(this.biomeBombsData);
+    this.registerCommand(() -> Commands.literal("biomebombs")
+        .executes(context -> {
+          biomeBombCommand.sendBombList(context.getSource().getSender());
+          return Command.SINGLE_SUCCESS;
+        }), "Lists all available biome bombs and their crafting ingredients", List.of("bb"));
   }
 
   private void registerCraftingRecipes(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {

@@ -7,10 +7,6 @@ authors:
   - TimPCunningham
 api-version: "1.21"
 commands:
-  biomebombs:
-    description: Lists all available biome bombs and their crafting ingredients
-    usage: /biomebombs
-    aliases: [bb]
   macro:
     description: Command macro management
     usage: /macro <list | run>

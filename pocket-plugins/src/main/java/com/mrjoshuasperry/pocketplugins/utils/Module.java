@@ -1,6 +1,7 @@
 package com.mrjoshuasperry.pocketplugins.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -104,6 +105,22 @@ public abstract class Module implements Listener {
     public final void registerCommand(LiteralCommandNode<CommandSourceStack> command) {
         this.plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
                 (ReloadableRegistrarEvent<Commands> event) -> event.registrar().register(command));
+    }
+
+    /**
+     * The description and aliases are what {@code plugin.yml} used to carry for a
+     * command; registering here keeps them next to the command itself.
+     */
+    public final void registerCommand(Supplier<LiteralArgumentBuilder<CommandSourceStack>> commandSupplier,
+            String description, Collection<String> aliases) {
+        this.registerCommand(commandSupplier.get().build(), description, aliases);
+    }
+
+    public final void registerCommand(LiteralCommandNode<CommandSourceStack> command, String description,
+            Collection<String> aliases) {
+        this.plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
+                (ReloadableRegistrarEvent<Commands> event) -> event.registrar().register(command, description,
+                        aliases));
     }
 
     public final void saveConfig() {
