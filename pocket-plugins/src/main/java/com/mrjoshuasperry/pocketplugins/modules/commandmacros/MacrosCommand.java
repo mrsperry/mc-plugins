@@ -1,56 +1,31 @@
 package com.mrjoshuasperry.pocketplugins.modules.commandmacros;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class MacrosCommand implements CommandExecutor, TabCompleter {
+public class MacrosCommand {
   private final Map<String, MacroData> macros;
 
   public MacrosCommand(Map<String, MacroData> macros) {
     this.macros = macros;
   }
 
-  @Override
-  public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-    if (args.length == 0) {
-      sender.sendMessage(Component.text("Usage: /macro <list|run> [macro-name]").color(NamedTextColor.RED));
-      return true;
-    }
-
-    switch (args[0].toLowerCase()) {
-      case "list":
-        listMacros(sender);
-        break;
-      case "run":
-        if (args.length < 2) {
-          sender.sendMessage(Component.text("Usage: /macro run <macro-name>").color(NamedTextColor.RED));
-          return true;
-        }
-        runMacro(sender, args[1].toLowerCase());
-        break;
-      default:
-        sender.sendMessage(Component.text("Unknown subcommand. Use 'list' or 'run'").color(NamedTextColor.RED));
-    }
-    return true;
-  }
-
-  private void listMacros(CommandSender sender) {
+  public void listMacros(CommandSender sender) {
     sender.sendMessage(
         Component.text("════ Command Macros ════").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
     sender.sendMessage(Component.empty());
 
-    boolean isOp = !(sender instanceof Player) || ((Player) sender).isOp();
+    boolean isOp = canUseOpMacros(sender);
 
     for (Map.Entry<String, MacroData> entry : macros.entrySet()) {
       MacroData macro = entry.getValue();
@@ -73,14 +48,15 @@ public class MacrosCommand implements CommandExecutor, TabCompleter {
     }
   }
 
-  private void runMacro(CommandSender sender, String macroName) {
+  public void runMacro(CommandSender sender, String macroName) {
     if (!(sender instanceof Player)) {
       sender.sendMessage(Component.text("Only players can run macros!").color(NamedTextColor.RED));
       return;
     }
 
     Player player = (Player) sender;
-    MacroData macro = macros.get(macroName);
+    // Macros are keyed lowercase, but the name is whatever the player typed
+    MacroData macro = macros.get(macroName.toLowerCase());
 
     if (macro == null) {
       player.sendMessage(Component.text("That macro doesn't exist!").color(NamedTextColor.RED));
@@ -97,23 +73,29 @@ public class MacrosCommand implements CommandExecutor, TabCompleter {
     }
   }
 
-  @Override
-  public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-    List<String> completions = new ArrayList<>();
+  /**
+   * Brigadier does not filter suggestions against what has been typed so far, so
+   * the prefix match here is what keeps the list narrowing as the player types.
+   */
+  public CompletableFuture<Suggestions> suggestMacroNames(CommandSender sender, SuggestionsBuilder builder) {
+    String typed = builder.getRemainingLowerCase();
+    boolean isOp = canUseOpMacros(sender);
 
-    if (args.length == 1) {
-      completions.add("list");
-      completions.add("run");
-    } else if (args.length == 2 && args[0].equalsIgnoreCase("run")) {
-      boolean isOp = !(sender instanceof Player) || ((Player) sender).isOp();
+    for (Map.Entry<String, MacroData> entry : macros.entrySet()) {
+      if (entry.getValue().isOpOnly() && !isOp) {
+        continue;
+      }
 
-      for (Map.Entry<String, MacroData> entry : macros.entrySet()) {
-        if (!entry.getValue().isOpOnly() || isOp) {
-          completions.add(entry.getKey());
-        }
+      if (entry.getKey().startsWith(typed)) {
+        builder.suggest(entry.getKey());
       }
     }
 
-    return completions;
+    return builder.buildFuture();
+  }
+
+  // The console is not a Player but should still see everything
+  private boolean canUseOpMacros(CommandSender sender) {
+    return !(sender instanceof Player) || ((Player) sender).isOp();
   }
 }

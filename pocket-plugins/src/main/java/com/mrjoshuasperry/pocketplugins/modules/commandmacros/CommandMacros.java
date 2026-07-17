@@ -1,11 +1,16 @@
 package com.mrjoshuasperry.pocketplugins.modules.commandmacros;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.configuration.ConfigurationSection;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
+
+import io.papermc.paper.command.brigadier.Commands;
 
 /** @author TimPCunningham */
 public class CommandMacros extends Module {
@@ -16,9 +21,24 @@ public class CommandMacros extends Module {
     this.macros = new HashMap<>();
 
     this.loadMacros(writableConfig);
-    MacrosCommand executor = new MacrosCommand(macros);
-    this.getPlugin().getCommand("macro").setExecutor(executor);
-    this.getPlugin().getCommand("macro").setTabCompleter(executor);
+
+    MacrosCommand macrosCommand = new MacrosCommand(this.macros);
+    this.registerCommand(() -> Commands.literal("macro")
+        .then(Commands.literal("list")
+            .executes(context -> {
+              macrosCommand.listMacros(context.getSource().getSender());
+              return Command.SINGLE_SUCCESS;
+            }))
+        .then(Commands.literal("run")
+            .then(Commands.argument("name", StringArgumentType.word())
+                .suggests((context, builder) -> macrosCommand
+                    .suggestMacroNames(context.getSource().getSender(), builder))
+                .executes(context -> {
+                  macrosCommand.runMacro(context.getSource().getSender(),
+                      StringArgumentType.getString(context, "name"));
+                  return Command.SINGLE_SUCCESS;
+                }))),
+        "Command macro management", List.of());
   }
 
   private void loadMacros(ConfigurationSection config) {
