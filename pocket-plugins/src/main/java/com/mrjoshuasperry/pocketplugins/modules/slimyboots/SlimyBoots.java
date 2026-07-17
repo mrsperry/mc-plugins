@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
@@ -19,7 +20,7 @@ import org.bukkit.util.Vector;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /** @author TimPCunningham */
 public class SlimyBoots extends Module {
@@ -43,8 +44,14 @@ public class SlimyBoots extends Module {
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
             ItemStack boots = player.getInventory().getBoots();
-            if (player.isSneaking() || boots == null
-                    || !boots.getItemMeta().getPersistentDataContainer().has(this.bootsKey, BYTE)) {
+            // An empty feet slot comes back as an AIR stack rather than null, so the
+            // null check alone lets it through; AIR has no meta to read a PDC from
+            if (player.isSneaking() || boots == null || boots.isEmpty()) {
+                return;
+            }
+
+            ItemMeta itemMeta = boots.getItemMeta();
+            if (itemMeta == null || !itemMeta.getPersistentDataContainer().has(this.bootsKey, BYTE)) {
                 return;
             }
 
@@ -63,8 +70,9 @@ public class SlimyBoots extends Module {
         LeatherArmorMeta itemMeta = (LeatherArmorMeta) result.getItemMeta();
 
         itemMeta.setColor(Color.fromRGB(100, 255, 100));
-        itemMeta.displayName(Component.text(ChatColor.GREEN + "Slimy Boots"));
-        itemMeta.lore(List.of(Component.text(ChatColor.GRAY + "A bit squishy but it should protect from falls")));
+        itemMeta.displayName(Component.text("Slimy Boots", NamedTextColor.GREEN));
+        itemMeta.lore(List.of(
+                Component.text("A bit squishy but it should protect from falls", NamedTextColor.GRAY)));
 
         itemMeta.getPersistentDataContainer().set(bootsKey, BYTE, (byte) 1);
         result.setItemMeta(itemMeta);
