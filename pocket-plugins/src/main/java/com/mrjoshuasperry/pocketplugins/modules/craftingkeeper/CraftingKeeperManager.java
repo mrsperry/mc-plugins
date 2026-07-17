@@ -1,18 +1,13 @@
 package com.mrjoshuasperry.pocketplugins.modules.craftingkeeper;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
-@SerializableAs("CraftingKeeperManager")
-public class CraftingKeeperManager implements ConfigurationSerializable {
+public class CraftingKeeperManager {
     private Map<Location, ItemStack[]> inventories;
     private static final CraftingKeeperManager self = new CraftingKeeperManager();
 
@@ -40,54 +35,58 @@ public class CraftingKeeperManager implements ConfigurationSerializable {
         this.inventories.remove(location);
     }
 
-    private void setMap(Map<Location, ItemStack[]> invs) {
-        this.inventories = invs;
-    }
-
-    @Override
-    public Map<String, Object> serialize() {
-        Map<String, Object> result = new HashMap<>();
-        List<String> ids = new ArrayList<>();
-
+    /**
+     * Writes every saved table into {@code section}, one numbered child each.
+     * {@code Location} and {@code ItemStack} are both serialized by the config API
+     * directly, so no {@code ConfigurationSerialization} registration is needed.
+     * The caller is expected to pass a freshly created (empty) section.
+     */
+    public void save(ConfigurationSection section) {
+        int index = 0;
         for (Map.Entry<Location, ItemStack[]> entry : this.inventories.entrySet()) {
-            String randId = UUID.randomUUID().toString().replace("-", "");
-            Map<String, Object> craftingTable = new HashMap<>();
-            List<Map<String, Object>> contents = new ArrayList<>();
-            Location location = entry.getKey();
+            ConfigurationSection table = section.createSection(Integer.toString(index));
+            table.set("location", entry.getKey());
 
-            for (ItemStack item : entry.getValue()) {
-                // Empty slots are stored as null to keep every item at its original grid index
-                contents.add(item == null ? null : item.serialize());
+            ItemStack[] contents = entry.getValue();
+            table.set("size", contents.length);
+
+            ConfigurationSection items = table.createSection("contents");
+            // Empty slots are omitted; their index is restored from "size" on load
+            for (int slot = 0; slot < contents.length; slot++) {
+                if (contents[slot] != null) {
+                    items.set(Integer.toString(slot), contents[slot]);
+                }
             }
 
-            craftingTable.put("location", location.serialize());
-            craftingTable.put("contents", contents);
-            result.put(randId, craftingTable);
-            ids.add(randId);
+            index++;
         }
-
-        result.put("ids", ids);
-        return result;
     }
 
-    @SuppressWarnings("unchecked")
-    public static CraftingKeeperManager deserialize(Map<String, Object> args) {
-        CraftingKeeperManager manager = getInstance();
-        Map<Location, ItemStack[]> savedTables = new HashMap<>();
-        List<String> ids = (ArrayList<String>) args.get("ids");
+    public void load(ConfigurationSection section) {
+        Map<Location, ItemStack[]> loaded = new HashMap<>();
 
-        for (String id : ids) {
-            Map<String, Object> craftingTable = (Map<String, Object>) args.get(id);
-            Location loc = Location.deserialize((Map<String, Object>) craftingTable.get("location"));
-            List<ItemStack> items = new ArrayList<>();
-            List<Map<String, Object>> craftingContents = (List<Map<String, Object>>) craftingTable.get("contents");
+        for (String key : section.getKeys(false)) {
+            ConfigurationSection table = section.getConfigurationSection(key);
+            if (table == null) {
+                continue;
+            }
 
-            craftingContents.forEach(
-                    serializedItem -> items.add(serializedItem == null ? null : ItemStack.deserialize(serializedItem)));
-            savedTables.put(loc, items.toArray(new ItemStack[items.size()]));
+            Location location = table.getLocation("location");
+            if (location == null) {
+                continue;
+            }
+
+            ItemStack[] contents = new ItemStack[table.getInt("size")];
+            ConfigurationSection items = table.getConfigurationSection("contents");
+            if (items != null) {
+                for (String slot : items.getKeys(false)) {
+                    contents[Integer.parseInt(slot)] = items.getItemStack(slot);
+                }
+            }
+
+            loaded.put(location, contents);
         }
 
-        manager.setMap(savedTables);
-        return manager;
+        this.inventories = loaded;
     }
 }
