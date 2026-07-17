@@ -36,6 +36,16 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
 
+        restackHand(inventory, item, hand);
+    }
+
+    /**
+     * When the placed stack was the last of its kind in the given hand, refill that
+     * hand from another matching stack elsewhere in the inventory and empty that
+     * stack. Package-private and static so the inventory manipulation is unit-testable
+     * without a BlockPlaceEvent.
+     */
+    static void restackHand(PlayerInventory inventory, ItemStack placed, EquipmentSlot hand) {
         ItemStack[] contents = inventory.getContents();
         if (contents == null || contents.length == 0) {
             return;
@@ -46,11 +56,11 @@ public class Main extends JavaPlugin implements Listener {
                 continue;
             }
 
-            if (stack.equals(item)) {
+            if (stack.equals(placed)) {
                 continue;
             }
 
-            if (stack.getType() != item.getType()) {
+            if (stack.getType() != placed.getType()) {
                 continue;
             }
 

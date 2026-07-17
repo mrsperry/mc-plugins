@@ -55,14 +55,23 @@ public class SlimyBoots extends Module {
                 return;
             }
 
-            float fallDist = player.getFallDistance();
-            float fallDistModified = (-.0011f * fallDist * fallDist) + (0.43529f * fallDist);
-            double velY = Math.sqrt(0.32 * fallDistModified);
+            double velY = launchVelocity(player.getFallDistance());
 
             player.setVelocity(new Vector(dir.getX(), velY, dir.getZ()));
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_SLIME_BLOCK_FALL, 2, 1);
             event.setCancelled(true);
         }
+    }
+
+    /**
+     * Upward launch velocity for a slime-boots fall, from the tuned parabola. Package-
+     * private and static so it is unit-testable without a live player. Note the
+     * parabola turns negative past a fall distance of roughly 396 blocks, so the sqrt
+     * yields NaN there — a pre-existing edge this extraction makes visible.
+     */
+    static double launchVelocity(float fallDistance) {
+        float modified = (-.0011f * fallDistance * fallDistance) + (0.43529f * fallDistance);
+        return Math.sqrt(0.32 * modified);
     }
 
     private void initRecipes() {

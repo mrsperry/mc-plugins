@@ -52,23 +52,34 @@ public class CobbleGenerator extends Module {
     }
 
     protected Material generateNewBlock() {
-        if (this.materials.size() == 0) {
+        if (this.materials.isEmpty()) {
             return Material.COBBLESTONE;
         }
 
+        // keySet() and values() of the same map iterate in matching order, so the two
+        // lists stay aligned index-for-index.
+        List<Material> validMaterials = new ArrayList<>(this.materials.keySet());
         List<Double> weights = new ArrayList<>(this.materials.values());
         double total = weights.stream().mapToDouble(Double::doubleValue).sum();
+        double roll = this.getPlugin().getRandom().nextDouble() * total;
 
-        double chance = this.getPlugin().getRandom().nextDouble() * total;
-        List<Material> validMaterials = new ArrayList<>(this.materials.keySet());
+        return pick(validMaterials, weights, roll);
+    }
 
-        for (int index = 0; index < validMaterials.size(); index++) {
-            if (chance < weights.get(index)) {
-                return validMaterials.get(index);
+    /**
+     * Weighted pick: walks the weight buckets subtracting as it goes and returns the
+     * material whose bucket {@code roll} lands in. {@code roll} is expected in
+     * [0, sum(weights)); a value at or past the end falls through to the last entry.
+     * Package-private and static so the selection is unit-testable without a live RNG.
+     */
+    static Material pick(List<Material> materials, List<Double> weights, double roll) {
+        for (int index = 0; index < materials.size(); index++) {
+            if (roll < weights.get(index)) {
+                return materials.get(index);
             }
-            chance -= weights.get(index);
+            roll -= weights.get(index);
         }
 
-        return validMaterials.get(validMaterials.size() - 1);
+        return materials.get(materials.size() - 1);
     }
 }

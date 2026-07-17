@@ -89,8 +89,7 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
 
-        int range = values.maxYield() - values.minYield();
-        int mobsToSpawn = values.minYield() + (range > 0 ? this.random.nextInt(range) : 0);
+        int mobsToSpawn = rollYield(values, this.random);
 
         for (int amount = 0; amount < mobsToSpawn; amount++) {
             Entity entity = mob.getWorld().spawnEntity(mob.getLocation(), type);
@@ -100,6 +99,17 @@ public class Main extends JavaPlugin implements Listener {
                     (this.random.nextDouble() * 2) - 1));
         }
 
+    }
+
+    /**
+     * How many mobs a compressed mob bursts into: minYield plus a random amount
+     * across the min/max spread. Package-private and static so it is testable with a
+     * seeded Random. Note maxYield is exclusive here (nextInt is exclusive of its
+     * bound), so the configured maximum is never actually reached.
+     */
+    static int rollYield(Settings settings, Random random) {
+        int range = settings.maxYield() - settings.minYield();
+        return settings.minYield() + (range > 0 ? random.nextInt(range) : 0);
     }
 
     @EventHandler

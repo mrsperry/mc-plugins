@@ -61,7 +61,7 @@ public class BreedingUtils {
      */
     public static boolean checkBreedingMaterial(EntityType type, Material material) {
         ArrayList<Material> materials = BreedingUtils.getBreedingMaterials().getOrDefault(type, null);
-        if (material != null) {
+        if (materials != null && material != null) {
             return materials.contains(material);
         }
 
@@ -135,7 +135,7 @@ public class BreedingUtils {
      */
     public static boolean checkConsumableMaterial(EntityType type, Material material) {
         ArrayList<Material> materials = BreedingUtils.getConsumableMaterials().getOrDefault(type, null);
-        if (material != null) {
+        if (materials != null && material != null) {
             return materials.contains(material);
         }
 

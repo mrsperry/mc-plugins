@@ -49,13 +49,10 @@ public class Main extends JavaPlugin implements Listener {
         Entity hit = event.getHitEntity();
         if (entity instanceof Egg) {
             if (hit != null) {
-                ItemStack item = null;
-                try {
-                    item = new ItemStack(Material.valueOf(hit.getType().toString() + "_SPAWN_EGG"));
-                } catch (IllegalArgumentException ignored) { /* Mob does not have a spawn egg */ }
+                Material eggMaterial = spawnEggMaterial(hit.getType());
 
-                if (item != null && !this.blacklist.contains(hit.getType())) {
-                    hit.getWorld().dropItemNaturally(hit.getLocation().add(0, 1, 0), item);
+                if (eggMaterial != null && !this.blacklist.contains(hit.getType())) {
+                    hit.getWorld().dropItemNaturally(hit.getLocation().add(0, 1, 0), new ItemStack(eggMaterial));
                     hit.getWorld().playSound(hit.getLocation(), Sound.ENTITY_CHICKEN_EGG, 1, 0);
                     hit.remove();
                 } else {
@@ -64,6 +61,18 @@ public class Main extends JavaPlugin implements Listener {
             } else {
                 this.spawnChicken(entity.getLocation());
             }
+        }
+    }
+
+    /**
+     * The spawn-egg material for an entity type, or null if it has none. Package-
+     * private and static so the derivation is unit-testable.
+     */
+    static Material spawnEggMaterial(EntityType type) {
+        try {
+            return Material.valueOf(type.toString() + "_SPAWN_EGG");
+        } catch (IllegalArgumentException ex) {
+            return null;
         }
     }
 
