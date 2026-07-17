@@ -24,7 +24,33 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 
-public class Module implements Listener {
+/**
+ * Base class for every pocket-plugins module.
+ *
+ * <p>
+ * Modules are discovered by scanning the jar at runtime rather than from a
+ * registry, which imposes conventions the compiler cannot enforce:
+ *
+ * <ul>
+ * <li>The class name must match its package name, case-insensitively:
+ * {@code CropTweaks} must live in package {@code croptweaks}, or it is not
+ * picked up as a module at all.
+ * <li>It must declare a
+ * {@code (ConfigurationSection readable, ConfigurationSection writable)}
+ * constructor.
+ * <li>Its readable config is the lowercased class name's section of
+ * {@code config.yml}; its writable config is
+ * {@code configs/<lowercased class name>.yml}.
+ * </ul>
+ *
+ * <p>
+ * Subclasses must not name an event handler the same as one declared here.
+ * Bukkit collects handlers by reflection, so a matching name silently replaces
+ * the base handler rather than adding to it. Base handlers are {@code final} to
+ * turn that into a compile error; note they cannot be made {@code private}
+ * instead, as Bukkit would then stop finding them on subclass instances.
+ */
+public abstract class Module implements Listener {
     private final String name;
 
     private PocketPlugins plugin;
@@ -117,7 +143,7 @@ public class Module implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public final void discoverRecipesOnJoin(PlayerJoinEvent event) {
         for (NamespacedKey key : this.craftingKeys) {
             if (!event.getPlayer().hasDiscoveredRecipe(key)) {
                 event.getPlayer().discoverRecipe(key);
