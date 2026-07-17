@@ -89,16 +89,6 @@ public abstract class Module implements Listener {
         this.saveConfig();
     }
 
-    public final void enableModule() {
-        this.enabled = true;
-        this.onEnable();
-    }
-
-    public final void disableModule() {
-        this.enabled = false;
-        this.onDisable();
-    }
-
     public final void registerCommand(Supplier<LiteralArgumentBuilder<CommandSourceStack>> commandSupplier) {
         this.registerCommand(commandSupplier.get().build());
     }
