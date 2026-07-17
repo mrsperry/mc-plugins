@@ -41,10 +41,7 @@ public class DebuggerDisplay {
             DebuggerDisplay.displays.put(entity, display);
         } else {
             if (concat) {
-                Component component = display.text();
-                component.append(Component.text(text));
-
-                display.text(component);
+                display.text(display.text().append(Component.text(text)));
             } else {
                 display.text(Component.text(text));
             }

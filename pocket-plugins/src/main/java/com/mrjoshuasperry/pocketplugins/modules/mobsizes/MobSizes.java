@@ -56,6 +56,6 @@ public class MobSizes extends Module {
     double scale = minSize + (maxHealth - this.minMountHealth) * (this.maxSize - this.minSize)
         / (this.maxMountHealth - this.minMountHealth);
 
-    entity.getAttribute(Attribute.SCALE).setBaseValue(scale);
+    entity.getAttribute(Attribute.SCALE).setBaseValue(Math.max(this.minSize, Math.min(this.maxSize, scale)));
   }
 }
