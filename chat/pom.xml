@@ -24,6 +24,12 @@
         </dependency>
     </dependencies>
 
+    <properties>
+        <!-- Relocate bundled mc-utils under this plugin's own package; see the shade
+             config in the parent pom. -->
+        <mcutils.shadedPattern>com.mrjoshuasperry.chat.mcutils</mcutils.shadedPattern>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
