@@ -9,7 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Mob;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.destroystokyo.paper.entity.Pathfinder;
 import com.destroystokyo.paper.entity.Pathfinder.PathResult;
@@ -19,13 +19,9 @@ import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
 public class PathfinderUtil {
   private JavaPlugin plugin;
-  private BukkitScheduler scheduler;
-  private int taskId;
 
   public PathfinderUtil() {
     this.plugin = PocketPlugins.getInstance();
-    this.scheduler = plugin.getServer().getScheduler();
-    this.taskId = -1;
   }
 
   protected void runPathingChecks(Mob mob, Location target, Consumer<Boolean> onPathComplete) {
@@ -94,22 +90,28 @@ public class PathfinderUtil {
 
     pathfinder.moveTo(target, speed);
 
-    Consumer<Boolean> onPathComplete = (Boolean reachedTarget) -> {
-      this.scheduler.cancelTask(this.taskId);
-      pathfinder.stopPathfinding();
+    // Each path cancels its own task rather than one shared by the instance, so
+    // running two paths from a single PathfinderUtil - as pathToMultiple does -
+    // cannot leave the earlier timer running forever
+    new BukkitRunnable() {
+      private final Consumer<Boolean> onPathComplete = (Boolean reachedTarget) -> {
+        this.cancel();
+        pathfinder.stopPathfinding();
 
-      if (callback != null) {
-        callback.accept(reachedTarget);
+        if (callback != null) {
+          callback.accept(reachedTarget);
+        }
+      };
+
+      @Override
+      public void run() {
+        PathfinderUtil.this.runPathingChecks(mob, target, this.onPathComplete);
+
+        if (additionalChecks != null) {
+          additionalChecks.accept(this.onPathComplete);
+        }
       }
-    };
-
-    this.taskId = this.scheduler.runTaskTimer(this.plugin, () -> {
-      this.runPathingChecks(mob, target, onPathComplete);
-
-      if (additionalChecks != null) {
-        additionalChecks.accept(onPathComplete);
-      }
-    }, 0, 1).getTaskId();
+    }.runTaskTimer(this.plugin, 0, 1);
   }
 
   public void pathToMultiple(Mob mob, double speed, List<Pair<Location, Function<Boolean, Boolean>>> targets,
