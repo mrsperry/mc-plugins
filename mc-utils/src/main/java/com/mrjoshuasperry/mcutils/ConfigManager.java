@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.logging.Level;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -102,8 +103,7 @@ public class ConfigManager {
                 // Load the config from the read lines
                 config.loadFromString(builder.toString().trim());
             } catch (NullPointerException | IOException | InvalidConfigurationException ex) {
-                this.plugin.getLogger().severe("An error occurred while loading config '" + name + "'");
-                ex.printStackTrace();
+                this.plugin.getLogger().log(Level.SEVERE, "An error occurred while loading config '" + name + "'", ex);
             }
 
             // Add the config (removing the file extension from its name)
@@ -147,8 +147,7 @@ public class ConfigManager {
             reader.close();
             writer.close();
         } catch (IOException ex) {
-            this.plugin.getLogger().severe("An error occurred while saving config '" + name + ".yml'");
-            ex.printStackTrace();
+            this.plugin.getLogger().log(Level.SEVERE, "An error occurred while saving config '" + name + ".yml'", ex);
         }
     }
 

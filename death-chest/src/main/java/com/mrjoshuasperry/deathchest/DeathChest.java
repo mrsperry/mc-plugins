@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -83,13 +84,13 @@ public class DeathChest {
             byte[] byteArray = outputStream.toByteArray();
             container.set(plugin.getDeathChestItemsKey(), PersistentDataType.BYTE_ARRAY, byteArray);
         } catch (IOException e) {
-            e.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "Failed to save death chest contents", e);
         } finally {
             if (outputStream != null) {
                 try {
                     outputStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    plugin.getLogger().log(Level.WARNING, "Failed to close death chest output stream", e);
                 }
             }
         }
@@ -165,12 +166,12 @@ public class DeathChest {
         } catch (EOFException ex) {
             // Do nothing
         } catch (ClassNotFoundException | IOException ex) {
-            ex.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "Failed to load death chest contents", ex);
         } finally {
             try {
                 inputStream.close();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                plugin.getLogger().log(Level.WARNING, "Failed to close death chest input stream", ex);
             }
         }
 
