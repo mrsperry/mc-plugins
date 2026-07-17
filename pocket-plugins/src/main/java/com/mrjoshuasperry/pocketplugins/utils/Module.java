@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -138,8 +139,7 @@ public abstract class Module implements Listener {
         try {
             config.save(this.plugin.getDataFolder() + "/configs/" + this.name.toLowerCase() + ".yml");
         } catch (Exception ex) {
-            this.plugin.getLogger().severe("Could not save " + this.name + " configuration!");
-            ex.printStackTrace();
+            this.plugin.getLogger().log(Level.SEVERE, "Could not save " + this.name + " configuration!", ex);
         }
     }
 

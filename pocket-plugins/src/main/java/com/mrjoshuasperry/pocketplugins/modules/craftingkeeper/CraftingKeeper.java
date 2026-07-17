@@ -63,8 +63,7 @@ public class CraftingKeeper extends Module {
                     .loadConfiguration(new File(this.getPlugin().getDataFolder(), "crafting_tables.yml"));
             config.get("tables");
         } catch (Exception e) {
-            this.getPlugin().getLogger().warning("Error loading crafting tables!");
-            e.printStackTrace();
+            this.getPlugin().getLogger().log(Level.WARNING, "Error loading crafting tables!", e);
         }
     }
 

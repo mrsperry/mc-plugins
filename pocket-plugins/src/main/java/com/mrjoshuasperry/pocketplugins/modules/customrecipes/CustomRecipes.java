@@ -2,6 +2,7 @@ package com.mrjoshuasperry.pocketplugins.modules.customrecipes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Material;
@@ -53,8 +54,7 @@ public class CustomRecipes extends Module {
 
         this.registerCraftingRecipe(recipe);
       } catch (Exception ex) {
-        logger.severe("Error parsing recipe '" + recipeName + "': " + ex.getMessage());
-        ex.printStackTrace();
+        logger.log(Level.SEVERE, "Error parsing recipe '" + recipeName + "'", ex);
       }
     }
   }
