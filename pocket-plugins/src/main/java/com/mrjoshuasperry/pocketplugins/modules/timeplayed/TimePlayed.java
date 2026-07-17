@@ -21,21 +21,22 @@ import net.kyori.adventure.text.format.NamedTextColor;
 /** @author mrsperry */
 public class TimePlayed extends Module implements BasicCommand {
   protected Map<UUID, Long> timePlayed;
+  protected int saveInterval;
 
   public TimePlayed(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
     super(readableConfig, writableConfig);
     this.timePlayed = new HashMap<>();
+    this.saveInterval = readableConfig.getInt("save-interval", 300) * 20;
 
+    // Absent until the first player is recorded, so this is the normal fresh-install state
     ConfigurationSection savedPlayers = writableConfig.getConfigurationSection("players");
-    if (savedPlayers == null) {
-      return;
-    }
+    if (savedPlayers != null) {
+      for (String key : savedPlayers.getKeys(false)) {
+        UUID uuid = UUID.fromString(key);
+        long time = writableConfig.getLong("players." + key + ".time", 0);
 
-    for (String key : savedPlayers.getKeys(false)) {
-      UUID uuid = UUID.fromString(key);
-      long time = writableConfig.getLong("players." + key + ".time", 0);
-
-      this.timePlayed.put(uuid, time);
+        this.timePlayed.put(uuid, time);
+      }
     }
 
     this.registerBasicCommand("timeplayed", this);
@@ -130,8 +131,10 @@ public class TimePlayed extends Module implements BasicCommand {
         config.set(basePath + ".name", player.getName());
         config.set(basePath + ".time", secondsPlayed);
       }
-
-      this.saveConfig();
     }, 0, 20);
+
+    // The config above is updated in memory every second, so only the disk write is
+    // batched here; a hard crash loses at most save-interval seconds of play time
+    Bukkit.getScheduler().runTaskTimer(this.getPlugin(), this::saveConfig, this.saveInterval, this.saveInterval);
   }
 }
