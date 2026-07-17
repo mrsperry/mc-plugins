@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -32,8 +33,7 @@ public class PocketPlugins extends JavaPlugin {
             try {
                 module.onDisable();
             } catch (Exception ex) {
-                this.getLogger().severe("Failed to disable module: " + ex.getMessage());
-                ex.printStackTrace();
+                this.getLogger().log(Level.SEVERE, "Failed to disable module", ex);
             }
         }
     }
@@ -108,14 +108,12 @@ public class PocketPlugins extends JavaPlugin {
                         moduleInstance.onEnable();
                         modules.add(moduleInstance);
                     } catch (Exception ex) {
-                        this.getLogger().severe("Failed to load module: " + ex.getMessage());
-                        ex.printStackTrace();
+                        this.getLogger().log(Level.SEVERE, "Failed to load module", ex);
                     }
                 }
             }
         } catch (Exception ex) {
-            this.getLogger().severe("Failed to load module: " + ex.getMessage());
-            ex.printStackTrace();
+            this.getLogger().log(Level.SEVERE, "Failed to load module", ex);
         }
 
         return modules;
