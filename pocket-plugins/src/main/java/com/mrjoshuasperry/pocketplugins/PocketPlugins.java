@@ -106,6 +106,9 @@ public class PocketPlugins extends JavaPlugin {
                                 .getDeclaredConstructor(ConfigurationSection.class, ConfigurationSection.class)
                                 .newInstance(readableSection,
                                         writableSection);
+                        // Registers the module's events, so it has to wait until the subclass
+                        // constructor above has finished assigning its fields
+                        moduleInstance.onEnable();
                         modules.add(moduleInstance);
                     } catch (Exception ex) {
                         this.getLogger().severe("Failed to load module: " + ex.getMessage());

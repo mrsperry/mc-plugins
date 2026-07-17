@@ -60,6 +60,12 @@ public abstract class Module implements Listener {
     private ConfigurationSection writableConfig;
     private boolean enabled;
 
+    /**
+     * Must not register events or otherwise hand out {@code this}: subclasses
+     * assign their own fields only after this returns, so anything reaching the
+     * module before then sees them unset. The loader calls {@link #onEnable()}
+     * once construction is complete.
+     */
     public Module(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
         this.name = this.getClass().getSimpleName();
 
@@ -69,12 +75,6 @@ public abstract class Module implements Listener {
         this.readableConfig = readableConfig;
         this.writableConfig = writableConfig;
         this.enabled = readableConfig.getBoolean("enabled", true);
-
-        if (this.enabled) {
-            this.onEnable();
-        } else {
-            this.onDisable();
-        }
     }
 
     public void onEnable() {
