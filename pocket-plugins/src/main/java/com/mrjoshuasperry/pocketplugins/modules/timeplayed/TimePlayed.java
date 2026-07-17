@@ -10,16 +10,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import com.mojang.brigadier.Command;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
-import io.papermc.paper.command.brigadier.BasicCommand;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 /** @author mrsperry */
-public class TimePlayed extends Module implements BasicCommand {
+public class TimePlayed extends Module {
   protected Map<UUID, Long> timePlayed;
   protected int saveInterval;
 
@@ -39,21 +39,19 @@ public class TimePlayed extends Module implements BasicCommand {
       }
     }
 
-    this.registerBasicCommand("timeplayed", this);
+    this.registerCommand(() -> Commands.literal("timeplayed")
+        .executes(context -> {
+          this.sendTimeReport(context.getSource().getSender());
+          return Command.SINGLE_SUCCESS;
+        }));
     this.startTimer();
   }
 
-  @Override
-  public void execute(CommandSourceStack commandSourceStack, String[] args) {
-    CommandSender sender = commandSourceStack.getSender();
-
+  // Brigadier rejects anything after the literal itself, so only the sender needs
+  // checking here
+  protected void sendTimeReport(CommandSender sender) {
     if (!(sender instanceof Player)) {
       sender.sendMessage(Component.text("You must be a player to use this command", NamedTextColor.RED));
-      return;
-    }
-
-    if (args.length != 0) {
-      sender.sendMessage(Component.text("Usage: /timeplayed", NamedTextColor.RED));
       return;
     }
 
