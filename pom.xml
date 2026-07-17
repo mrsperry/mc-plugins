@@ -25,8 +25,11 @@
             </dependency>
             <dependency>
                 <groupId>com.mrjoshuasperry</groupId>
+                <!-- Keep in step with mc-utils/pom.xml's own version. A range here
+                     resolves against whatever is already in the local repo rather
+                     than the version built alongside these plugins. -->
                 <artifactId>mc-utils</artifactId>
-                <version>[1.0.0,)</version>
+                <version>1.0.30</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -103,6 +106,21 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.6.0</version>
+                <configuration>
+                    <!-- Relocate the bundled mc-utils into a package unique to each
+                         plugin. Without this, two plugin jars on one server carry the
+                         same mc-utils classes and whichever the shared classloader
+                         resolves first wins for both. Each consuming plugin overrides
+                         mcutils.shadedPattern; the default identity mapping is a no-op,
+                         which is what mc-utils itself and the plugins that don't bundle
+                         it need. -->
+                    <relocations>
+                        <relocation>
+                            <pattern>com.mrjoshuasperry.mcutils</pattern>
+                            <shadedPattern>${mcutils.shadedPattern}</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -143,5 +161,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <!-- Identity by default so mc-utils and non-consuming plugins are untouched.
+             Plugins that bundle mc-utils override this to their own base package. -->
+        <mcutils.shadedPattern>com.mrjoshuasperry.mcutils</mcutils.shadedPattern>
     </properties>
 </project>
