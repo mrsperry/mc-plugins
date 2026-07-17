@@ -51,6 +51,10 @@ public class IgneousGenerator extends Module {
     }
 
     private boolean isWet(Block block) {
-        return block.getType() == Material.WATER || (block.getBlockData() instanceof Waterlogged);
+        if (block.getType() == Material.WATER) {
+            return true;
+        }
+
+        return block.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged();
     }
 }
