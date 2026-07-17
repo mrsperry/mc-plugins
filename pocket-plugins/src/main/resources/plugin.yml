@@ -7,9 +7,6 @@ authors:
   - TimPCunningham
 api-version: "1.21"
 commands:
-  markers:
-    description: Manage your map markers
-    usage: /markers <add | list>
   biomebombs:
     description: Lists all available biome bombs and their crafting ingredients
     usage: /biomebombs
