@@ -18,7 +18,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 
-import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent;
@@ -105,12 +104,6 @@ public abstract class Module implements Listener {
     public final void registerCommand(LiteralCommandNode<CommandSourceStack> command) {
         this.plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
                 (ReloadableRegistrarEvent<Commands> event) -> event.registrar().register(command));
-    }
-
-    // TODO: remove in favor of non-basic commands
-    public final void registerBasicCommand(String command, BasicCommand commandClass) {
-        this.plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
-                (ReloadableRegistrarEvent<Commands> event) -> event.registrar().register(command, commandClass));
     }
 
     public final void saveConfig() {
