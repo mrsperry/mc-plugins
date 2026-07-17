@@ -14,6 +14,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 public class MacrosCommand {
+  private static final String OP_PERMISSION = "pocketplugins.macros.op";
+
   private final Map<String, MacroData> macros;
 
   public MacrosCommand(Map<String, MacroData> macros) {
@@ -63,7 +65,7 @@ public class MacrosCommand {
       return;
     }
 
-    if (macro.isOpOnly() && !player.isOp()) {
+    if (macro.isOpOnly() && !canUseOpMacros(player)) {
       player.sendMessage(Component.text("You don't have permission to use this macro!").color(NamedTextColor.RED));
       return;
     }
@@ -94,8 +96,8 @@ public class MacrosCommand {
     return builder.buildFuture();
   }
 
-  // The console is not a Player but should still see everything
+  // The console is not a Player but holds every permission, so it still sees everything
   private boolean canUseOpMacros(CommandSender sender) {
-    return !(sender instanceof Player) || ((Player) sender).isOp();
+    return sender.hasPermission(OP_PERMISSION);
   }
 }
