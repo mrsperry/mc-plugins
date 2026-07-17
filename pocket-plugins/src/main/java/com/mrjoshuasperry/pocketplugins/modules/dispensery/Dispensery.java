@@ -67,7 +67,7 @@ public class Dispensery extends Module {
     this.runDispenserOperation(block, oldType, (ItemStack item) -> new ItemStack(newType, item.getAmount()));
   }
 
-  protected Sound getFillSoundForBucket(Material bucketType) {
+  protected static Sound getFillSoundForBucket(Material bucketType) {
     return switch (bucketType) {
       case WATER_BUCKET -> Sound.ITEM_BUCKET_FILL;
       case LAVA_BUCKET -> Sound.ITEM_BUCKET_FILL_LAVA;
@@ -76,7 +76,7 @@ public class Dispensery extends Module {
     };
   }
 
-  protected Sound getEmptySoundForBucket(Material cauldronType) {
+  protected static Sound getEmptySoundForBucket(Material cauldronType) {
     return switch (cauldronType) {
       case WATER_CAULDRON -> Sound.ITEM_BUCKET_EMPTY;
       case LAVA_CAULDRON -> Sound.ITEM_BUCKET_EMPTY_LAVA;
@@ -85,7 +85,7 @@ public class Dispensery extends Module {
     };
   }
 
-  protected Material getCauldronTypeForBucket(Material bucketType) {
+  protected static Material getCauldronTypeForBucket(Material bucketType) {
     return switch (bucketType) {
       case WATER_BUCKET -> Material.WATER_CAULDRON;
       case LAVA_BUCKET -> Material.LAVA_CAULDRON;
@@ -94,7 +94,7 @@ public class Dispensery extends Module {
     };
   }
 
-  protected Material getBucketTypeForCauldron(Material cauldronType) {
+  protected static Material getBucketTypeForCauldron(Material cauldronType) {
     return switch (cauldronType) {
       case WATER_CAULDRON -> Material.WATER_BUCKET;
       case LAVA_CAULDRON -> Material.LAVA_BUCKET;
@@ -150,8 +150,8 @@ public class Dispensery extends Module {
 
     switch (itemType) {
       case WATER_BUCKET, LAVA_BUCKET, POWDER_SNOW_BUCKET -> {
-        relative.getWorld().playSound(relative.getLocation(), this.getFillSoundForBucket(itemType), 1, 1);
-        relative.setType(this.getCauldronTypeForBucket(itemType));
+        relative.getWorld().playSound(relative.getLocation(), getFillSoundForBucket(itemType), 1, 1);
+        relative.setType(getCauldronTypeForBucket(itemType));
 
         BlockData data = relative.getBlockData();
         if (data instanceof Levelled levelled) {
@@ -164,11 +164,11 @@ public class Dispensery extends Module {
       }
       case BUCKET -> {
         if (this.isFilledCauldron(relative)) {
-          relative.getWorld().playSound(relative.getLocation(), this.getEmptySoundForBucket(relative.getType()), 1, 1);
+          relative.getWorld().playSound(relative.getLocation(), getEmptySoundForBucket(relative.getType()), 1, 1);
           relative.setType(Material.CAULDRON);
 
           event.setCancelled(true);
-          this.updateItemInDispenser(block, itemType, this.getBucketTypeForCauldron(relativeType));
+          this.updateItemInDispenser(block, itemType, getBucketTypeForCauldron(relativeType));
         }
       }
       default -> {

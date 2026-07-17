@@ -50,7 +50,9 @@ public class ToolTypes {
             Material.NETHERITE_HOE);
 
     public static List<Material> getAllToolTypes() {
-        List<Material> types = ToolTypes.woodTypes;
+        // Copy first — addAll onto the `woodTypes` reference would mutate the shared
+        // static list, growing it on every call and corrupting getWoodTypes().
+        List<Material> types = Lists.newArrayList(ToolTypes.woodTypes);
         types.addAll(ToolTypes.stoneTypes);
         types.addAll(ToolTypes.ironTypes);
         types.addAll(ToolTypes.goldTypes);

@@ -25,8 +25,12 @@ mvn -P creative compile     # chat + mc-utils
 
 `mvn install -P <profile>` additionally copies the jars into `_dist/` and `_server/plugins/`.
 
-There are no tests and no test framework wired up, so changes are compile-verified only. Anything
-behavioral needs an in-game check on the dev server — say so rather than implying it's verified.
+Tests are JUnit 5 + MockBukkit, run with `mvn -P all test` — the `all` profile aggregates every
+module (including the standalone plugins that no other profile reaches) into one reactor. MockBukkit
+is pinned to `mockbukkit-v1.21:4.45.0`, the last release built against Paper 1.21.4; bump it in
+lockstep with the paper-api upgrade, not before. Coverage is unit tests over pure logic and
+config/serialization round-trips — behavioral/gameplay changes still need an in-game check on the
+dev server, so say so rather than implying it's verified.
 
 ## Version posture
 

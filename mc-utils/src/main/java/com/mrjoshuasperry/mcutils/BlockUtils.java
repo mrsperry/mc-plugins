@@ -133,8 +133,10 @@ public class BlockUtils {
     return this.blockColors;
   }
 
-  // Convert RGB to HSB (returns [hue, saturation, brightness])
-  public double[] rgbToHsb(Color color) {
+  // Convert RGB to HSB (returns [hue, saturation, brightness]).
+  // Static because it uses no instance state — lets callers and tests convert a
+  // colour without building the (server-dependent) singleton.
+  public static double[] rgbToHsb(Color color) {
     double r = color.getRed() / 255.0;
     double g = color.getGreen() / 255.0;
     double b = color.getBlue() / 255.0;

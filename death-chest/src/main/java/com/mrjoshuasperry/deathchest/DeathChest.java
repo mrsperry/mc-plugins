@@ -27,23 +27,24 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class DeathChest {
-    private static int getItemIndexForwardOffset(int index) {
+    static int getItemIndexForwardOffset(int index) {
         int adjustedIndex = index;
         // This shifts the hotbar items down 3 rows, to allow for a more natural look
         if (index < 9) {
             adjustedIndex += 27;
         }
 
-        // Maintain position of armor and offhand items, while shifting all other items
-        // up one row
-        if (index > 9 && index < 36) {
+        // Shift the main-inventory rows (9-35) up one row. This must include slot 9:
+        // with `> 9` it was skipped, so slots 9 and 18 both mapped to display slot 9
+        // and collided in the storage map, silently dropping one item.
+        if (index >= 9 && index < 36) {
             adjustedIndex -= 9;
         }
 
         return adjustedIndex;
     }
 
-    private static int getItemIndexBackwardOffset(int index) {
+    static int getItemIndexBackwardOffset(int index) {
         int adjustedIndex = index;
         // This shifts the hotbar items back to their original position
         if (index < 27) {

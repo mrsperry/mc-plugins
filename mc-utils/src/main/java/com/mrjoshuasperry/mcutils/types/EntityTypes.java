@@ -34,7 +34,9 @@ public class EntityTypes {
             EntityType.TROPICAL_FISH, EntityType.TURTLE, EntityType.WANDERING_TRADER);
 
     public static ArrayList<EntityType> getAllTypes() {
-        ArrayList<EntityType> types = hostile;
+        // Copy first — addAll onto the `hostile` reference would mutate the shared
+        // static list, growing it on every call and corrupting getHostileTypes().
+        ArrayList<EntityType> types = Lists.newArrayList(hostile);
         types.addAll(neutral);
         return types;
     }

@@ -64,11 +64,18 @@ public class DisplayNameConfig {
     }
 
     public void saveToConfig(ConfigurationSection config) {
-        config.set("name-colors", this.nameColors);
+        // Serialize colours as hex strings so loadFromConfig (which reads string
+        // lists) can round-trip them; writing raw TextColor objects here meant a
+        // save/load cycle silently dropped every colour.
+        config.set("name-colors", colorsToHex(this.nameColors));
         config.set("prefix", this.prefix);
-        config.set("prefix-colors", this.prefixColors);
+        config.set("prefix-colors", colorsToHex(this.prefixColors));
         config.set("suffix", this.suffix);
-        config.set("suffix-colors", this.suffixColors);
+        config.set("suffix-colors", colorsToHex(this.suffixColors));
+    }
+
+    private static List<String> colorsToHex(List<TextColor> colors) {
+        return colors.stream().map(TextColor::asHexString).toList();
     }
 
     public List<TextColor> getNameColors() {

@@ -31,10 +31,41 @@
                 <artifactId>mc-utils</artifactId>
                 <version>1.0.30</version>
             </dependency>
+            <!-- Test-only. JUnit 5 via its BOM so the jupiter/platform artifacts stay
+                 in lockstep; modules declare junit-jupiter without a version. -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Pinned to the last MockBukkit that targets Paper 1.21.4 exactly, so its
+                 transitive paper-api matches our provided one — no version skew on the
+                 test classpath. Bump this in lockstep with the paper-api upgrade, not
+                 before. -->
+            <dependency>
+                <groupId>org.mockbukkit.mockbukkit</groupId>
+                <artifactId>mockbukkit-v1.21</artifactId>
+                <version>${mockbukkit.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Version-only management; the default lifecycle already binds
+                     surefire to the test phase. The Maven-bundled default is too old
+                     to run the JUnit 5 platform, so pin a 3.x. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -155,6 +186,23 @@
                 <module>mc-utils</module>
             </modules>
         </profile>
+        <!-- Not a server flavor: every buildable module in one reactor so a single
+             `mvn -P all test` runs the whole test suite. The standalone plugins aren't
+             in any other profile, so this is the only way to reach them from the root.
+             Maven reorders by the dependency graph, so mc-utils still builds first. -->
+        <profile>
+            <id>all</id>
+            <modules>
+                <module>mc-utils</module>
+                <module>chat</module>
+                <module>pocket-plugins</module>
+                <module>death-chest</module>
+                <module>level-up</module>
+                <module>mob-eggs</module>
+                <module>auto-stack</module>
+                <module>compressed-mobs</module>
+            </modules>
+        </profile>
     </profiles>
 
     <properties>
@@ -164,5 +212,9 @@
         <!-- Identity by default so mc-utils and non-consuming plugins are untouched.
              Plugins that bundle mc-utils override this to their own base package. -->
         <mcutils.shadedPattern>com.mrjoshuasperry.mcutils</mcutils.shadedPattern>
+        <!-- Test toolchain. See the managed test dependencies for the version posture. -->
+        <junit.version>5.11.4</junit.version>
+        <mockbukkit.version>4.45.0</mockbukkit.version>
+        <maven.surefire.version>3.5.2</maven.surefire.version>
     </properties>
 </project>

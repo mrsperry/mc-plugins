@@ -50,13 +50,20 @@ public class MobSizes extends Module {
       return;
     }
 
-    double maxHealth = healthAttribute.getBaseValue();
-    // Calculate the scale based on the mount's max health, clamped to the min and
-    // max sizes
-    double scale = minSize + (maxHealth - this.minMountHealth) * (this.maxSize - this.minSize)
-        / (this.maxMountHealth - this.minMountHealth);
+    double scale = healthToScale(healthAttribute.getBaseValue(),
+        this.minSize, this.maxSize, this.minMountHealth, this.maxMountHealth);
+    this.setScale(entity, scale);
+  }
 
-    this.setScale(entity, Math.max(this.minSize, Math.min(this.maxSize, scale)));
+  /**
+   * Linearly maps a mount's max health onto the [minSize, maxSize] range and clamps
+   * to it. Package-private and static so the interpolation + clamp is unit-testable
+   * without a live entity/attribute.
+   */
+  static double healthToScale(double maxHealth, double minSize, double maxSize, int minMountHealth,
+      int maxMountHealth) {
+    double scale = minSize + (maxHealth - minMountHealth) * (maxSize - minSize) / (maxMountHealth - minMountHealth);
+    return Math.max(minSize, Math.min(maxSize, scale));
   }
 
   private void setScale(LivingEntity entity, double scale) {

@@ -45,7 +45,9 @@ public class CropTypes {
     };
 
     public static List<Material> getAllTypes() {
-        List<Material> types = CropTypes.harvestable;
+        // Copy first — addAll onto the `harvestable` reference would mutate the shared
+        // static list, growing it on every call and corrupting getHarvestableTypes().
+        List<Material> types = Lists.newArrayList(CropTypes.harvestable);
         types.addAll(CropTypes.breakable);
         types.addAll(CropTypes.clickable);
         types.addAll(CropTypes.seeds);
