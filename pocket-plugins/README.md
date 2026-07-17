@@ -1,139 +1,63 @@
-# Mini Additions
+# Pocket Plugins
 
-A small collection of additions made to enhance the survival Minecraft experience.
+A collection of small changes and additions to enhance vanilla gameplay, built as 25 independent
+modules behind an internal module system.
 
-## Additions
+Every module can be turned off on its own — see [Configuration](#configuration). To add one, see
+[Contributing](Contributing.md).
 
-Each addition comes with its own configuration file and can be turned on or off independently of other additions. Any related configuration options will be available in this file.
+## Modules
 
-### Armor stands
+| Module | Behavior |
+|---|---|
+| ArmorStandPoser | Sneak + right-click an armor stand: a stick adds arms, sugar makes it small |
+| ArmorSwapper | Sneak + right-click an armor stand to swap all four armor pieces with it |
+| AutoBreeding | Animals pathfind toward nearby dropped breeding items and enter love mode |
+| BedrockBreaker | Sneak + right-click a powered beacon with a netherite ingot to destroy the bedrock column above it |
+| BeePlanter | Bees pick up dropped seeds and plant them on free farmland |
+| BiomeBombs | Craftable bombs (egg + 8× catalyst) thrown to convert the surrounding biome |
+| CobbleGenerator | Replaces vanilla lava + water cobble with a weighted roll over configurable materials |
+| CommandMacros | Config-defined command macros, op-gated |
+| ConcreteMixer | Concrete powder dropped into a filled water cauldron hardens |
+| CraftingKeeper | Crafting tables retain their grid contents on close, saved per location |
+| Creeperworks | Creeper explosions spawn a creeper-shaped firework |
+| CropTweaks | Right-click a mature crop with a hoe to harvest and replant; blaze powder acts as bonemeal on nether wart |
+| CustomRecipes | Config-driven shaped and shapeless recipe engine |
+| Dispensery | Dispensers place configured blocks (anvil by default), and fill or empty cauldrons from buckets |
+| DyeShears | Craftable shears (2 shears + diamond) with a chance to drop matching dye instead of wool |
+| EasyPaintings | Sneak + right-click a painting to cycle through art variants |
+| FeatherPlucker | Hit a chicken non-lethally for a free feather, on a cooldown tracked per chicken |
+| IgneousGenerator | Water next to a magma block becomes andesite, diorite, or granite after a delay |
+| InventoryInspector | In creative or spectator, sneak + right-click a player for a read-only snapshot of their inventory |
+| LeadAttacher | Attach a lead to a fence without an entity on the other end |
+| MobGriefing | Stops sheep eating grass and endermen picking up blocks, keeping the sound and animation |
+| MobSizes | Randomizes mob scale; rideable mounts are sized by their health pool instead |
+| SlimyBoots | Slime-crafted leather boots that negate fall damage and bounce you |
+| TimePlayed | Tracks per-player play time |
+| WoodPile | Enclose logs in dirt and light it to convert them to coal blocks over time |
 
-Right clicking on an armor stand with a stick will add configurable arms; sugar will miniaturize it.
+## Commands
 
-### Biome Bombs
+| Command | Module | Description |
+|---|---|---|
+| `/biomebombs`, `/bb` | BiomeBombs | Lists all available biome bombs and their crafting ingredients |
+| `/macro <list \| run>` | CommandMacros | Command macro management |
+| `/timeplayed` | TimePlayed | Reports your play time |
 
-Craftable "bombs" that you can throw on the ground to convert the surrounding biome into another.
+## Configuration
 
-Bombs have a limited range, and a unique recipe corresponding to the biome it will convert to.
+Configuration is split across two kinds of file.
 
-### Cobble Generator
+**`config.yml`** holds read-only settings, one section per module, named for the module in
+lowercase. Add `enabled: false` to a section to turn that module off:
 
-Allows different types of blocks to be formed when water and lava meet. The type of blocks that can form, and their respective chances are configurable.
-
-This replaces vanilla behavior when any lava block spreads into a water block to form cobblestone.
-
-### Concrete Mixer
-
-Allows the use of water-filled cauldrons to convert concrete powder into its hardened form.
-
-### Crafting Keeper
-
-Retains items in crafting tables when the interface closes. This follows the same principle as [Tinkers Construct's](https://tinkers-construct.fandom.com/wiki/Crafting_Station) crafting station.
-
-### Easy Paintings
-
-Allows the cycling of valid paintings by right clicking them.
-
-The dimensions of the paintings available can be changed by surrounding the wall with blocks.
-
-### Easy Sleep
-
-Turns night into day without needing all players to be sleeping. The percentage of online players that must be sleeping can be configured.
-
-This will also reset everyone's phantom spawn timer.
-
-### Feather Plucker
-
-Chickens can be right clicked every so often for a free feather.
-
-### Igneous Generator
-
-A new type of generator that creates andesite, diorite, and granite. This uses water and magma blocks in place of lava.
-
-### Improved Shears
-
-Adds a new type of shears gives a chance to drop a dye item based on the color of the sheep.
-
-### Lead Attacher
-
-Allows you to attach leads to fences without needing an entity on the lead.
-
-### Name Ping
-
-Plays a sound to a player whenever their name is mentioned in the chat.
-
-### No Sheep Griefing
-
-Prevents sheep from converting grass blocks to dirt blocks when they eat grass.
-
-This keeps the functionality of the wool regrowth and the animation of the sheep eating.
-
-### Slimy Boots
-
-Adds a new boot type that protects you from falls (similar to feather falling) and bounces you around as if you fell on a slime block.
-
-### Woodpile
-
-Adds a new multi-block structure that can be created by enclosing wood logs in dirt or grass. Using a flint and steel on one of the surrounding dirt blocks will start a fire and display smoke rising from the pile.
-
-After a configurable amount of time per wood log, each of the logs will be converted to coal blocks.
-
-## NMS Additions
-
-NMS (Net.Minecraft.Server) modules allows for version specific features
-
-### Creating an NMS Module
-
-`NMSFeature.java`
-
-```java
-public class NMSFeature extends NMSModule {
-  static {
-    NMSTest.nmsModuleHandlers.put("1.21.4-R0.1-SNAPSHOT", NMSFeature_v1_21_4.class);
-  }
-
-  public NMSFeature() {
-    super("NMSFeature");
-  }
-
-  public void sharedFunction() {
-    Bukkit.getLogger().info("This is a shared function");
-  }
-}
+```yaml
+woodpile:
+  enabled: false
 ```
 
-The parent module class is similar to a regular module class with two difference. It extends `NMSModule` and it has an extra static block used to declare supported versions and the classes that correspond to them.
+Not every module has a section — those without one run on their defaults. A module is enabled
+unless it says otherwise.
 
-`NMSFeature_v1_21_4.java`
-
-```java
-public class NMSFeature_v1_21_4 extends Module {
-  private NMSFeature shared;
-
-  public NMSFeature_v1_21_4(String name, NMSModule _shared) {
-    super(name);
-    this.shared = (NMSFeature) _shared;
-  }
-
-  @Override
-  public void init(YamlConfiguration configuration) {
-    super.init(configuration);
-    Bukkit.getLogger().info("This is version v1.21.4");
-    this.shared.sharedFunction();
-  }
-}
-```
-
-The version specific modules are set up like any other module except for one change. The constructor must accept both a `String` and `NMSModule`. The `NMSModule` will be the parent module that can be used to access shared code that is not version depndent.
-
-`PocketPlugins.java`
-
-```java
-        ArrayList<Module> modules = Lists.newArrayList(
-            ...
-            new NMSFeature(),
-            ...
-            );
-```
-
-The module is registered just like any other module with only the parent module needing to be added to the `modules` array list.
+**`configs/<module>.yml`** holds state the module itself writes: macros, custom recipes, play
+times. These are copied out of the jar on first run and shouldn't normally need hand-editing.
