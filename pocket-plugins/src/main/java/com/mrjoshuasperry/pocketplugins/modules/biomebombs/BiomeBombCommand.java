@@ -4,23 +4,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class BiomeBombCommand implements CommandExecutor {
+public class BiomeBombCommand {
   private final List<BiomeBombData> biomeBombs;
 
   public BiomeBombCommand(List<BiomeBombData> biomeBombs) {
     this.biomeBombs = biomeBombs;
   }
 
-  @Override
-  public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+  public void sendBombList(CommandSender sender) {
     // Header
     sender
         .sendMessage(Component.text("════ Biome Bombs ════").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
@@ -53,7 +50,5 @@ public class BiomeBombCommand implements CommandExecutor {
               .append(Component.text(formattedCatalyst).color(NamedTextColor.GRAY))
               .append(Component.text(")").color(NamedTextColor.GRAY)));
     }
-
-    return true;
   }
 }
