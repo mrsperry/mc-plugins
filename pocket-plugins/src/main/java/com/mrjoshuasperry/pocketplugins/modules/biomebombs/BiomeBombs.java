@@ -30,15 +30,15 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class BiomeBombs extends Module {
   private NamespacedKey biomeBombTypeKey;
   private NamespacedKey biomeBombColorKey;
-  private int explosionRage;
+  private int explosionRange;
   private List<BiomeBombData> biomeBombsData;
 
   public BiomeBombs(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
     super(readableConfig, writableConfig);
 
-    this.biomeBombTypeKey = this.createKey("biomb-bomb-type");
-    this.biomeBombColorKey = this.createKey("biomb-bomb-color");
-    this.explosionRage = readableConfig.getInt("bomb-range");
+    this.biomeBombTypeKey = this.createKey("biome-bomb-type");
+    this.biomeBombColorKey = this.createKey("biome-bomb-color");
+    this.explosionRange = readableConfig.getInt("bomb-range");
   
     this.registerCraftingRecipes(readableConfig, writableConfig);
     this.getPlugin().getCommand("biomebombs").setExecutor(new BiomeBombCommand(biomeBombsData));
@@ -99,7 +99,7 @@ public class BiomeBombs extends Module {
 
       if (loreLine.contains("biome_bomb_type")) {
         String type = loreLine.split(":")[1];
-        container.set(biomeBombColorKey, PersistentDataType.STRING, type);
+        container.set(biomeBombTypeKey, PersistentDataType.STRING, type);
       } else if (loreLine.contains("biome_bomb_color")) {
         int color = Integer.parseInt(loreLine.split(":")[1]);
         container.set(biomeBombColorKey, PersistentDataType.INTEGER, color);
@@ -135,7 +135,7 @@ public class BiomeBombs extends Module {
     String type = (String) container.get(biomeBombTypeKey, PersistentDataType.STRING);
     int color = (int) container.get(biomeBombColorKey, PersistentDataType.INTEGER);
 
-    BiomeBombProjectile projectile = new BiomeBombProjectile(this.explosionRage, type, Color.fromARGB(color),
+    BiomeBombProjectile projectile = new BiomeBombProjectile(this.explosionRange, type, Color.fromARGB(color),
         item.clone());
 
     int amount = item.getAmount();
