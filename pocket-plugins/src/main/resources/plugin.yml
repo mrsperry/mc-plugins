@@ -6,7 +6,3 @@ authors:
   - mrsperry
   - TimPCunningham
 api-version: "1.21"
-commands:
-  macro:
-    description: Command macro management
-    usage: /macro <list | run>
