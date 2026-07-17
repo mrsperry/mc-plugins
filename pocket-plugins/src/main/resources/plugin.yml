@@ -6,3 +6,7 @@ authors:
   - mrsperry
   - TimPCunningham
 api-version: "1.21"
+permissions:
+  pocketplugins.macros.op:
+    description: Allows running and viewing command macros flagged op-only
+    default: op
