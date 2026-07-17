@@ -1,18 +1,13 @@
 package com.mrjoshuasperry.pocketplugins.modules.craftingkeeper;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -33,38 +28,20 @@ public class CraftingKeeper extends Module {
         super(readableConfig, writableConfig);
 
         this.tableBlocks = new HashMap<>();
-        ConfigurationSerialization.registerClass(CraftingKeeperManager.class, "CraftingKeeperManager");
-        this.loadCrafting();
+
+        ConfigurationSection tables = this.getWritableConfig().getConfigurationSection("tables");
+        if (tables != null) {
+            CraftingKeeperManager.getInstance().load(tables);
+        }
     }
 
     @Override
     public void onDisable() {
+        // A fresh section keeps a single "tables" key present so the writable config
+        // is never empty, which is the case Module.saveConfig() skips writing
+        ConfigurationSection tables = this.getWritableConfig().createSection("tables");
+        CraftingKeeperManager.getInstance().save(tables);
         super.onDisable();
-        this.saveCrafting();
-    }
-
-    // TODO: Update to use new config system
-    private void saveCrafting() {
-        CraftingKeeperManager manager = CraftingKeeperManager.getInstance();
-        FileConfiguration config = new YamlConfiguration();
-
-        config.set("tables", manager);
-        try {
-            config.save(new File(this.getPlugin().getDataFolder(), "crafting_tables.yml"));
-        } catch (Exception e) {
-            this.getPlugin().getLogger().log(Level.WARNING, "Error saving crafting tables!", e);
-        }
-    }
-
-    // TODO: Update to use new config system
-    private void loadCrafting() {
-        try {
-            FileConfiguration config = YamlConfiguration
-                    .loadConfiguration(new File(this.getPlugin().getDataFolder(), "crafting_tables.yml"));
-            config.get("tables");
-        } catch (Exception e) {
-            this.getPlugin().getLogger().log(Level.WARNING, "Error loading crafting tables!", e);
-        }
     }
 
     @EventHandler
