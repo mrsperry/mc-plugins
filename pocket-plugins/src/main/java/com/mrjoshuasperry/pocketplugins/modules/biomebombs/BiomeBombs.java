@@ -3,6 +3,7 @@ package com.mrjoshuasperry.pocketplugins.modules.biomebombs;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -53,12 +54,31 @@ public class BiomeBombs extends Module {
   }
 
   private void registerCraftingRecipes(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
+    // Assigned before any early return below, since the command reads it whether
+    // or not there turned out to be anything to craft
+    this.biomeBombsData = new ArrayList<>();
+
+    Logger logger = this.getPlugin().getLogger();
     ConfigurationSection biomeConfigSection = writableConfig.getConfigurationSection("biomes");
-    biomeBombsData = new ArrayList<>();
+    if (biomeConfigSection == null) {
+      logger.warning("No biomes are configured; no biome bombs will be craftable");
+      return;
+    }
+
     int craftingAmount = readableConfig.getInt("crafting-output");
 
     for (String key : biomeConfigSection.getKeys(false)) {
-      biomeBombsData.add(new BiomeBombData(biomeConfigSection.getConfigurationSection(key)));
+      ConfigurationSection biomeSection = biomeConfigSection.getConfigurationSection(key);
+      if (biomeSection == null) {
+        logger.warning("Skipping biome bomb '" + key + "': not a configuration section");
+        continue;
+      }
+
+      try {
+        biomeBombsData.add(new BiomeBombData(biomeSection));
+      } catch (IllegalArgumentException ex) {
+        logger.warning("Skipping biome bomb '" + key + "': " + ex.getMessage());
+      }
     }
 
     for (BiomeBombData data : biomeBombsData) {
@@ -122,14 +142,11 @@ public class BiomeBombs extends Module {
 
   @EventHandler
   public void biomeBombUse(PlayerInteractEvent event) {
-    if (event.getHand() == EquipmentSlot.OFF_HAND || event.getItem() == null)
-      return;
-
-    ItemStack item = event.getItem();
-    if (item == null) {
+    if (event.getHand() == EquipmentSlot.OFF_HAND || event.getItem() == null) {
       return;
     }
 
+    ItemStack item = event.getItem();
     ItemMeta meta = item.getItemMeta();
     if (meta == null) {
       return;
