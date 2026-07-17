@@ -56,7 +56,8 @@ public class CraftingKeeperManager implements ConfigurationSerializable {
             Location location = entry.getKey();
 
             for (ItemStack item : entry.getValue()) {
-                contents.add(item.serialize());
+                // Empty slots are stored as null to keep every item at its original grid index
+                contents.add(item == null ? null : item.serialize());
             }
 
             craftingTable.put("location", location.serialize());
@@ -81,7 +82,8 @@ public class CraftingKeeperManager implements ConfigurationSerializable {
             List<ItemStack> items = new ArrayList<>();
             List<Map<String, Object>> craftingContents = (List<Map<String, Object>>) craftingTable.get("contents");
 
-            craftingContents.forEach(serializedItem -> items.add(ItemStack.deserialize(serializedItem)));
+            craftingContents.forEach(
+                    serializedItem -> items.add(serializedItem == null ? null : ItemStack.deserialize(serializedItem)));
             savedTables.put(loc, items.toArray(new ItemStack[items.size()]));
         }
 

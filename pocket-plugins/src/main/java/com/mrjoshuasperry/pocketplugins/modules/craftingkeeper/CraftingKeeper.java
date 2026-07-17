@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,7 +52,7 @@ public class CraftingKeeper extends Module {
         try {
             config.save(new File(this.getPlugin().getDataFolder(), "crafting_tables.yml"));
         } catch (Exception e) {
-            this.getPlugin().getLogger().warning("Error saving crafting tables!");
+            this.getPlugin().getLogger().log(Level.WARNING, "Error saving crafting tables!", e);
         }
     }
 
