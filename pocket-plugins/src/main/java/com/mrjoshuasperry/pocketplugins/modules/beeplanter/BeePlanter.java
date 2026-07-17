@@ -40,7 +40,7 @@ public class BeePlanter extends Module {
   public BeePlanter(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
     super(readableConfig, writableConfig);
 
-    this.random = new Random();
+    this.random = this.getPlugin().getRandom();
 
     this.searchRadius = readableConfig.getInt("search-radius", 4);
 

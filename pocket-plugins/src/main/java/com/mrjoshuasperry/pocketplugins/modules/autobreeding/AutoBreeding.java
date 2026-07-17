@@ -49,7 +49,7 @@ public class AutoBreeding extends Module {
     super(readableConfig, writableConfig);
 
     this.plugin = PocketPlugins.getInstance();
-    this.random = new Random();
+    this.random = this.getPlugin().getRandom();
     this.breedingTargets = new HashMap<>();
 
     this.minDelay = readableConfig.getDouble("min-delay", 0.25f);
