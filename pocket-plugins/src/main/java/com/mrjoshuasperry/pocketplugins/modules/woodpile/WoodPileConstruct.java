@@ -1,28 +1,34 @@
 package com.mrjoshuasperry.pocketplugins.modules.woodpile;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 /** @author TimPCunningham */
 public class WoodPileConstruct {
+    private static final BlockFace[] SPREAD_FACES = { BlockFace.UP, BlockFace.DOWN, BlockFace.EAST, BlockFace.WEST,
+            BlockFace.NORTH, BlockFace.SOUTH };
+
     private final List<Block> fuel;
     private final List<Block> covering;
-    private List<Block> visited;
+    private Set<Block> visited;
     static List<Material> validCovering = Arrays.asList(Material.GRASS_BLOCK, Material.DIRT, Material.COARSE_DIRT,
             Material.PODZOL, Material.MYCELIUM);
-    static List<Material> validFuel = Arrays.asList(Material.ACACIA_LOG, Material.BIRCH_LOG, Material.DARK_OAK_LOG,
-            Material.JUNGLE_LOG, Material.OAK_LOG, Material.SPRUCE_LOG);
 
     public WoodPileConstruct() {
         fuel = new ArrayList<>();
         covering = new ArrayList<>();
-        visited = new ArrayList<>();
+        visited = new HashSet<>();
     }
 
     public void addFuelBlock(Block block) {
@@ -34,55 +40,56 @@ public class WoodPileConstruct {
     }
 
     public boolean checkValid(Block start) {
-        visited = new ArrayList<>();
+        visited = new HashSet<>();
 
         if (isValidCovering(start)) { // find fuel;
-            if (isValidFuel(start.getRelative(BlockFace.UP))) {
-                return recursiveCheck(start.getRelative(BlockFace.UP));
-            }
-            if (isValidFuel(start.getRelative(BlockFace.DOWN))) {
-                return recursiveCheck(start.getRelative(BlockFace.DOWN));
-            }
-            if (isValidFuel(start.getRelative(BlockFace.EAST))) {
-                return recursiveCheck(start.getRelative(BlockFace.EAST));
-            }
-            if (isValidFuel(start.getRelative(BlockFace.WEST))) {
-                return recursiveCheck(start.getRelative(BlockFace.WEST));
-            }
-            if (isValidFuel(start.getRelative(BlockFace.NORTH))) {
-                return recursiveCheck(start.getRelative(BlockFace.NORTH));
-            }
-            if (isValidFuel(start.getRelative(BlockFace.SOUTH))) {
-                return recursiveCheck(start.getRelative(BlockFace.SOUTH));
+            for (BlockFace face : SPREAD_FACES) {
+                Block neighbour = start.getRelative(face);
+                if (isValidFuel(neighbour)) {
+                    return spreadFromFuel(neighbour);
+                }
             }
         }
 
         return false;
     }
 
-    private boolean recursiveCheck(Block current) {
-        if (this.visited.contains(current)) {
-            return true;
-        }
+    /**
+     * Walks the pile outwards from a fuel block, collecting the fuel and the
+     * covering that encloses it. Only fuel spreads further, so the covering forms
+     * the boundary; anything else reachable means the pile is not sealed.
+     *
+     * <p>
+     * The search is iterative rather than recursive because a pile is only bounded
+     * by how much the player stacked, and one call per block overflowed the stack
+     * on large ones.
+     */
+    private boolean spreadFromFuel(Block start) {
+        Deque<Block> pending = new ArrayDeque<>();
+        pending.push(start);
 
-        if (!isValidCovering(current) && !isValidFuel(current)) {
-            return false;
-        }
+        while (!pending.isEmpty()) {
+            Block current = pending.pop();
 
-        this.visited.add(current);
+            if (this.visited.contains(current)) {
+                continue;
+            }
 
-        if (isValidFuel(current)) {
-            this.fuel.add(current);
-            boolean result = recursiveCheck(current.getRelative(BlockFace.UP));
-            result = result && recursiveCheck(current.getRelative(BlockFace.DOWN));
-            result = result && recursiveCheck(current.getRelative(BlockFace.EAST));
-            result = result && recursiveCheck(current.getRelative(BlockFace.WEST));
-            result = result && recursiveCheck(current.getRelative(BlockFace.SOUTH));
-            result = result && recursiveCheck(current.getRelative(BlockFace.NORTH));
+            boolean isFuel = isValidFuel(current);
+            if (!isFuel && !isValidCovering(current)) {
+                return false;
+            }
 
-            return result;
-        } else if (current.getRelative(BlockFace.UP).getType().equals(Material.AIR)) {
-            this.covering.add(current);
+            this.visited.add(current);
+
+            if (isFuel) {
+                this.fuel.add(current);
+                for (BlockFace face : SPREAD_FACES) {
+                    pending.push(current.getRelative(face));
+                }
+            } else if (current.getRelative(BlockFace.UP).getType().equals(Material.AIR)) {
+                this.covering.add(current);
+            }
         }
 
         return true;
@@ -109,7 +116,10 @@ public class WoodPileConstruct {
     }
 
     public static boolean isValidFuel(Block block) {
-        return validFuel.contains(block.getType());
+        // Every overworld wood type, including its bark and stripped variants. The
+        // nether stems are excluded by the tag itself, matching vanilla: they don't
+        // burn, so they shouldn't char either
+        return Tag.LOGS_THAT_BURN.isTagged(block.getType());
     }
 
     public static boolean isValidCovering(Block block) {
