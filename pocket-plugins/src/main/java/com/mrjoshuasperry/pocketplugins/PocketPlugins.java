@@ -14,7 +14,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mrjoshuasperry.pocketplugins.utils.DebuggerDisplay;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 public class PocketPlugins extends JavaPlugin {
@@ -29,8 +28,6 @@ public class PocketPlugins extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        DebuggerDisplay.removeAll();
-
         for (Module module : this.modules) {
             try {
                 module.onDisable();
