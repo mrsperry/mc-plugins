@@ -44,6 +44,21 @@ class CompressedMobsTest {
   }
 
   @Test
+  void yieldCanReachConfiguredMax() {
+    Settings settings = new Settings(100, 3, 5);
+    Random random = new Random(42);
+
+    boolean reachedMax = false;
+    for (int i = 0; i < 1000; i++) {
+      if (Main.rollYield(settings, random) == 5) {
+        reachedMax = true;
+        break;
+      }
+    }
+    assertTrue(reachedMax, "configured max yield of 5 was never produced");
+  }
+
+  @Test
   void yieldWithEqualBoundsIsConstant() {
     Settings settings = new Settings(100, 4, 4);
     Random random = new Random(1);

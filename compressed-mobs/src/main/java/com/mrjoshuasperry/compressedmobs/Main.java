@@ -102,14 +102,13 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     /**
-     * How many mobs a compressed mob bursts into: minYield plus a random amount
-     * across the min/max spread. Package-private and static so it is testable with a
-     * seeded Random. Note maxYield is exclusive here (nextInt is exclusive of its
-     * bound), so the configured maximum is never actually reached.
+     * How many mobs a compressed mob bursts into: a uniform random count across the
+     * inclusive minYield..maxYield spread. Package-private and static so it is
+     * testable with a seeded Random.
      */
     static int rollYield(Settings settings, Random random) {
         int range = settings.maxYield() - settings.minYield();
-        return settings.minYield() + (range > 0 ? random.nextInt(range) : 0);
+        return settings.minYield() + (range > 0 ? random.nextInt(range + 1) : 0);
     }
 
     @EventHandler
