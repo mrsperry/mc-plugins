@@ -2,6 +2,8 @@ package com.mrjoshuasperry.deathchest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,12 +23,23 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class DeathChest {
+    /**
+     * Version marker for the current on-disk item format. Contents are stored in the
+     * chest's PDC as a byte array; version 1 serializes each item with
+     * {@link ItemStack#serializeAsBytes()}, which tags the Minecraft data version and
+     * therefore survives game upgrades. Chests written before this migration used Java
+     * serialization ({@code BukkitObjectOutputStream#writeObject}); those payloads
+     * always begin with the {@code ObjectOutputStream} magic {@code 0xACED}, which lets
+     * the reader detect them and still load pre-migration chests. Must never be
+     * {@code 0xAC}, or the two formats would be indistinguishable.
+     */
+    private static final byte FORMAT_VERSION = 1;
+
     static int getItemIndexForwardOffset(int index) {
         int adjustedIndex = index;
         // This shifts the hotbar items down 3 rows, to allow for a more natural look
@@ -60,40 +73,110 @@ public class DeathChest {
         return adjustedIndex;
     }
 
-    public static void updateChestContents(Main plugin, Chest chest, Inventory inventory, boolean updateIndex) {
-        PersistentDataContainer container = chest.getPersistentDataContainer();
+    /**
+     * Serializes a slot-to-item map in the current format: a version byte, the entry
+     * count, then each entry as its slot, the item's serialized length, and its
+     * {@link ItemStack#serializeAsBytes()} payload. Package-private and static so the
+     * round trip is unit-testable without a live chest.
+     */
+    static byte[] serializeItems(Map<Integer, ItemStack> items) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        try (BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
-            Map<Integer, ItemStack> items = new HashMap<>();
-            for (int index = 0; index < inventory.getSize(); index++) {
-                ItemStack item = inventory.getItem(index);
-                if (item == null) {
-                    continue;
-                }
-
-                int adjustedIndex = updateIndex ? DeathChest.getItemIndexForwardOffset(index) : index;
-                items.put(adjustedIndex, item);
-            }
-
-            dataOutput.writeInt(items.entrySet().size());
+        try (DataOutputStream dataOutput = new DataOutputStream(outputStream)) {
+            dataOutput.writeByte(FORMAT_VERSION);
+            dataOutput.writeInt(items.size());
             for (Entry<Integer, ItemStack> entry : items.entrySet()) {
                 dataOutput.writeInt(entry.getKey());
-                dataOutput.writeObject(entry.getValue());
+
+                byte[] itemBytes = entry.getValue().serializeAsBytes();
+                dataOutput.writeInt(itemBytes.length);
+                dataOutput.write(itemBytes);
+            }
+        }
+
+        return outputStream.toByteArray();
+    }
+
+    /**
+     * Reads a slot-to-item map from either the current format or the pre-migration
+     * Java-serialized one, dispatching on {@link #isLegacyFormat(byte[])}. Returns an
+     * empty map for missing/empty data. Package-private and static so both formats are
+     * unit-testable without a live chest.
+     */
+    static Map<Integer, ItemStack> deserializeItems(byte[] data) throws IOException, ClassNotFoundException {
+        Map<Integer, ItemStack> items = new HashMap<>();
+        if (data == null || data.length == 0) {
+            return items;
+        }
+
+        if (isLegacyFormat(data)) {
+            readLegacyItems(items, data);
+        } else {
+            readCurrentItems(items, data);
+        }
+
+        return items;
+    }
+
+    private static void readCurrentItems(Map<Integer, ItemStack> items, byte[] data) throws IOException {
+        try (DataInputStream input = new DataInputStream(new ByteArrayInputStream(data))) {
+            input.readByte(); // format version; only version 1 exists today
+            int count = input.readInt();
+
+            for (int index = 0; index < count; index++) {
+                int slot = input.readInt();
+
+                byte[] itemBytes = new byte[input.readInt()];
+                input.readFully(itemBytes);
+                items.put(slot, ItemStack.deserializeBytes(itemBytes));
+            }
+        }
+    }
+
+    // BukkitObjectInputStream is deprecated, but it is the only reader for the old
+    // format, so this shim is required until every pre-migration chest has been reopened.
+    @SuppressWarnings("deprecation")
+    private static void readLegacyItems(Map<Integer, ItemStack> items, byte[] data)
+            throws IOException, ClassNotFoundException {
+        try (BukkitObjectInputStream input = new BukkitObjectInputStream(new ByteArrayInputStream(data))) {
+            int count = input.readInt();
+
+            for (int index = 0; index < count; index++) {
+                int slot = input.readInt();
+                items.put(slot, (ItemStack) input.readObject());
+            }
+        } catch (EOFException ex) {
+            // Pre-migration chests occasionally ended before their declared count;
+            // keep whatever was read, matching the original loader's behavior.
+        }
+    }
+
+    /**
+     * Whether the payload was written by the pre-migration Java serializer.
+     * {@code ObjectOutputStream} (and thus {@code BukkitObjectOutputStream}) always
+     * opens its stream with the 2-byte magic {@code 0xACED}; the current format opens
+     * with {@link #FORMAT_VERSION}, so this reliably tells the two apart.
+     */
+    static boolean isLegacyFormat(byte[] data) {
+        return data.length >= 2 && (data[0] & 0xFF) == 0xAC && (data[1] & 0xFF) == 0xED;
+    }
+
+    public static void updateChestContents(Main plugin, Chest chest, Inventory inventory, boolean updateIndex) {
+        Map<Integer, ItemStack> items = new HashMap<>();
+        for (int index = 0; index < inventory.getSize(); index++) {
+            ItemStack item = inventory.getItem(index);
+            if (item == null) {
+                continue;
             }
 
-            byte[] byteArray = outputStream.toByteArray();
-            container.set(plugin.getDeathChestItemsKey(), PersistentDataType.BYTE_ARRAY, byteArray);
+            int adjustedIndex = updateIndex ? DeathChest.getItemIndexForwardOffset(index) : index;
+            items.put(adjustedIndex, item);
+        }
+
+        try {
+            byte[] data = DeathChest.serializeItems(items);
+            chest.getPersistentDataContainer().set(plugin.getDeathChestItemsKey(), PersistentDataType.BYTE_ARRAY, data);
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to save death chest contents", e);
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    plugin.getLogger().log(Level.WARNING, "Failed to close death chest output stream", e);
-                }
-            }
         }
 
         chest.update();
@@ -150,30 +233,13 @@ public class DeathChest {
         Inventory inventory = new DeathChestInventory(plugin, chest, 45, Component.text(playerName + "'s Death Chest"))
                 .getInventory();
 
-        byte[] itemBytes = chest.getPersistentDataContainer().get(
-                plugin.getDeathChestItemsKey(),
-                PersistentDataType.BYTE_ARRAY);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(itemBytes);
-
-        try (BukkitObjectInputStream input = new BukkitObjectInputStream(inputStream)) {
-            int inventorySize = input.readInt();
-
-            for (int index = 0; index < inventorySize; index++) {
-                int slot = input.readInt();
-                ItemStack item = (ItemStack) input.readObject();
-
-                inventory.setItem(slot, item);
+        byte[] itemBytes = container.get(plugin.getDeathChestItemsKey(), PersistentDataType.BYTE_ARRAY);
+        try {
+            for (Entry<Integer, ItemStack> entry : DeathChest.deserializeItems(itemBytes).entrySet()) {
+                inventory.setItem(entry.getKey(), entry.getValue());
             }
-        } catch (EOFException ex) {
-            // Do nothing
         } catch (ClassNotFoundException | IOException ex) {
             plugin.getLogger().log(Level.SEVERE, "Failed to load death chest contents", ex);
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException ex) {
-                plugin.getLogger().log(Level.WARNING, "Failed to close death chest input stream", ex);
-            }
         }
 
         return inventory;
