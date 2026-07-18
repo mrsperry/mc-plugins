@@ -19,17 +19,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      # paper-api 1.21.4 is Java 21 bytecode, so the build needs JDK 21+ to read
-      # it even though the plugins target 17 (maven-compiler --release 17). 21 is
-      # the native runtime for paper-api/MockBukkit here; the local dev JDK (25)
-      # produces identical output because --release 17 caps the API surface.
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      # Everything targets Java 25 (maven-compiler --release 25) and paper-api 1.21.11
+      # is Java 25 bytecode, so the runner needs JDK 25.
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '25'
           cache: maven
 
       # The 'all' profile is the only one that pulls every module into a single

@@ -25,22 +25,24 @@ mvn -P creative compile     # chat + mc-utils
 
 `mvn install -P <profile>` additionally copies the jars into `_dist/` and `_server/plugins/`.
 
-Tests are JUnit 5 + MockBukkit, run with `mvn -P all test` — the `all` profile aggregates every
+Tests are JUnit 6 + MockBukkit, run with `mvn -P all test` — the `all` profile aggregates every
 module (including the standalone plugins that no other profile reaches) into one reactor. MockBukkit
-is pinned to `mockbukkit-v1.21:4.45.0`, the last release built against Paper 1.21.4; bump it in
-lockstep with the paper-api upgrade, not before. Coverage is unit tests over pure logic and
+is `mockbukkit-v1.21:4.110.0`; dependencyManagement forces its transitive paper-api to our pinned
+version, so bump it alongside the paper-api version. Coverage is unit tests over pure logic and
 config/serialization round-trips — behavioral/gameplay changes still need an in-game check on the
 dev server, so say so rather than implying it's verified.
 
 ## Version posture
 
-**Paper 1.21.4 / Java 17, deliberately.** Paper has since moved to calendar versioning (26.x) and
-Java 25, but the upgrade is not planned and isn't worth re-raising. Target 1.21.4 and don't reach
-for newer APIs. Java 17 in particular means no `Math.clamp` — use `Math.max`/`Math.min`.
+**Paper 1.21.11 / Java 25.** Tracks the latest Minecraft release. Keep dependencies, Maven plugins,
+and the CI toolchain on their latest **stable** versions — avoid the pre-release lines (Paper's
+calendar-versioned `26.x` builds are alpha/rc/beta only, `maven-compiler-plugin:4.0.0` is beta,
+`surefire:3.6.0` is a milestone). `paper-api` uses the `{MC}-R0.1-SNAPSHOT` coordinate, not the
+calendar `26.x` one. Java 25 means `Math.clamp` and the other 18–25 APIs are available.
 
-**Folia is not a goal.** Don't migrate the existing Bukkit scheduler calls, and don't treat plain
-`HashMap` shared state as a bug — it's correct under Paper's single-threaded model. In new code,
-just avoid digging deeper: no new "scan every entity in every world" timers.
+**Folia is not a goal — and won't be.** This is a standard single-threaded Paper server, not a
+massively-multiplayer multi-threaded one. Don't migrate the Bukkit scheduler calls, and don't treat
+plain `HashMap` shared state as a bug — it's correct under Paper's single-threaded model.
 
 ## pocket-plugins module system
 
