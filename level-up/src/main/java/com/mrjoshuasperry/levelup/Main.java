@@ -51,22 +51,39 @@ public class Main extends JavaPlugin implements Listener {
             }
         }
 
-        for (Object color : config.getList("colors")) {
-            if (!(color instanceof Map)) {
-                continue;
-            }
+        List<?> colorList = config.getList("colors");
+        if (colorList != null) {
+            for (Object color : colorList) {
+                if (!(color instanceof Map)) {
+                    continue;
+                }
 
-            Map<?, ?> colorMap = (Map<?, ?>) color;
-            try {
-                int alpha = Integer.parseInt(colorMap.get("alpha").toString());
-                int red = Integer.parseInt(colorMap.get("red").toString());
-                int green = Integer.parseInt(colorMap.get("green").toString());
-                int blue = Integer.parseInt(colorMap.get("blue").toString());
+                Color parsed = parseColor((Map<?, ?>) color);
+                if (parsed == null) {
+                    this.getLogger().severe("Invalid color format: " + color);
+                    continue;
+                }
 
-                this.colors.add(Color.fromARGB(alpha, red, green, blue));
-            } catch (ClassCastException ex) {
-                this.getLogger().severe("Invalid color format: " + color);
+                this.colors.add(parsed);
             }
+        }
+    }
+
+    /**
+     * Parses one ARGB color entry from the config, returning null if any component is
+     * missing, non-numeric, or outside the 0-255 range. Static and null-returning so a
+     * single malformed entry is skipped rather than crashing startup, and so it is unit-
+     * testable without a live server.
+     */
+    static Color parseColor(Map<?, ?> colorMap) {
+        try {
+            int alpha = Integer.parseInt(colorMap.get("alpha").toString());
+            int red = Integer.parseInt(colorMap.get("red").toString());
+            int green = Integer.parseInt(colorMap.get("green").toString());
+            int blue = Integer.parseInt(colorMap.get("blue").toString());
+            return Color.fromARGB(alpha, red, green, blue);
+        } catch (IllegalArgumentException | NullPointerException ex) {
+            return null;
         }
     }
 
