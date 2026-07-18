@@ -20,7 +20,7 @@
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>1.21.4-R0.1-SNAPSHOT</version>
+                <version>1.21.11-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -40,10 +40,10 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Pinned to the last MockBukkit that targets Paper 1.21.4 exactly, so its
-                 transitive paper-api matches our provided one — no version skew on the
-                 test classpath. Bump this in lockstep with the paper-api upgrade, not
-                 before. -->
+            <!-- Latest MockBukkit for the 1.21.x line. Our dependencyManagement pins
+                 paper-api to the version above for every module, so MockBukkit's own
+                 transitive paper-api converges to it — no version skew on the test
+                 classpath. Bump alongside the paper-api version. -->
             <dependency>
                 <groupId>org.mockbukkit.mockbukkit</groupId>
                 <artifactId>mockbukkit-v1.21</artifactId>
@@ -70,7 +70,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>copy-plugin-to-dist-folder</id>
@@ -131,15 +131,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.15.0</version>
                 <configuration>
-                    <release>17</release>
+                    <release>25</release>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.2</version>
                 <configuration>
                     <!-- Relocate the bundled mc-utils into a package unique to each
                          plugin. Without this, two plugin jars on one server carry the
@@ -210,14 +210,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <!-- Identity by default so mc-utils and non-consuming plugins are untouched.
              Plugins that bundle mc-utils override this to their own base package. -->
         <mcutils.shadedPattern>com.mrjoshuasperry.mcutils</mcutils.shadedPattern>
         <!-- Test toolchain. See the managed test dependencies for the version posture. -->
-        <junit.version>5.11.4</junit.version>
-        <mockbukkit.version>4.45.0</mockbukkit.version>
+        <junit.version>6.1.2</junit.version>
+        <mockbukkit.version>4.110.0</mockbukkit.version>
         <maven.surefire.version>3.5.2</maven.surefire.version>
     </properties>
 </project>
