@@ -63,14 +63,21 @@ public class SlimyBoots extends Module {
         }
     }
 
+    // The launch parabola peaks at this fall distance (its vertex, b / 2a for the
+    // coefficients below); beyond it the curve falls back toward zero and then goes
+    // negative. Capping the fall distance here holds the bounce at its maximum for big
+    // falls instead of shrinking it — and past ~396 blocks would otherwise yield NaN.
+    private static final float PEAK_FALL_DISTANCE = 0.43529f / (2f * 0.0011f);
+
     /**
-     * Upward launch velocity for a slime-boots fall, from the tuned parabola. Package-
-     * private and static so it is unit-testable without a live player. Note the
-     * parabola turns negative past a fall distance of roughly 396 blocks, so the sqrt
-     * yields NaN there — a pre-existing edge this extraction makes visible.
+     * Upward launch velocity for a slime-boots fall, from the tuned parabola. The fall
+     * distance is capped at the parabola's peak, so falls beyond it hold the maximum
+     * bounce rather than curving back down. Package-private and static so it is unit-
+     * testable without a live player.
      */
     static double launchVelocity(float fallDistance) {
-        float modified = (-.0011f * fallDistance * fallDistance) + (0.43529f * fallDistance);
+        float effective = Math.min(fallDistance, PEAK_FALL_DISTANCE);
+        float modified = (-.0011f * effective * effective) + (0.43529f * effective);
         return Math.sqrt(0.32 * modified);
     }
 

@@ -1,6 +1,7 @@
 package com.mrjoshuasperry.pocketplugins.modules.slimyboots;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -23,9 +24,20 @@ class SlimyBootsTest {
   }
 
   @Test
-  void extremeFallDistanceProducesNaN() {
-    // Documents a latent edge: the tuned parabola turns negative past ~396 blocks,
-    // so the sqrt yields NaN. Flagged for a follow-up decision, not fixed here.
-    assertTrue(Double.isNaN(SlimyBoots.launchVelocity(500f)));
+  void largeFallsPlateauAtTheMaxInsteadOfNaN() {
+    // Past the parabola's peak (~198 blocks) the bounce holds at its maximum instead
+    // of curving back down and eventually producing a NaN.
+    double plateau = SlimyBoots.launchVelocity(250f);
+
+    assertFalse(Double.isNaN(SlimyBoots.launchVelocity(500f)));
+    assertEquals(plateau, SlimyBoots.launchVelocity(500f), 1e-9);
+    assertEquals(plateau, SlimyBoots.launchVelocity(1000f), 1e-9);
+  }
+
+  @Test
+  void aBiggerFallNeverBouncesLess() {
+    // Regression guard for the old downslope: a 300-block fall used to bounce weaker
+    // than a 100-block fall; now farther never means weaker.
+    assertTrue(SlimyBoots.launchVelocity(300f) >= SlimyBoots.launchVelocity(100f));
   }
 }
