@@ -33,6 +33,8 @@ jobs:
           cache: maven
 
       # The 'all' profile is the only one that pulls every module into a single
-      # reactor, so this one command runs the entire suite.
+      # reactor, so this one command runs the entire suite. -Dskip.setup.server
+      # skips the initialize-phase antrun step that copies the local dev server's
+      # paper.jar, which is absent (and unneeded) on the runner.
       - name: Run the full test suite
-        run: mvn -B -P all test
+        run: mvn -B -P all test -Dskip.setup.server=true
