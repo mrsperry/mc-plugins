@@ -40,24 +40,23 @@ public class ArmorStandPoser extends Module {
         ArmorStand armorStand = (ArmorStand) entity;
 
         switch (type) {
-            case STICK:
-                if (armorStand.hasArms()) {
-                    break;
+            case STICK -> {
+                if (!armorStand.hasArms()) {
+                    event.setCancelled(true);
+                    armorStand.setArms(true);
+                    this.removeOneMainHand(event.getPlayer());
                 }
-                event.setCancelled(true);
-                armorStand.setArms(true);
-                this.removeOneMainHand(event.getPlayer());
-                break;
-            case SUGAR:
-                if (armorStand.isSmall()) {
-                    break;
+            }
+            case SUGAR -> {
+                if (!armorStand.isSmall()) {
+                    event.setCancelled(true);
+                    armorStand.setSmall(true);
+                    this.removeOneMainHand(event.getPlayer());
                 }
-                event.setCancelled(true);
-                armorStand.setSmall(true);
-                this.removeOneMainHand(event.getPlayer());
-                break;
-            default:
-                break;
+            }
+            default -> {
+                // Other held items don't modify the armor stand
+            }
         }
 
     }

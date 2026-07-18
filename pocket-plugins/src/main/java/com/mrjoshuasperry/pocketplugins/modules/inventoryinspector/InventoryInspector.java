@@ -119,12 +119,10 @@ public class InventoryInspector extends Module {
 
         if (regular) {
             switch (action) {
-                case COLLECT_TO_CURSOR:
-                case MOVE_TO_OTHER_INVENTORY:
-                    event.setCancelled(true);
-                    break;
-                default:
-                    break;
+                case COLLECT_TO_CURSOR, MOVE_TO_OTHER_INVENTORY -> event.setCancelled(true);
+                default -> {
+                    // Other actions are handled by the clicked-slot guard above
+                }
             }
         }
     }
