@@ -98,22 +98,14 @@ public class RandomItems {
 
         // Amount used whenever extra data is required (ex: number of colors)
         final int amount = random.nextInt(3) + 1;
-        switch (type) {
-            case POTION:
-            case LINGERING_POTION:
-            case SPLASH_POTION:
-                return RandomItems.getRandomPotion();
-            case ENCHANTED_BOOK:
-                return RandomItems.getRandomEnchantedBook(amount);
-            case TIPPED_ARROW:
-                return RandomItems.getRandomTippedArrow();
-            case FIREWORK_ROCKET:
-                return RandomItems.getRandomFirework(amount);
-            case FIREWORK_STAR:
-                return RandomItems.getRandomFireworkStar(amount);
-            default:
-                return new ItemStack(type);
-        }
+        return switch (type) {
+            case POTION, LINGERING_POTION, SPLASH_POTION -> RandomItems.getRandomPotion();
+            case ENCHANTED_BOOK -> RandomItems.getRandomEnchantedBook(amount);
+            case TIPPED_ARROW -> RandomItems.getRandomTippedArrow();
+            case FIREWORK_ROCKET -> RandomItems.getRandomFirework(amount);
+            case FIREWORK_STAR -> RandomItems.getRandomFireworkStar(amount);
+            default -> new ItemStack(type);
+        };
     }
 
     /**

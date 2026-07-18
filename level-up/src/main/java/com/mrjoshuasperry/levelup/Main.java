@@ -54,11 +54,11 @@ public class Main extends JavaPlugin implements Listener {
         List<?> colorList = config.getList("colors");
         if (colorList != null) {
             for (Object color : colorList) {
-                if (!(color instanceof Map)) {
+                if (!(color instanceof Map<?, ?> colorMap)) {
                     continue;
                 }
 
-                Color parsed = parseColor((Map<?, ?>) color);
+                Color parsed = parseColor(colorMap);
                 if (parsed == null) {
                     this.getLogger().severe("Invalid color format: " + color);
                     continue;

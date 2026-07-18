@@ -23,7 +23,7 @@ public class ArmorSwapper extends Module {
   public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
     Entity target = event.getRightClicked();
 
-    if (!(target instanceof ArmorStand)) {
+    if (!(target instanceof ArmorStand armorStand)) {
       return;
     }
 
@@ -35,7 +35,6 @@ public class ArmorSwapper extends Module {
 
     event.setCancelled(true);
 
-    ArmorStand armorStand = (ArmorStand) target;
     List<EquipmentSlot> slots = List.of(
         EquipmentSlot.HEAD,
         EquipmentSlot.CHEST,

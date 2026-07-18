@@ -27,11 +27,11 @@ public class InventoryListener implements Listener {
     Inventory inventory = event.getInventory();
     InventoryHolder holder = inventory.getHolder();
 
-    if (!(holder instanceof DeathChestInventory)) {
+    if (!(holder instanceof DeathChestInventory deathChestInventory)) {
       return;
     }
 
-    Chest chest = ((DeathChestInventory) holder).getChest();
+    Chest chest = deathChestInventory.getChest();
 
     if (inventory.isEmpty()) {
       DeathChest.destroy(chest);

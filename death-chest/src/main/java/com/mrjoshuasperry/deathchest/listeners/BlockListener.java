@@ -25,11 +25,10 @@ public class BlockListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         BlockState state = event.getBlock().getState();
 
-        if (!(state instanceof Chest)) {
+        if (!(state instanceof Chest chest)) {
             return;
         }
 
-        Chest chest = (Chest) state;
         PersistentDataContainer container = chest.getPersistentDataContainer();
         boolean isDeathChest = container.getOrDefault(plugin.getDeathChestKey(), PersistentDataType.BOOLEAN, false);
 

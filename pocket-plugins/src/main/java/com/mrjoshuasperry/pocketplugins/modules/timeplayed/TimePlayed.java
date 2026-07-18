@@ -50,12 +50,11 @@ public class TimePlayed extends Module {
   // Brigadier rejects anything after the literal itself, so only the sender needs
   // checking here
   protected void sendTimeReport(CommandSender sender) {
-    if (!(sender instanceof Player)) {
+    if (!(sender instanceof Player player)) {
       sender.sendMessage(Component.text("You must be a player to use this command", NamedTextColor.RED));
       return;
     }
 
-    Player player = (Player) sender;
     long secondsPlayed = this.timePlayed.getOrDefault(player.getUniqueId(), 0L);
     long minutesPlayed = (long) Math.floor(secondsPlayed / 60);
     long hoursPlayed = (long) Math.floor(minutesPlayed / 60);

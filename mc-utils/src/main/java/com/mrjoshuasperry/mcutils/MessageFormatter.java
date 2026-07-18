@@ -1,21 +1,29 @@
 package com.mrjoshuasperry.mcutils;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class MessageFormatter {
-    public static String addTimestamp() {
-        return ChatColor.DARK_GRAY + "[" + ChatColor.GRAY
-                + new SimpleDateFormat("HH:mm").format(Calendar.getInstance().getTime()) + ChatColor.DARK_GRAY + "]";
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
+
+    public static Component addTimestamp() {
+        return bracketed(Component.text(LocalTime.now().format(TIME_FORMAT)));
     }
 
-    public static String addWorldName(String name) {
-        return ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + name + ChatColor.DARK_GRAY + "]";
+    public static Component addWorldName(String name) {
+        return bracketed(Component.text(name));
     }
 
-    public static String addTimeAndWorld(String name) {
-        return addTimestamp() + addWorldName(name);
+    public static Component addTimeAndWorld(String name) {
+        return addTimestamp().append(addWorldName(name));
+    }
+
+    private static Component bracketed(Component inner) {
+        return Component.text("[", NamedTextColor.DARK_GRAY)
+                .append(inner.color(NamedTextColor.GRAY))
+                .append(Component.text("]", NamedTextColor.DARK_GRAY));
     }
 }
