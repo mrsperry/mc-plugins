@@ -36,11 +36,10 @@ public class EasyPaintings extends Module {
             return;
         }
 
-        if (!(event.getRightClicked() instanceof Painting)) {
+        if (!(event.getRightClicked() instanceof Painting painting)) {
             return;
         }
 
-        Painting painting = (Painting) event.getRightClicked();
         int newArtIndex = (this.availableArt.indexOf(painting.getArt()) + 1) % this.availableArt.size();
         painting.setArt(availableArt.get(newArtIndex));
     }

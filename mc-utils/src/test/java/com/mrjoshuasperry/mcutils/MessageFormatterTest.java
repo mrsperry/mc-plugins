@@ -5,26 +5,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+
 class MessageFormatterTest {
-  @Test
-  void addWorldNameWrapsNameInColouredBrackets() {
-    // §8 = dark gray, §7 = gray (legacy section-sign colour codes).
-    assertEquals("§8[§7world§8]", MessageFormatter.addWorldName("world"));
+  private static String plain(Component component) {
+    return PlainTextComponentSerializer.plainText().serialize(component);
   }
 
   @Test
-  void addTimestampMatchesTheExpectedStructure() {
-    String timestamp = MessageFormatter.addTimestamp();
+  void addWorldNameUsesAGrayNameInDarkGrayBrackets() {
+    Component expected = Component.text("[", NamedTextColor.DARK_GRAY)
+        .append(Component.text("world").color(NamedTextColor.GRAY))
+        .append(Component.text("]", NamedTextColor.DARK_GRAY));
 
-    assertTrue(timestamp.matches("§8\\[§7\\d{2}:\\d{2}§8\\]"),
-        "unexpected timestamp format: " + timestamp);
+    assertEquals(expected, MessageFormatter.addWorldName("world"));
   }
 
   @Test
-  void addTimeAndWorldConcatenatesBoth() {
-    String combined = MessageFormatter.addTimeAndWorld("nether");
+  void addTimestampFormatsAsBracketedTime() {
+    String rendered = plain(MessageFormatter.addTimestamp());
+    assertTrue(rendered.matches("\\[\\d{2}:\\d{2}\\]"), rendered);
+  }
 
-    assertTrue(combined.endsWith(MessageFormatter.addWorldName("nether")));
-    assertTrue(combined.startsWith("§8[§7"));
+  @Test
+  void addTimeAndWorldAppendsTheWorldAfterTheTimestamp() {
+    String rendered = plain(MessageFormatter.addTimeAndWorld("nether"));
+    assertTrue(rendered.matches("\\[\\d{2}:\\d{2}\\]\\[nether\\]"), rendered);
   }
 }

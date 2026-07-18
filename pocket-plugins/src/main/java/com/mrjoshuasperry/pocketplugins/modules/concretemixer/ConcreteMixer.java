@@ -76,11 +76,10 @@ public class ConcreteMixer extends Module {
     @EventHandler
     public void trackLoadedPowder(EntitiesLoadEvent event) {
         for (Entity entity : event.getEntities()) {
-            if (!(entity instanceof Item)) {
+            if (!(entity instanceof Item item)) {
                 continue;
             }
 
-            Item item = (Item) entity;
             if (this.concrete.containsKey(item.getItemStack().getType())) {
                 this.trackedPowder.add(item);
             }

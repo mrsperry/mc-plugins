@@ -49,11 +49,9 @@ public class PlayerListener implements Listener {
 
         BlockState state = block.getState();
 
-        if (!(state instanceof Chest)) {
+        if (!(state instanceof Chest chest)) {
             return;
         }
-
-        Chest chest = (Chest) state;
 
         boolean isDeathChest = chest.getPersistentDataContainer().getOrDefault(
                 plugin.getDeathChestKey(),

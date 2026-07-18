@@ -51,12 +51,11 @@ public class MacrosCommand {
   }
 
   public void runMacro(CommandSender sender, String macroName) {
-    if (!(sender instanceof Player)) {
+    if (!(sender instanceof Player player)) {
       sender.sendMessage(Component.text("Only players can run macros!").color(NamedTextColor.RED));
       return;
     }
 
-    Player player = (Player) sender;
     // Macros are keyed lowercase, but the name is whatever the player typed
     MacroData macro = macros.get(macroName.toLowerCase());
 

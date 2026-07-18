@@ -22,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class Main extends JavaPlugin implements Listener {
     private final Random random = new Random();
@@ -140,7 +140,7 @@ public class Main extends JavaPlugin implements Listener {
         if (this.random.nextDouble() * values.compressChance() <= 1) {
             container.set(this.compressedKey, PersistentDataType.BYTE, (byte) 1);
 
-            entity.customName(Component.text(ChatColor.GRAY + "Compressed " + entity.getName()));
+            entity.customName(Component.text("Compressed " + entity.getName(), NamedTextColor.GRAY));
             entity.setCustomNameVisible(true);
             entity.setRemoveWhenFarAway(true);
         }

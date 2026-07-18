@@ -35,11 +35,10 @@ public class SlimyBoots extends Module {
 
     @EventHandler
     public void onFall(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player)) {
+        if (!(event.getEntity() instanceof Player player)) {
             return;
         }
 
-        Player player = (Player) event.getEntity();
         Vector dir = player.getLocation().getDirection();
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {

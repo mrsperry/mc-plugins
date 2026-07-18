@@ -35,8 +35,8 @@ public class MobSizes extends Module {
       return;
     }
 
-    if (this.enableMountHealthSizing && entity instanceof AbstractHorse) {
-      this.setMountScale((AbstractHorse) entity);
+    if (this.enableMountHealthSizing && entity instanceof AbstractHorse horse) {
+      this.setMountScale(horse);
       return;
     }
 
@@ -63,6 +63,8 @@ public class MobSizes extends Module {
   static double healthToScale(double maxHealth, double minSize, double maxSize, int minMountHealth,
       int maxMountHealth) {
     double scale = minSize + (maxHealth - minMountHealth) * (maxSize - minSize) / (maxMountHealth - minMountHealth);
+    // Not Math.clamp: it throws if a misconfig sets minSize > maxSize, whereas this
+    // degrades gracefully to minSize like the original did.
     return Math.max(minSize, Math.min(maxSize, scale));
   }
 

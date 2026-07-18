@@ -40,12 +40,11 @@ public class DyeShears extends Module {
     public void onPlayerShearEntity(PlayerShearEntityEvent event) {
         Entity entity = event.getEntity();
 
-        if (!(entity instanceof Sheep)) {
+        if (!(entity instanceof Sheep sheep)) {
             return;
         }
 
         Player player = event.getPlayer();
-        Sheep sheep = (Sheep) entity;
         ItemStack itemUsed = this.checkAndGet(player);
         ItemMeta meta = itemUsed.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
@@ -61,7 +60,7 @@ public class DyeShears extends Module {
             }
 
             event.setCancelled(true);
-            ItemStack drop = new ItemStack(Material.valueOf(color.name() + "_DYE"));
+            var drop = new ItemStack(Material.valueOf(color.name() + "_DYE"));
             drop.setAmount(this.getPlugin().getRandom().nextInt(1, 4));
             sheep.setSheared(true);
             sheep.getWorld().dropItemNaturally(sheep.getLocation().clone().add(0, 0.5, 0), drop);

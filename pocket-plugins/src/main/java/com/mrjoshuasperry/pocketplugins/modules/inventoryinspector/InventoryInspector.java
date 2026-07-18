@@ -49,10 +49,7 @@ public class InventoryInspector extends Module {
         }
 
         final Entity entity = event.getRightClicked();
-        final Player clicked;
-        if (entity instanceof Player) {
-            clicked = (Player) entity;
-        } else {
+        if (!(entity instanceof Player clicked)) {
             return;
         }
 

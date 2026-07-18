@@ -133,8 +133,8 @@ public class AutoBreeding extends Module {
   @EventHandler
   public void trackLoadedItems(EntitiesLoadEvent event) {
     for (Entity entity : event.getEntities()) {
-      if (entity instanceof Item) {
-        this.droppedItems.add((Item) entity);
+      if (entity instanceof Item item) {
+        this.droppedItems.add(item);
       }
     }
   }
