@@ -1,0 +1,4 @@
+# Shell git hooks must stay LF. With core.autocrlf=true a committed hook would
+# otherwise be checked out with CRLF line endings, which breaks the "#!/bin/sh"
+# shebang the next time the hook runs on a Windows clone.
+.githooks/** text eol=lf

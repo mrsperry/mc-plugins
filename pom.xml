@@ -113,6 +113,9 @@
                         <phase>initialize</phase>
                         <inherited>false</inherited>
                         <configuration>
+                            <!-- Skippable so CI (which has no dev-server paper.jar) can
+                                 bypass provisioning without failing the build. -->
+                            <skip>${skip.setup.server}</skip>
                             <target>
                                 <mkdir dir="${project.basedir}/_server/plugins" />
                                 <copy file="${project.basedir}/paper.jar"
