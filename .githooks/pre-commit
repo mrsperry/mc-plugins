@@ -1,0 +1,16 @@
+#!/bin/sh
+# Run the whole test suite before each commit; abort the commit if it fails.
+#
+# Enable once per clone:   git config core.hooksPath .githooks
+# Bypass in a pinch:       git commit --no-verify
+#
+# This runs every module's tests (mvn -P all test), so it is not instant. If it
+# becomes too slow for your flow, move the same check to a pre-push hook instead.
+
+echo "pre-commit: running the test suite (mvn -P all test)..."
+if ! mvn -B -P all test; then
+    echo ""
+    echo "pre-commit: tests failed - commit aborted."
+    echo "Fix the failures, or rerun with 'git commit --no-verify' to bypass."
+    exit 1
+fi
