@@ -1,7 +1,7 @@
 package com.mrjoshuasperry.chat;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +21,7 @@ import net.kyori.adventure.text.TextComponent;
 public class NamePing implements Listener {
     private static final Pattern MENTION_PATTERN = Pattern.compile("@(\\w+)\\s*");
 
-    private final Map<String, Date> cooldowns;
+    private final Map<String, Instant> cooldowns;
     private int cooldown;
 
     public NamePing(YamlConfiguration config) {
@@ -53,19 +53,17 @@ public class NamePing implements Listener {
             }
 
             if (this.cooldowns.containsKey(player.getName())) {
-                Date expire = this.cooldowns.get(player.getName());
+                Instant expire = this.cooldowns.get(player.getName());
                 // Skip only this mention while it is on cooldown; a `return` here used
                 // to abandon every remaining mention in the same message.
-                if (new Date().before(expire)) {
+                if (Instant.now().isBefore(expire)) {
                     continue;
                 }
             }
 
             player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 1);
 
-            Date expire = new Date();
-            expire.setTime(expire.getTime() + (cooldown * 1000));
-            this.cooldowns.put(player.getName(), expire);
+            this.cooldowns.put(player.getName(), Instant.now().plusSeconds(cooldown));
         }
     }
 }

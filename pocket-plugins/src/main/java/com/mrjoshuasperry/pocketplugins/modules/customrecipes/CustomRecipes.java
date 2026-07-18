@@ -31,7 +31,6 @@ public class CustomRecipes extends Module {
     for (String recipeName : recipes.getKeys(false)) {
       try {
         String recipeType = recipes.getString(recipeName + ".type");
-        CraftingRecipe recipe = null;
 
         if (recipeType == null) {
           logger.severe("Recipe '" + recipeName + "'' does not have a type.");
@@ -39,14 +38,11 @@ public class CustomRecipes extends Module {
         }
 
         ConfigurationSection recipeSection = recipes.getConfigurationSection(recipeName);
-        switch (recipeType) {
-          case "shaped":
-            recipe = this.parseShapedRecipe(recipeSection);
-            break;
-          case "shapeless":
-            recipe = this.parseShapelessRecipe(recipeSection);
-            break;
-        }
+        CraftingRecipe recipe = switch (recipeType) {
+          case "shaped" -> this.parseShapedRecipe(recipeSection);
+          case "shapeless" -> this.parseShapelessRecipe(recipeSection);
+          default -> null;
+        };
 
         if (recipe == null) {
           continue;

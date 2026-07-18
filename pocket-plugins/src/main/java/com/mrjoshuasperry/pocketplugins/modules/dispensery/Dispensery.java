@@ -172,7 +172,7 @@ public class Dispensery extends Module {
         }
       }
       default -> {
-        break;
+        // Other items do nothing
       }
     }
   }
