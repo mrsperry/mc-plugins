@@ -1,4 +1,6 @@
-# List of entity types that you cannot put into eggs
+# List of entity types that you cannot put into eggs.
+# Players, bosses (wither, ender dragon), mobs with riders, and mobs that have no
+# vanilla spawn egg are always refused and don't need listing here.
 blacklist:
   - "vex"
   - "vindicator"
