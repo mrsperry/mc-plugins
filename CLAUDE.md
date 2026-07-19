@@ -27,18 +27,29 @@ mvn -P creative compile     # chat + mc-utils
 
 Tests are JUnit 6 + MockBukkit, run with `mvn -P all test` — the `all` profile aggregates every
 module (including the standalone plugins that no other profile reaches) into one reactor. MockBukkit
-is `mockbukkit-v1.21:4.110.0`; dependencyManagement forces its transitive paper-api to our pinned
-version, so bump it alongside the paper-api version. Coverage is unit tests over pure logic and
-config/serialization round-trips — behavioral/gameplay changes still need an in-game check on the
-dev server, so say so rather than implying it's verified.
+is `mockbukkit-v26.1.2:4.114.0`; it declares no transitive paper-api of its own, so the
+provided-scope paper-api from dependencyManagement is what lands on the test classpath. Bump it
+alongside the paper-api version. Coverage is unit tests over pure logic and config/serialization
+round-trips — behavioral/gameplay changes still need an in-game check on the dev server, so say so
+rather than implying it's verified.
+
+`RegistryDriftTest` in mc-utils diffs the hand-maintained content tables (tools, saplings, mobs)
+against the live registry, so content added by a Paper upgrade fails the build instead of silently
+falling out of whatever the table feeds. Prefer a Bukkit `Tag` or a registry-derived predicate over
+a hand-rolled `Material`/`EntityType` list wherever one exists.
 
 ## Version posture
 
-**Paper 1.21.11 / Java 25.** Tracks the latest Minecraft release. Keep dependencies, Maven plugins,
-and the CI toolchain on their latest **stable** versions — avoid the pre-release lines (Paper's
-calendar-versioned `26.x` builds are alpha/rc/beta only, `maven-compiler-plugin:4.0.0` is beta,
-`surefire:3.6.0` is a milestone). `paper-api` uses the `{MC}-R0.1-SNAPSHOT` coordinate, not the
-calendar `26.x` one. Java 25 means `Math.clamp` and the other 18–25 APIs are available.
+**Paper 26.1.2 / Java 25.** Tracks the latest Minecraft release. Keep dependencies, Maven plugins,
+and the CI toolchain on their latest **stable** versions — avoid the pre-release lines
+(`maven-compiler-plugin:4.0.0` is beta, `surefire:3.6.0` is a milestone; Paper's `26.2` line is
+still BETA). Java 25 means `Math.clamp` and the other 18–25 APIs are available.
+
+Paper's calendar versioning changed the `paper-api` coordinate: the `26.x` line pins a specific
+build (`26.1.2.build.74-stable`, set once via the `paper.version` property) instead of resolving a
+rolling `{MC}-R0.1-SNAPSHOT`. The MockBukkit **artifactId** encodes the line too
+(`mockbukkit-v26.1.2`), so it changes in the parent *and* all eight child poms on a line bump.
+`UPGRADING.md` is the full runbook — follow it rather than editing versions ad hoc.
 
 **Folia is not a goal — and won't be.** This is a standard single-threaded Paper server, not a
 massively-multiplayer multi-threaded one. Don't migrate the Bukkit scheduler calls, and don't treat

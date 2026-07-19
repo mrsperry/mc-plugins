@@ -4,4 +4,4 @@ version: ${project.version}
 description: Throw eggs at mobs, get mob eggs!
 authors:
   - mrsperry
-api-version: "1.21"
+api-version: "26.1.2"

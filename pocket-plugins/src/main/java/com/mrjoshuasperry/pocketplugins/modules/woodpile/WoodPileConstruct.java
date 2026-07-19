@@ -2,7 +2,6 @@ package com.mrjoshuasperry.pocketplugins.modules.woodpile;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -22,8 +21,6 @@ public class WoodPileConstruct {
     private final List<Block> fuel;
     private final List<Block> covering;
     private Set<Block> visited;
-    static List<Material> validCovering = Arrays.asList(Material.GRASS_BLOCK, Material.DIRT, Material.COARSE_DIRT,
-            Material.PODZOL, Material.MYCELIUM);
 
     public WoodPileConstruct() {
         fuel = new ArrayList<>();
@@ -123,7 +120,10 @@ public class WoodPileConstruct {
     }
 
     public static boolean isValidCovering(Block block) {
-        return validCovering.contains(block.getType());
+        // The vanilla dirt tag, for the same reason isValidFuel uses a tag: the
+        // hand-listed version predated rooted dirt, mud, muddy mangrove roots and the
+        // moss blocks, so sealing a pile with any of those silently failed to build one
+        return Tag.DIRT.isTagged(block.getType());
     }
 
 }

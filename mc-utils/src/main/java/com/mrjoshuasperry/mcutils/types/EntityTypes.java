@@ -1,51 +1,65 @@
 package com.mrjoshuasperry.mcutils.types;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.bukkit.entity.Enemy;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mob;
 
-import com.google.common.collect.Lists;
-
+/**
+ * Spawnable mobs, split into hostile and neutral.
+ *
+ * <p>
+ * Derived from the {@link EntityType} registry rather than hand-listed, so a new
+ * Minecraft version's mobs are picked up on the next build instead of silently
+ * falling out of every caller. The hand-maintained lists this replaced had drifted
+ * 24 mobs behind by Paper 26.1.2 — everything from Allay through Warden.
+ *
+ * <p>
+ * {@link Enemy} is the split: it reproduced the old hand-built hostile/neutral
+ * classification exactly, including the entries that are not {@code Monster}s
+ * (Ghast, Hoglin, Magma Cube, Phantom, Shulker, Slime). {@link Mob} is what makes
+ * "alive and spawnable" mean an actual creature — it excludes Armor Stands and
+ * Mannequins, which are {@code LivingEntity} but not mobs.
+ */
 public class EntityTypes {
-    private static ArrayList<EntityType> hostile = Lists.newArrayList(
-            EntityType.BLAZE, EntityType.CAVE_SPIDER, EntityType.CREEPER,
-            EntityType.DROWNED, EntityType.ELDER_GUARDIAN, EntityType.ENDER_DRAGON,
-            EntityType.ENDERMAN, EntityType.EVOKER, EntityType.GHAST,
-            EntityType.GIANT, EntityType.GUARDIAN, EntityType.HUSK,
-            EntityType.HOGLIN, EntityType.ILLUSIONER, EntityType.MAGMA_CUBE,
-            EntityType.PHANTOM, EntityType.PIGLIN, EntityType.PIGLIN_BRUTE,
-            EntityType.PILLAGER, EntityType.RAVAGER, EntityType.SHULKER,
-            EntityType.SILVERFISH, EntityType.SKELETON, EntityType.SLIME,
-            EntityType.SPIDER, EntityType.STRAY, EntityType.VEX,
-            EntityType.VINDICATOR, EntityType.WITCH, EntityType.WITHER,
-            EntityType.WITHER_SKELETON, EntityType.ZOGLIN, EntityType.ZOMBIE,
-            EntityType.ZOMBIFIED_PIGLIN, EntityType.ZOMBIE_VILLAGER);
+    private static final List<EntityType> hostile = new ArrayList<>();
+    private static final List<EntityType> neutral = new ArrayList<>();
 
-    private static ArrayList<EntityType> neutral = Lists.newArrayList(
-            EntityType.BEE, EntityType.BAT, EntityType.CAT,
-            EntityType.COW, EntityType.CHICKEN, EntityType.COD,
-            EntityType.DOLPHIN, EntityType.DONKEY, EntityType.FOX,
-            EntityType.HORSE, EntityType.IRON_GOLEM, EntityType.LLAMA,
-            EntityType.MULE, EntityType.MOOSHROOM, EntityType.OCELOT,
-            EntityType.PANDA, EntityType.PARROT, EntityType.PIG,
-            EntityType.POLAR_BEAR, EntityType.PUFFERFISH, EntityType.RABBIT,
-            EntityType.SALMON, EntityType.SHEEP, EntityType.SNOW_GOLEM,
-            EntityType.SQUID, EntityType.STRIDER, EntityType.TRADER_LLAMA,
-            EntityType.TROPICAL_FISH, EntityType.TURTLE, EntityType.WANDERING_TRADER);
+    static {
+        for (EntityType type : EntityType.values()) {
+            Class<?> entityClass = type.getEntityClass();
+            if (!type.isAlive() || !type.isSpawnable() || entityClass == null
+                    || !Mob.class.isAssignableFrom(entityClass)) {
+                continue;
+            }
 
-    public static ArrayList<EntityType> getAllTypes() {
-        // Copy first — addAll onto the `hostile` reference would mutate the shared
-        // static list, growing it on every call and corrupting getHostileTypes().
-        ArrayList<EntityType> types = Lists.newArrayList(hostile);
+            if (Enemy.class.isAssignableFrom(entityClass)) {
+                hostile.add(type);
+            } else {
+                neutral.add(type);
+            }
+        }
+    }
+
+    private EntityTypes() {
+    }
+
+    public static List<EntityType> getAllTypes() {
+        List<EntityType> types = new ArrayList<>(hostile);
         types.addAll(neutral);
+
         return types;
     }
 
-    public static ArrayList<EntityType> getHostileTypes() {
-        return hostile;
+    // Defensive copies — callers used to receive the backing lists directly, so a
+    // caller mutating the result would corrupt them for every other caller.
+    public static List<EntityType> getHostileTypes() {
+        return new ArrayList<>(hostile);
     }
 
-    public static ArrayList<EntityType> getNeutralTypes() {
-        return neutral;
+    public static List<EntityType> getNeutralTypes() {
+        return new ArrayList<>(neutral);
     }
 }

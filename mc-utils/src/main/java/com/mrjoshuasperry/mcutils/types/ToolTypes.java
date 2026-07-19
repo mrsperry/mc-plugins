@@ -15,6 +15,10 @@ public class ToolTypes {
             Material.STONE_SWORD, Material.STONE_PICKAXE, Material.STONE_SHOVEL, Material.STONE_AXE,
             Material.STONE_HOE);
 
+    private static List<Material> copperTypes = Lists.newArrayList(
+            Material.COPPER_SWORD, Material.COPPER_PICKAXE, Material.COPPER_SHOVEL, Material.COPPER_AXE,
+            Material.COPPER_HOE);
+
     private static List<Material> ironTypes = Lists.newArrayList(
             Material.IRON_SWORD, Material.IRON_PICKAXE, Material.IRON_SHOVEL, Material.IRON_AXE, Material.IRON_HOE);
 
@@ -30,23 +34,28 @@ public class ToolTypes {
             Material.NETHERITE_PICKAXE, Material.NETHERITE_SHOVEL, Material.NETHERITE_AXE, Material.NETHERITE_HOE);
 
     private static List<Material> swordTypes = Lists.newArrayList(
-            Material.WOODEN_SWORD, Material.STONE_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD,
-            Material.DIAMOND_SWORD, Material.NETHERITE_SWORD);
+            Material.WOODEN_SWORD, Material.STONE_SWORD, Material.COPPER_SWORD,
+            Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.DIAMOND_SWORD,
+            Material.NETHERITE_SWORD);
 
     private static List<Material> pickaxeTypes = Lists.newArrayList(
-            Material.WOODEN_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.GOLDEN_PICKAXE,
-            Material.DIAMOND_PICKAXE, Material.NETHERITE_PICKAXE);
+            Material.WOODEN_PICKAXE, Material.STONE_PICKAXE, Material.COPPER_PICKAXE,
+            Material.IRON_PICKAXE, Material.GOLDEN_PICKAXE, Material.DIAMOND_PICKAXE,
+            Material.NETHERITE_PICKAXE);
 
     private static List<Material> shovelTypes = Lists.newArrayList(
-            Material.WOODEN_SHOVEL, Material.STONE_SHOVEL, Material.IRON_SHOVEL, Material.GOLDEN_SHOVEL,
-            Material.DIAMOND_SHOVEL, Material.NETHERITE_SHOVEL);
+            Material.WOODEN_SHOVEL, Material.STONE_SHOVEL, Material.COPPER_SHOVEL,
+            Material.IRON_SHOVEL, Material.GOLDEN_SHOVEL, Material.DIAMOND_SHOVEL,
+            Material.NETHERITE_SHOVEL);
 
     private static List<Material> axeTypes = Lists.newArrayList(
-            Material.WOODEN_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLDEN_AXE, Material.DIAMOND_AXE,
+            Material.WOODEN_AXE, Material.STONE_AXE, Material.COPPER_AXE,
+            Material.IRON_AXE, Material.GOLDEN_AXE, Material.DIAMOND_AXE,
             Material.NETHERITE_AXE);
 
     private static List<Material> hoeTypes = Lists.newArrayList(
-            Material.WOODEN_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLDEN_HOE, Material.DIAMOND_HOE,
+            Material.WOODEN_HOE, Material.STONE_HOE, Material.COPPER_HOE,
+            Material.IRON_HOE, Material.GOLDEN_HOE, Material.DIAMOND_HOE,
             Material.NETHERITE_HOE);
 
     public static List<Material> getAllToolTypes() {
@@ -54,6 +63,7 @@ public class ToolTypes {
         // static list, growing it on every call and corrupting getWoodTypes().
         List<Material> types = Lists.newArrayList(ToolTypes.woodTypes);
         types.addAll(ToolTypes.stoneTypes);
+        types.addAll(ToolTypes.copperTypes);
         types.addAll(ToolTypes.ironTypes);
         types.addAll(ToolTypes.goldTypes);
         types.addAll(ToolTypes.diamondTypes);
@@ -70,6 +80,10 @@ public class ToolTypes {
         return ToolTypes.stoneTypes;
     }
 
+    public static List<Material> getCopperTypes() {
+        return ToolTypes.copperTypes;
+    }
+
     public static List<Material> getIronTypes() {
         return ToolTypes.ironTypes;
     }
@@ -80,6 +94,10 @@ public class ToolTypes {
 
     public static List<Material> getDiamondTypes() {
         return ToolTypes.diamondTypes;
+    }
+
+    public static List<Material> getNetheriteTypes() {
+        return ToolTypes.netheriteTypes;
     }
 
     public static List<Material> getSwordTypes() {
