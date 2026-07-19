@@ -1,25 +1,70 @@
 {
+  // Save when a tab loses focus. Deliberately not "afterDelay": VS Code skips
+  // editor.formatOnSave for delay-based autosave, which would quietly disable
+  // the formatting and organize-imports below.
+  "files.autoSave": "onFocusChange",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // Pin the JDK the language server compiles against. Left unset it resolves one
+  // on its own and can land below the project's Java 25 target, which shows up
+  // as phantom "method is undefined" errors on newer APIs (Math.clamp and
+  // friends) baked into target/classes, while a plain mvn build succeeds.
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-25",
+      "path": "C:\\Program Files\\Amazon Corretto\\jdk25.0.3_9",
+      "default": true
+    }
+  ],
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.compile.nullAnalysis.mode": "automatic",
+  "java.format.settings.url": "${workspaceFolder}/.vscode/eclipse-formatter.xml",
+  "java.format.settings.profile": "mc-plugins",
+
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.organizeImports": "always",
     "source.fixAll": "always"
   },
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "editor.rulers": [120],
+
   "[java]": {
-    "editor.defaultFormatter": "redhat.java",
+    "editor.defaultFormatter": "redhat.java"
   },
   "[xml]": {
-    "editor.defaultFormatter": "redhat.vscode-xml"
+    "editor.defaultFormatter": "redhat.vscode-xml",
+    "editor.tabSize": 4
   },
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml",
     "editor.insertSpaces": true,
     "editor.autoIndent": "advanced",
     "editor.tabSize": 2,
-    "diffEditor.ignoreTrimWhitespace": false,
+    "diffEditor.ignoreTrimWhitespace": false
   },
+  "[markdown]": {
+    // Trailing spaces are a hard line break in Markdown
+    "files.trimTrailingWhitespace": false
+  },
+
   "yaml.schemas": {
     "https://json.schemastore.org/paper-plugin.json": "plugin.yml"
   },
+
+  // Build output and the dev server are gitignored; keep them out of search
+  // results and off the file watcher.
+  "search.exclude": {
+    "**/target": true,
+    "_dist": true,
+    "_server": true,
+    ".archive": true
+  },
+  "files.watcherExclude": {
+    "**/target/**": true,
+    "_dist/**": true,
+    "_server/**": true
+  }
 }
