@@ -113,6 +113,10 @@ public class BiomeBombs extends Module {
     }
 
     ItemStack item = event.getItem();
+    if (item == null) {
+      return;
+    }
+
     ItemMeta meta = item.getItemMeta();
     if (meta == null) {
       return;
@@ -120,11 +124,13 @@ public class BiomeBombs extends Module {
 
     PersistentDataContainer container = meta.getPersistentDataContainer();
 
-    if (!container.has(biomeBombTypeKey, PersistentDataType.STRING))
-      return;
+    String type = container.get(biomeBombTypeKey, PersistentDataType.STRING);
+    Integer color = container.get(biomeBombColorKey, PersistentDataType.INTEGER);
 
-    String type = (String) container.get(biomeBombTypeKey, PersistentDataType.STRING);
-    int color = (int) container.get(biomeBombColorKey, PersistentDataType.INTEGER);
+    // Both keys are written together, but an item carrying only one of them (an
+    // older bomb, or one edited by hand) would otherwise unbox null and throw.
+    if (type == null || color == null)
+      return;
 
     BiomeBombProjectile projectile = new BiomeBombProjectile(this.explosionRange, type, Color.fromARGB(color),
         item.clone());
