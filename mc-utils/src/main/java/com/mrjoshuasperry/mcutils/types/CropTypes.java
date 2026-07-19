@@ -27,7 +27,8 @@ public class CropTypes {
 
     private static List<Material> saplings = Lists.newArrayList(
             Material.ACACIA_SAPLING, Material.BIRCH_SAPLING, Material.DARK_OAK_SAPLING, Material.JUNGLE_SAPLING,
-            Material.OAK_SAPLING, Material.SPRUCE_SAPLING);
+            Material.OAK_SAPLING, Material.SPRUCE_SAPLING, Material.CHERRY_SAPLING, Material.PALE_OAK_SAPLING,
+            Material.MANGROVE_PROPAGULE);
 
     private static Map<Material, Material> cropToSeed = new HashMap<>() {
         {

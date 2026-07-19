@@ -4,4 +4,4 @@ version: ${project.version}
 description: Compressing monsters and animals.
 authors:
   - mrsperry
-api-version: "1.21"
+api-version: "26.1.2"

@@ -20,7 +20,7 @@
             <dependency>
                 <groupId>io.papermc.paper</groupId>
                 <artifactId>paper-api</artifactId>
-                <version>1.21.11-R0.1-SNAPSHOT</version>
+                <version>${paper.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -40,13 +40,14 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Latest MockBukkit for the 1.21.x line. Our dependencyManagement pins
-                 paper-api to the version above for every module, so MockBukkit's own
-                 transitive paper-api converges to it — no version skew on the test
-                 classpath. Bump alongside the paper-api version. -->
+            <!-- MockBukkit for the Paper line we target — the artifactId encodes the
+                 version, so it moves with paper.version, not just the version number.
+                 Unlike the 1.21 artifact, mockbukkit-v26.1.2 declares no transitive
+                 paper-api at all; the provided-scope paper-api above is what lands on
+                 the test classpath. Bump alongside the paper-api version. -->
             <dependency>
                 <groupId>org.mockbukkit.mockbukkit</groupId>
-                <artifactId>mockbukkit-v1.21</artifactId>
+                <artifactId>mockbukkit-v26.1.2</artifactId>
                 <version>${mockbukkit.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -215,9 +216,13 @@
         <!-- Identity by default so mc-utils and non-consuming plugins are untouched.
              Plugins that bundle mc-utils override this to their own base package. -->
         <mcutils.shadedPattern>com.mrjoshuasperry.mcutils</mcutils.shadedPattern>
+        <!-- Paper's calendar-versioned line pins a specific build rather than resolving a
+             rolling {MC}-R0.1-SNAPSHOT. Take the highest -stable build in the target
+             family; see UPGRADING.md for how to resolve it. -->
+        <paper.version>26.1.2.build.74-stable</paper.version>
         <!-- Test toolchain. See the managed test dependencies for the version posture. -->
         <junit.version>6.1.2</junit.version>
-        <mockbukkit.version>4.110.0</mockbukkit.version>
+        <mockbukkit.version>4.114.0</mockbukkit.version>
         <maven.surefire.version>3.5.2</maven.surefire.version>
     </properties>
 </project>

@@ -15,13 +15,16 @@ class ToolTypesTest {
 
   @Test
   void getAllToolTypesCombinesEveryTier() {
-    // Five tiers with public getters, plus the netherite tier (field-only).
+    // Summed from the tier getters rather than written as a literal — a new tier
+    // (copper arrived in 26.1.2) shifts the total, and the old literal 30 meant this
+    // test failed on the upgrade instead of the table that was actually stale.
     int expected = ToolTypes.getWoodTypes().size()
         + ToolTypes.getStoneTypes().size()
+        + ToolTypes.getCopperTypes().size()
         + ToolTypes.getIronTypes().size()
         + ToolTypes.getGoldTypes().size()
         + ToolTypes.getDiamondTypes().size()
-        + 5;
+        + ToolTypes.getNetheriteTypes().size();
 
     assertEquals(expected, ToolTypes.getAllToolTypes().size());
     assertTrue(ToolTypes.getAllToolTypes().contains(Material.NETHERITE_HOE));

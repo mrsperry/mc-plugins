@@ -7,7 +7,7 @@ global-max-yield: 5
 # Individual creature spawn chances and yields
 # Global values are used unless specified
 creatures:
-  mushroom_cow:
+  mooshroom:
     chance: 50.0
     min-yield: 5
     max-yield: 10

@@ -5,7 +5,7 @@ description: A collection of small changes and additions to enhance vanilla game
 authors:
   - mrsperry
   - TimPCunningham
-api-version: "1.21"
+api-version: "26.1.2"
 permissions:
   pocketplugins.macros.op:
     description: Allows running and viewing command macros flagged op-only
