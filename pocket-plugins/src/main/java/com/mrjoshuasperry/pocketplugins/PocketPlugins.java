@@ -89,7 +89,9 @@ public class PocketPlugins extends JavaPlugin {
                     if (readableSection == null) {
                         YamlConfiguration config = new YamlConfiguration();
                         config.set("enabled", true);
-                        readableSection = config.getRoot();
+                        // The configuration is itself the root section; getRoot() is
+                        // declared nullable and would only reintroduce a null here.
+                        readableSection = config;
                     }
 
                     boolean enabled = readableSection.getBoolean("enabled", true);

@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -41,8 +42,10 @@ public class Main extends JavaPlugin implements Listener {
 
         FileConfiguration config = this.getConfig();
 
-        if (config.isConfigurationSection("creatures")) {
-            for (String key : config.getConfigurationSection("creatures").getKeys(false)) {
+        ConfigurationSection creaturesSection = config.getConfigurationSection("creatures");
+
+        if (creaturesSection != null) {
+            for (String key : creaturesSection.getKeys(false)) {
                 try {
                     EntityType type = EntityType.valueOf(key.toUpperCase());
                     Settings settings = Settings.fromConfig(config.getConfigurationSection("creatures." + key),

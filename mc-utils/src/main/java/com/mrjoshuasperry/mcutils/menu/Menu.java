@@ -2,6 +2,7 @@ package com.mrjoshuasperry.mcutils.menu;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -31,7 +32,10 @@ public class Menu implements InventoryHolder {
     public void repopulateInventory() {
         for (Integer slot : this.items.keySet()) {
             ItemStack item = this.items.get(slot).getItem();
-            if (!this.inventory.getItem(slot).equals(item)) {
+            // getItem returns null for an empty slot, which is every slot the first
+            // time the constructor runs this, so compare null-safely rather than
+            // dereferencing the current contents.
+            if (!Objects.equals(this.inventory.getItem(slot), item)) {
                 this.inventory.setItem(slot, item);
             }
         }

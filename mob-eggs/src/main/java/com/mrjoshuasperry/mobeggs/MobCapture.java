@@ -11,6 +11,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
@@ -131,8 +132,13 @@ public final class MobCapture {
             lore.add(line("Age", "Baby"));
         }
 
-        if (entity instanceof Tameable tameable && tameable.isTamed() && tameable.getOwner() != null) {
-            lore.add(line("Owner", tameable.getOwner().getName()));
+        if (entity instanceof Tameable tameable && tameable.isTamed()) {
+            // Read once rather than null-checking one call and dereferencing another.
+            AnimalTamer owner = tameable.getOwner();
+
+            if (owner != null) {
+                lore.add(line("Owner", owner.getName()));
+            }
         }
 
         String variant = variantOf(entity);

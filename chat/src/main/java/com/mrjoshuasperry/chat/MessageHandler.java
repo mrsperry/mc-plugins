@@ -284,11 +284,19 @@ public class MessageHandler implements Listener {
 
   @EventHandler
   public void onPlayerDeath(PlayerDeathEvent event) {
+    Component deathMessage = event.deathMessage();
+
+    // Null whenever the message is suppressed, such as with showDeathMessages
+    // off; there is nothing to decorate then, so leave the event untouched.
+    if (deathMessage == null) {
+      return;
+    }
+
     event.deathMessage(Component.text()
         .color(NamedTextColor.RED)
         .append(Component.text("💀"))
         .append(Component.space())
-        .append(event.deathMessage().decorate(TextDecoration.ITALIC))
+        .append(deathMessage.decorate(TextDecoration.ITALIC))
         .append(Component.space())
         .append(Component.text("💀"))
         .build()

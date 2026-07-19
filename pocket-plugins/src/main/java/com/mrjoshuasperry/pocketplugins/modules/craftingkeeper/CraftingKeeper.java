@@ -81,8 +81,8 @@ public class CraftingKeeper extends Module {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && event.getHand() != null
-                && event.getHand().equals(EquipmentSlot.HAND)) {
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && EquipmentSlot.HAND.equals(event.getHand())) {
             Block block = event.getClickedBlock();
             if (block != null && block.getType().equals(Material.CRAFTING_TABLE)) {
                 this.tableBlocks.put(event.getPlayer().getUniqueId(), block.getLocation());

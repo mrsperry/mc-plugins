@@ -50,7 +50,10 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addLore(Component loreLine) {
-        List<Component> lore = this.meta.lore() == null ? new ArrayList<>() : this.meta.lore();
+        // Read once: lore() is a fresh copy per call, so testing one result and
+        // appending to another would drop the existing lines.
+        List<Component> existing = this.meta.lore();
+        List<Component> lore = existing == null ? new ArrayList<>() : existing;
         lore.add(loreLine);
         this.meta.lore(lore);
         return this;
