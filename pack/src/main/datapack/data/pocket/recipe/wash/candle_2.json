@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "pocket_wash_candle",
+  "ingredients": [
+    "minecraft:water_bucket",
+    "#pocket:washable/candle",
+    "#pocket:washable/candle"
+  ],
+  "result": {
+    "id": "minecraft:candle",
+    "count": 2
+  }
+}

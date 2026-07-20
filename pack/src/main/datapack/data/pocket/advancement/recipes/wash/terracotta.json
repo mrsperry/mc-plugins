@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_water_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:water_bucket"
+          },
+          {
+            "items": "#pocket:washable/terracotta"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "pocket:wash/terracotta_1"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_water_bucket",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pocket:wash/terracotta_1",
+      "pocket:wash/terracotta_2",
+      "pocket:wash/terracotta_3",
+      "pocket:wash/terracotta_4",
+      "pocket:wash/terracotta_5",
+      "pocket:wash/terracotta_6",
+      "pocket:wash/terracotta_7",
+      "pocket:wash/terracotta_8"
+    ]
+  }
+}

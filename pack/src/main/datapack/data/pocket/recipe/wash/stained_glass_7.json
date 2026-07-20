@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "pocket_wash_stained_glass",
+  "ingredients": [
+    "minecraft:water_bucket",
+    "#pocket:washable/stained_glass",
+    "#pocket:washable/stained_glass",
+    "#pocket:washable/stained_glass",
+    "#pocket:washable/stained_glass",
+    "#pocket:washable/stained_glass",
+    "#pocket:washable/stained_glass",
+    "#pocket:washable/stained_glass"
+  ],
+  "result": {
+    "id": "minecraft:glass",
+    "count": 7
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "pocket_wash_bed",
+  "ingredients": [
+    "minecraft:water_bucket",
+    "#pocket:washable/bed"
+  ],
+  "result": {
+    "id": "minecraft:white_bed",
+    "count": 1
+  }
+}

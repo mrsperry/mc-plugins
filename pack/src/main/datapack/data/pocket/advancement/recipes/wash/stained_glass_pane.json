@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_water_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:water_bucket"
+          },
+          {
+            "items": "#pocket:washable/stained_glass_pane"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "pocket:wash/stained_glass_pane_1"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_water_bucket",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pocket:wash/stained_glass_pane_1",
+      "pocket:wash/stained_glass_pane_2",
+      "pocket:wash/stained_glass_pane_3",
+      "pocket:wash/stained_glass_pane_4",
+      "pocket:wash/stained_glass_pane_5",
+      "pocket:wash/stained_glass_pane_6",
+      "pocket:wash/stained_glass_pane_7",
+      "pocket:wash/stained_glass_pane_8"
+    ]
+  }
+}
