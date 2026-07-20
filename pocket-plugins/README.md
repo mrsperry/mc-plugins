@@ -1,6 +1,6 @@
 # Pocket Plugins
 
-A collection of small changes and additions to enhance vanilla gameplay, built as 26 independent
+A collection of small changes and additions to enhance vanilla gameplay, built as 27 independent
 modules behind an internal module system.
 
 Every module can be turned off on its own — see [Configuration](#configuration). To add one, see
@@ -33,6 +33,7 @@ Every module can be turned off on its own — see [Configuration](#configuration
 | MobSizes | Randomizes mob scale; rideable mounts are sized by their health pool instead |
 | SlimyBoots | Slime-crafted leather boots that negate fall damage and bounce you |
 | TimePlayed | Tracks per-player play time |
+| VillagerMakeovers | Villagers change into the biome outfit for wherever they are standing, instead of keeping their spawn outfit forever |
 | WanderingTraderBuffs | Config-defined wandering trader trades, added to the vanilla ones or replacing them |
 | WoodPile | Enclose logs in dirt and light it to convert them to coal blocks over time |
 
