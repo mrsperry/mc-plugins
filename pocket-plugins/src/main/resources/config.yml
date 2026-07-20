@@ -160,6 +160,34 @@ timeplayed:
   # regardless, so this only bounds what a server crash can lose
   save-interval: 300
 
+wanderingtraderbuffs:
+  # true offers only the trades below; false appends them to the vanilla ones.
+  # An empty `trades` list leaves traders untouched either way
+  replace-vanilla-trades: false
+  # Each trade takes one or two ingredients and gives one result, both written as
+  # `material: amount` pairs.
+  #
+  # `max-uses` is how many times a trader will sell the trade before it locks,
+  # and defaults to 3. Adding `min-uses` rolls that stock per trader somewhere in
+  # [min-uses, max-uses] instead of pinning it; omit it to keep every trader
+  # stocked the same. `gives-experience` defaults to true, matching villagers.
+  #
+  # trades:
+  #   - ingredients:
+  #       - emerald: 32
+  #       - book: 1
+  #     result:
+  #       elytra: 1
+  #     max-uses: 1
+  #   - ingredients:
+  #       - emerald: 4
+  #     result:
+  #       glow_ink_sac: 2
+  #     min-uses: 2
+  #     max-uses: 6
+  #     gives-experience: false
+  trades: []
+
 woodpile:
   # How many seconds it takes to convert a single log
   log-convert-time: 5
