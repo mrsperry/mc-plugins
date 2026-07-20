@@ -42,6 +42,11 @@ igneousgenerator:
   # Conversion time is in seconds
   max-conversion-time: 2
 
+lightningrods:
+  # How far from a strike to look for the rod that attracted it; fires are only
+  # suppressed when one is found
+  search-radius: 2
+
 mobgriefing:
   no-sheep-griefing: true
   no-enderman-griefing: true
