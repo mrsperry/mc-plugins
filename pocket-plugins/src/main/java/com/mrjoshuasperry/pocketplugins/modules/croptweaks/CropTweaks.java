@@ -73,6 +73,38 @@ public class CropTweaks extends Module {
       return;
     }
 
+    Material cropToDrop;
+    Sound soundToPlay = Sound.BLOCK_CROP_BREAK;
+
+    switch (cropType) {
+      case NETHER_WART -> {
+        cropToDrop = Material.NETHER_WART;
+        soundToPlay = Sound.BLOCK_NETHER_WART_BREAK;
+      }
+      case WHEAT -> cropToDrop = Material.WHEAT;
+      case CARROTS -> cropToDrop = Material.CARROT;
+      case POTATOES -> cropToDrop = Material.POTATO;
+      case BEETROOTS -> cropToDrop = Material.BEETROOT;
+      default -> {
+        return;
+      }
+    }
+
+    // Ask the block for its vanilla loot given the hoe: this is where Fortune is
+    // applied. Read it while the crop is still mature — resetting the age first
+    // would yield the immature drop table. Keep only the produce item so the
+    // free replant doesn't also hand out a windfall of seeds.
+    int amountToDrop = block.getDrops(tool).stream()
+        .filter(drop -> drop.getType() == cropToDrop)
+        .mapToInt(ItemStack::getAmount)
+        .sum();
+
+    // The crop is replanted in place at no cost, so reserve one of the derived
+    // drop to stand in for the seed a manual break-and-replant would have spent.
+    // Floored at one so a harvest is never empty — that floor also leaves wheat
+    // and beetroot, whose vanilla produce is a single item, dropping that item.
+    amountToDrop = Math.max(1, amountToDrop - 1);
+
     data.setAge(0);
     block.setBlockData(data);
 
@@ -89,28 +121,7 @@ public class CropTweaks extends Module {
       }
     }
 
-    Material cropToDrop = null;
-    int amountToDrop = random.nextInt(2) + 1;
-    Sound soundToPlay = Sound.BLOCK_CROP_BREAK;
-
-    switch (cropType) {
-      case NETHER_WART -> {
-        cropToDrop = Material.NETHER_WART;
-        soundToPlay = Sound.BLOCK_NETHER_WART_BREAK;
-      }
-      case WHEAT -> {
-        cropToDrop = Material.WHEAT;
-        amountToDrop = 1;
-      }
-      case CARROTS -> cropToDrop = Material.CARROT;
-      case POTATOES -> cropToDrop = Material.POTATO;
-      case BEETROOTS -> cropToDrop = Material.BEETROOT;
-      default -> {
-        // No action needed for other materials
-      }
-    }
-
-    if (cropToDrop != null) {
+    if (amountToDrop > 0) {
       world.dropItemNaturally(location, new ItemStack(cropToDrop, amountToDrop));
       world.playSound(location, soundToPlay, 1, 1);
     }
