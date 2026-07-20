@@ -29,7 +29,7 @@
                      resolves against whatever is already in the local repo rather
                      than the version built alongside these plugins. -->
                 <artifactId>mc-utils</artifactId>
-                <version>1.0.30</version>
+                <version>1.0.31</version>
             </dependency>
             <!-- Test-only. JUnit 5 via its BOM so the jupiter/platform artifacts stay
                  in lockstep; modules declare junit-jupiter without a version. -->
@@ -181,6 +181,7 @@
                 <module>chat</module>
                 <module>mc-utils</module>
                 <module>pocket-plugins</module>
+                <module>world-clusters</module>
                 <module>pack</module>
             </modules>
         </profile>
@@ -189,6 +190,7 @@
             <modules>
                 <module>chat</module>
                 <module>mc-utils</module>
+                <module>world-clusters</module>
             </modules>
         </profile>
         <!-- Not a server flavor: every buildable module in one reactor so a single
@@ -206,6 +208,7 @@
                 <module>mob-eggs</module>
                 <module>auto-stack</module>
                 <module>compressed-mobs</module>
+                <module>world-clusters</module>
                 <module>pack</module>
             </modules>
         </profile>
