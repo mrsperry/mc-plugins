@@ -10,6 +10,7 @@ A Maven monorepo of independent Paper plugins, each building its own jar. The gi
 | `mc-utils` | Shared library, consumed by the others |
 | `pocket-plugins` | 25 gameplay modules behind an internal module system |
 | `auto-stack`, `chat`, `compressed-mobs`, `death-chest`, `level-up`, `mob-eggs` | Standalone plugins |
+| `pack` | Companion data pack + resource pack. No sources, no jar — zips only |
 | `.archive/` | Retired plugins, kept for reference. Not part of the build |
 | `_server/`, `_dist/` | Dev server and build output. Gitignored |
 
@@ -69,6 +70,17 @@ Full detail in `pocket-plugins/Contributing.md`. The parts worth knowing before 
   concrete class, so a same-named subclass method silently replaces the base handler — and they
   can't be `private` instead, since Bukkit would then stop finding them on subclasses at all.
 - Constructors must not register events or leak `this`; the loader calls `onEnable()` afterward.
+
+## Data pack vs plugin
+
+Anything the vanilla data-pack format can express belongs in `pack/`, not in a plugin — recipes,
+loot tables, advancements, tags, predicates, item model definitions. Reach for a plugin module only
+when the behavior needs code: event handlers, per-tick logic, mutable state. `pack/README.md` has
+the current format details (pack formats track `paper.version`; the directory names are singular
+since 1.21 — `recipe/`, `advancement/`, `loot_table/`).
+
+Data pack recipes need a sibling unlock advancement to show up in the recipe book; plugin-registered
+ones get that from `Module`'s join-time `discoverRecipe` loop instead.
 
 ## Conventions
 

@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>pack</artifactId>
+    <version>1.0.0</version>
+    <!-- No sources and no jar: this module only zips the two pack trees. -->
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>com.mrjoshuasperry</groupId>
+        <artifactId>mc-plugins</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <build>
+        <plugins>
+            <!-- The parent binds shade to package for every module. There is no jar
+                 here to shade, so unbind it rather than let it fail on a pom packaging. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <!-- Yields pocket-datapack.zip / pocket-resourcepack.zip, so the
+                         zip name matches the pack namespace rather than the module. -->
+                    <finalName>pocket</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>datapack</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/datapack.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>resourcepack</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/resourcepack.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-packs-to-dist-folder</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.basedir}/../_dist">
+                                    <fileset dir="${project.build.directory}">
+                                        <include name="*.zip" />
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <!-- The dev server reads data packs out of the world folder, so
+                             this lands next to the world rather than in plugins/. A running
+                             server needs `/datapack enable` or a restart to see a new zip;
+                             `/reload` alone does not rescan. -->
+                        <id>copy-datapack-to-dev-server</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <skip>${skip.setup.server}</skip>
+                            <target>
+                                <mkdir dir="${project.basedir}/../_server/${dev.server.world}/datapacks" />
+                                <copy
+                                    file="${project.build.directory}/pocket-datapack.zip"
+                                    todir="${project.basedir}/../_server/${dev.server.world}/datapacks" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <!-- No jar is produced, so the parent's jar-copying executions have nothing
+             to find and would fail on an empty fileset. -->
+        <skip.copy.plugin>true</skip.copy.plugin>
+        <!-- Must match level-name in _server/server.properties. -->
+        <dev.server.world>world</dev.server.world>
+    </properties>
+</project>
