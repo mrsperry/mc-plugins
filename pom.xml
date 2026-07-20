@@ -181,6 +181,7 @@
                 <module>chat</module>
                 <module>mc-utils</module>
                 <module>pocket-plugins</module>
+                <module>pack</module>
             </modules>
         </profile>
         <profile>
@@ -205,6 +206,7 @@
                 <module>mob-eggs</module>
                 <module>auto-stack</module>
                 <module>compressed-mobs</module>
+                <module>pack</module>
             </modules>
         </profile>
     </profiles>
