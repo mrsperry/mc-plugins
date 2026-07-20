@@ -1,0 +1,7 @@
+main: com.mrjoshuasperry.worldclusters.WorldClusters
+name: WorldClusters
+version: ${project.version}
+description: Groups worlds into clusters with a hard player-state boundary between them
+authors:
+  - mrsperry
+api-version: "26.1.2"

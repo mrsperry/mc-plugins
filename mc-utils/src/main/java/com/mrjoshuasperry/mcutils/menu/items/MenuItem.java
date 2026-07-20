@@ -42,4 +42,12 @@ public abstract class MenuItem {
             this.onClick.accept(player, menu);
         }
     }
+
+    /**
+     * Advances any time-driven state. Called once per menu tick while the owning
+     * menu is open; see {@link com.mrjoshuasperry.mcutils.menu.MenuManager}.
+     */
+    public void tick() {
+        // No-op by default.
+    }
 }

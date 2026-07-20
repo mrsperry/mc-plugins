@@ -1,0 +1,70 @@
+# world-clusters
+#
+# A cluster is a group of worlds that share one player state. Moving between
+# worlds in the same cluster changes nothing. Moving between clusters crosses a
+# BOUNDARY: inventory, ender chest, XP, health, hunger, effects and game mode are
+# all swapped out and stored per cluster.
+#
+# Clusters are the only thing that separates worlds. A cluster can contain worlds
+# of mixed game modes, and two survival worlds in different clusters still get a
+# boundary between them.
+#
+# Any world not listed here falls into an implicit "default" cluster, so nothing
+# breaks if you forget to register one.
+
+settings:
+  # How long a /confirm prompt stays valid. Running another confirmable command
+  # invalidates the previous prompt immediately, regardless of this.
+  confirmation-timeout-seconds: 30
+
+clusters:
+  # Normal vanilla progression. Overworld, nether and end all in one cluster, so
+  # portal travel between them carries your inventory as it always has.
+  survival:
+    display-name: "Survival"
+    default-gamemode: SURVIVAL
+    # Permission nodes granted while in this cluster, and explicitly DENIED while
+    # in any other cluster that doesn't list them — an explicit deny is what
+    # overrides op's implicit yes.
+    permissions: []
+    worlds:
+      world:
+        # role drives portal routing within the cluster: a nether portal here
+        # looks for this cluster's "nether" world, not the server's.
+        role: overworld
+        environment: NORMAL
+        auto-load: true
+        display:
+          material: GRASS_BLOCK
+          name: "Overworld"
+          lore:
+            - "The main survival world"
+      world_nether:
+        role: nether
+        environment: NETHER
+        auto-load: true
+        display:
+          material: NETHERRACK
+          name: "The Nether"
+          lore: []
+      world_the_end:
+        role: end
+        environment: THE_END
+        auto-load: true
+        display:
+          material: END_STONE
+          name: "The End"
+          lore: []
+
+  # Building and testing. Separate cluster, so nothing made here can reach
+  # survival. Add the worlds below with /wc create once you want them.
+  creative:
+    display-name: "Creative"
+    default-gamemode: CREATIVE
+    # These only take effect if the plugin in question gates its commands on
+    # them, and only cascade to sub-nodes if that plugin registers them as
+    # children. If a wildcard doesn't bite, list the specific nodes instead.
+    permissions:
+      - worldedit.*
+      - voxelsniper.*
+    worlds: {}
