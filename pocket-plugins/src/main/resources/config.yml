@@ -160,6 +160,94 @@ timeplayed:
   # regardless, so this only bounds what a server crash can lose
   save-interval: 300
 
+villagermakeovers:
+  # Zombie villagers carry an outfit too; it shows again once they are cured
+  include-zombie-villagers: true
+  # Which biomes wear each of the seven villager outfits. A villager entering a
+  # biome listed here changes into that outfit; one entering a biome that is not
+  # listed keeps whatever it is already wearing.
+  #
+  # This starts from vanilla's own biome assignments and then fills in the ones
+  # vanilla silently lumps into plains. Move a biome to a different outfit to
+  # re-skin it — every biome must appear at most once across the whole table
+  outfits:
+    desert:
+      - desert
+      - badlands
+      - wooded_badlands
+      - eroded_badlands
+      - dripstone_caves
+    jungle:
+      - jungle
+      - sparse_jungle
+      - bamboo_jungle
+      - lush_caves
+      - warm_ocean
+    plains:
+      - plains
+      - sunflower_plains
+      - meadow
+      - cherry_grove
+      - forest
+      - flower_forest
+      - birch_forest
+      - old_growth_birch_forest
+      - beach
+      - stony_shore
+      - river
+      - ocean
+      - lukewarm_ocean
+      - deep_ocean
+      - deep_lukewarm_ocean
+    savanna:
+      - savanna
+      - savanna_plateau
+      - windswept_savanna
+    snow:
+      - snowy_plains
+      - snowy_beach
+      - snowy_slopes
+      - snowy_taiga
+      - ice_spikes
+      - grove
+      - frozen_peaks
+      - jagged_peaks
+      - frozen_river
+      - frozen_ocean
+      - deep_frozen_ocean
+      - cold_ocean
+      - deep_cold_ocean
+    swamp:
+      - swamp
+      - mangrove_swamp
+      - mushroom_fields
+      - dark_forest
+      - pale_garden
+      - deep_dark
+    taiga:
+      - taiga
+      - old_growth_pine_taiga
+      - old_growth_spruce_taiga
+      - windswept_hills
+      - windswept_forest
+      - windswept_gravelly_hills
+      - stony_peaks
+  # Biomes deliberately left without an outfit. These are only here to keep the
+  # startup warning quiet — the module treats them exactly like a biome it has
+  # never heard of. Assign any of them an outfit above and delete it from here
+  unstyled:
+    - nether_wastes
+    - crimson_forest
+    - warped_forest
+    - soul_sand_valley
+    - basalt_deltas
+    - the_end
+    - end_barrens
+    - end_highlands
+    - end_midlands
+    - small_end_islands
+    - the_void
+
 wanderingtraderbuffs:
   # true offers only the trades below; false appends them to the vanilla ones.
   # An empty `trades` list leaves traders untouched either way
