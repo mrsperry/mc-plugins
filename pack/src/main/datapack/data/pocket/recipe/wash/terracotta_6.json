@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "pocket_wash_terracotta",
+  "ingredients": [
+    "minecraft:water_bucket",
+    "#pocket:washable/terracotta",
+    "#pocket:washable/terracotta",
+    "#pocket:washable/terracotta",
+    "#pocket:washable/terracotta",
+    "#pocket:washable/terracotta",
+    "#pocket:washable/terracotta"
+  ],
+  "result": {
+    "id": "minecraft:terracotta",
+    "count": 6
+  }
+}

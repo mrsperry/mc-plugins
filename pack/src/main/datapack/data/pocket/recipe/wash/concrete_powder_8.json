@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "pocket_wash_concrete_powder",
+  "ingredients": [
+    "minecraft:water_bucket",
+    "#pocket:washable/concrete_powder",
+    "#pocket:washable/concrete_powder",
+    "#pocket:washable/concrete_powder",
+    "#pocket:washable/concrete_powder",
+    "#pocket:washable/concrete_powder",
+    "#pocket:washable/concrete_powder",
+    "#pocket:washable/concrete_powder",
+    "#pocket:washable/concrete_powder"
+  ],
+  "result": {
+    "id": "minecraft:white_concrete_powder",
+    "count": 8
+  }
+}

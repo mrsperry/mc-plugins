@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_transmute",
+  "category": "equipment",
+  "group": "pocket_wash_dyed_armor",
+  "input": "minecraft:leather_chestplate",
+  "material": "minecraft:water_bucket",
+  "result": {
+    "id": "minecraft:leather_chestplate",
+    "components": {
+      "!minecraft:dyed_color": {}
+    }
+  }
+}

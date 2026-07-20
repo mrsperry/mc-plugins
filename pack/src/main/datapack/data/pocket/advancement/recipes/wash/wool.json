@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_water_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:water_bucket"
+          },
+          {
+            "items": "#pocket:washable/wool"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "pocket:wash/wool_1"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_water_bucket",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pocket:wash/wool_1",
+      "pocket:wash/wool_2",
+      "pocket:wash/wool_3",
+      "pocket:wash/wool_4",
+      "pocket:wash/wool_5",
+      "pocket:wash/wool_6",
+      "pocket:wash/wool_7",
+      "pocket:wash/wool_8"
+    ]
+  }
+}

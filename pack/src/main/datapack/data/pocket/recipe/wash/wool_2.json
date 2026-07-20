@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "pocket_wash_wool",
+  "ingredients": [
+    "minecraft:water_bucket",
+    "#pocket:washable/wool",
+    "#pocket:washable/wool"
+  ],
+  "result": {
+    "id": "minecraft:white_wool",
+    "count": 2
+  }
+}

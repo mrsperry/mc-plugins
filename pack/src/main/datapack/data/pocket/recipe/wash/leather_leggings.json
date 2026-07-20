@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_transmute",
+  "category": "equipment",
+  "group": "pocket_wash_dyed_armor",
+  "input": "minecraft:leather_leggings",
+  "material": "minecraft:water_bucket",
+  "result": {
+    "id": "minecraft:leather_leggings",
+    "components": {
+      "!minecraft:dyed_color": {}
+    }
+  }
+}

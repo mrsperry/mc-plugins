@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_water_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:water_bucket"
+          },
+          {
+            "items": "#pocket:washable/carpet"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "pocket:wash/carpet_1"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_water_bucket",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pocket:wash/carpet_1",
+      "pocket:wash/carpet_2",
+      "pocket:wash/carpet_3",
+      "pocket:wash/carpet_4",
+      "pocket:wash/carpet_5",
+      "pocket:wash/carpet_6",
+      "pocket:wash/carpet_7",
+      "pocket:wash/carpet_8"
+    ]
+  }
+}
