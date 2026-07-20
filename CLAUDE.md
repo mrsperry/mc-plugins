@@ -8,7 +8,7 @@ A Maven monorepo of independent Paper plugins, each building its own jar. The gi
 | Path | What |
 |---|---|
 | `mc-utils` | Shared library, consumed by the others |
-| `pocket-plugins` | 25 gameplay modules behind an internal module system |
+| `pocket-plugins` | 26 gameplay modules behind an internal module system |
 | `auto-stack`, `chat`, `compressed-mobs`, `death-chest`, `level-up`, `mob-eggs` | Standalone plugins |
 | `pack` | Companion data pack + resource pack. No sources, no jar — zips only |
 | `.archive/` | Retired plugins, kept for reference. Not part of the build |
