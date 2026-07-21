@@ -2,6 +2,7 @@ package com.mrjoshuasperry.pocketplugins.modules.dispensery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 
 import org.bukkit.Bukkit;
@@ -13,10 +14,12 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
@@ -65,6 +68,33 @@ public class Dispensery extends Module {
 
   protected void updateItemInDispenser(Block block, Material oldType, Material newType) {
     this.runDispenserOperation(block, oldType, (ItemStack item) -> new ItemStack(newType, item.getAmount()));
+  }
+
+  /**
+   * Applies a point of durability to the first tool of the given type, honoring
+   * Unbreaking, and clears the slot with a break sound when it wears out.
+   */
+  protected void damageToolInDispenser(Block block, Material toolType) {
+    this.runDispenserOperation(block, toolType, (ItemStack item) -> {
+      if (!(item.getItemMeta() instanceof Damageable meta)) {
+        return item;
+      }
+
+      Random random = this.getPlugin().getRandom();
+      if (random.nextFloat() >= 1.0f / (item.getEnchantmentLevel(Enchantment.UNBREAKING) + 1)) {
+        return item;
+      }
+
+      int damage = meta.getDamage() + 1;
+      if (damage >= item.getType().getMaxDurability()) {
+        block.getWorld().playSound(block.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+        return new ItemStack(Material.AIR);
+      }
+
+      meta.setDamage(damage);
+      item.setItemMeta(meta);
+      return item;
+    });
   }
 
   protected static Sound getFillSoundForBucket(Material bucketType) {
@@ -141,6 +171,21 @@ public class Dispensery extends Module {
 
       event.setCancelled(true);
       this.removeItemInDispenser(block, itemType);
+      return;
+    }
+
+    if (itemType == Material.SHEARS && relativeType == Material.PUMPKIN) {
+      BlockData carvedData = Material.CARVED_PUMPKIN.createBlockData();
+      if (carvedData instanceof Directional carvedDirectional) {
+        carvedDirectional.setFacing(directional.getFacing().getOppositeFace());
+      }
+      relative.setBlockData(carvedData);
+      relative.getWorld().dropItemNaturally(relative.getLocation().add(0.5, 0.5, 0.5),
+          new ItemStack(Material.PUMPKIN_SEEDS, 4));
+      relative.getWorld().playSound(relative.getLocation(), Sound.BLOCK_PUMPKIN_CARVE, 1, 1);
+
+      event.setCancelled(true);
+      this.damageToolInDispenser(block, Material.SHEARS);
       return;
     }
 
