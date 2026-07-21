@@ -13,6 +13,12 @@ biomebombs:
   bomb-range: 9
   crafting-output: 4
 
+chunkloaders:
+  # Half-width, in chunks, of the square each placed end crystal force-loads.
+  # 1 covers a 3x3 (the crystal's chunk plus the ring around it); 0 is its chunk
+  # alone. Chunks always load full-height, so this only controls the footprint.
+  radius: 1
+
 cobblegenerator:
   # These chances are a weighted ratio
   blocks:
