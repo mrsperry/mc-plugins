@@ -25,6 +25,10 @@ concretemixer:
 
 croptweaks:
   can-blaze-powder-nether-wart: true
+  can-bonemeal-sugarcane: true
+  can-bonemeal-cactus: true
+  can-bonemeal-vines: true
+  can-bonemeal-stems: true
 
 dispensery:
   placeable-materials:
