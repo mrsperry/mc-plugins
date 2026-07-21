@@ -22,7 +22,7 @@ Every module can be turned off on its own — see [Configuration](#configuration
 | CraftingKeeper | Crafting tables retain their grid contents on close, saved per location |
 | Creeperworks | Creeper explosions spawn a creeper-shaped firework |
 | CropTweaks | Right-click a mature crop with a hoe to harvest and replant; blaze powder acts as bonemeal on nether wart |
-| Dispensery | Dispensers place configured blocks (anvil by default), and fill or empty cauldrons from buckets |
+| Dispensery | Dispensers place configured blocks (anvil by default), fill or empty cauldrons from buckets, and carve a pumpkin in front into a carved pumpkin with dispensed shears |
 | DyeShears | Craftable shears (2 shears + diamond) with a chance to drop matching dye instead of wool |
 | EasyPaintings | Sneak + right-click a painting to cycle through art variants |
 | FeatherPlucker | Hit a chicken non-lethally for a free feather, on a cooldown tracked per chicken |
