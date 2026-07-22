@@ -10,3 +10,6 @@ permissions:
   pocketplugins.macros.op:
     description: Allows running and viewing command macros flagged op-only
     default: op
+  pocketplugins.mobheads.take:
+    description: Allows taking heads from the /mobheads catalog
+    default: op

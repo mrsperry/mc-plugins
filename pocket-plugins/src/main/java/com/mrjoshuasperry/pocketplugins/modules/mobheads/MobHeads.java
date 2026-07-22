@@ -1,6 +1,7 @@
 package com.mrjoshuasperry.pocketplugins.modules.mobheads;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -10,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.bukkit.Keyed;
@@ -41,13 +43,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
+import com.mojang.brigadier.Command;
+import com.mrjoshuasperry.mcutils.menu.Menu;
+import com.mrjoshuasperry.mcutils.menu.PaginatedMenu;
+import com.mrjoshuasperry.mcutils.menu.items.MenuItem;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
+import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -64,6 +72,8 @@ public class MobHeads extends Module {
   private static final Set<EntityType> NATURAL_HEAD_DROPPERS = EnumSet.of(EntityType.WITHER_SKELETON);
 
   private static final String TEXTURE_URL = "https://textures.minecraft.net/texture/";
+
+  private static final String TAKE_PERMISSION = "pocketplugins.mobheads.take";
 
   private final double mobChance;
   private final double mobPlayerChance;
@@ -87,6 +97,15 @@ public class MobHeads extends Module {
 
     this.excludedEntities = this.readExcludedEntities(readableConfig);
     this.textures = this.readTextures(readableConfig);
+
+    this.registerCommand(() -> Commands.literal("mobheads")
+        .requires(source -> source.getSender() instanceof Player)
+        .executes(context -> {
+          if (context.getSource().getSender() instanceof Player player) {
+            this.openCatalog(player);
+          }
+          return Command.SINGLE_SUCCESS;
+        }), "Opens a browsable catalog of every mob head, including variants", List.of());
   }
 
   private Set<EntityType> readExcludedEntities(ConfigurationSection config) {
@@ -346,6 +365,68 @@ public class MobHeads extends Module {
     });
 
     return head;
+  }
+
+  private void openCatalog(Player player) {
+    List<MenuItem> items = new ArrayList<>();
+    for (ItemStack head : this.catalog()) {
+      items.add(new CatalogHead(head));
+    }
+
+    Component title = Component.text("Mob Heads", NamedTextColor.DARK_GRAY)
+        .decoration(TextDecoration.ITALIC, false);
+    new PaginatedMenu(title, 6, items).open(player);
+  }
+
+  /**
+   * A catalog entry. Clicking hands the player a copy of the head — one for a
+   * plain click, a full stack for a shift click — without removing it from the
+   * menu, gated behind {@link #TAKE_PERMISSION}.
+   */
+  private static final class CatalogHead extends MenuItem {
+    private CatalogHead(ItemStack head) {
+      super(head);
+    }
+
+    @Override
+    public void onClick(Player player, Menu menu, ClickType click) {
+      if (!player.hasPermission(TAKE_PERMISSION)) {
+        player.sendMessage(Component.text("You do not have permission to take heads.", NamedTextColor.RED));
+        return;
+      }
+
+      ItemStack given = this.getItem().clone();
+      given.setAmount(click.isShiftClick() ? given.getMaxStackSize() : 1);
+      player.getInventory().addItem(given);
+    }
+  }
+
+  /**
+   * Every head this module can produce, grouped by mob in alphabetical order with
+   * each mob's base head first and its variants after, themselves alphabetical.
+   */
+  private List<ItemStack> catalog() {
+    Map<String, List<ItemStack>> byMob = new TreeMap<>();
+
+    VANILLA_HEADS.forEach((type, material) -> byMob
+        .computeIfAbsent(type.key().value(), key -> new ArrayList<>())
+        .add(ItemStack.of(material)));
+
+    this.textures.forEach((type, variants) -> {
+      List<ItemStack> heads = byMob.computeIfAbsent(type.key().value(), key -> new ArrayList<>());
+
+      if (variants.defaultTexture() != null) {
+        heads.add(this.createTexturedHead(type.key().value(), variants.defaultTexture()));
+      }
+
+      variants.byVariant().keySet().stream().sorted()
+          .forEach(variant -> heads.add(this.createTexturedHead(
+              variant + "_" + type.key().value(), variants.byVariant().get(variant))));
+    });
+
+    List<ItemStack> catalog = new ArrayList<>();
+    byMob.values().forEach(catalog::addAll);
+    return catalog;
   }
 
   static String headName(String key) {

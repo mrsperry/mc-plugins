@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -88,8 +89,12 @@ public class Menu implements InventoryHolder {
     }
 
     public void clickedSlot(Player player, int slot) {
+        this.clickedSlot(player, slot, ClickType.UNKNOWN);
+    }
+
+    public void clickedSlot(Player player, int slot, ClickType click) {
         if (this.items.containsKey(slot)) {
-            this.items.get(slot).onClick(player, this);
+            this.items.get(slot).onClick(player, this, click);
         }
 
         this.repopulateInventory();
@@ -114,7 +119,7 @@ public class Menu implements InventoryHolder {
         // rather than trusting the raw slot.
         if (Objects.equals(event.getClickedInventory(), this.inventory)
                 && event.getWhoClicked() instanceof Player player) {
-            this.clickedSlot(player, event.getSlot());
+            this.clickedSlot(player, event.getSlot(), event.getClick());
         }
 
         return true;

@@ -125,7 +125,7 @@ public class PaginatedMenu extends Menu {
     private void renderNavigation() {
         if (this.page > 0) {
             this.setItem(this.prevSlot, new StaticMenuItem(
-                    navigationItem(Material.ARROW, "Previous page"),
+                    navigationItem(Material.RED_STAINED_GLASS_PANE, "Previous page"),
                     (player, menu) -> this.previousPage()));
         } else {
             this.setItem(this.prevSlot, new DecorMenuItem(Material.GRAY_STAINED_GLASS_PANE));
@@ -133,7 +133,7 @@ public class PaginatedMenu extends Menu {
 
         if (this.page < this.getPageCount() - 1) {
             this.setItem(this.nextSlot, new StaticMenuItem(
-                    navigationItem(Material.ARROW, "Next page"),
+                    navigationItem(Material.LIME_STAINED_GLASS_PANE, "Next page"),
                     (player, menu) -> this.nextPage()));
         } else {
             this.setItem(this.nextSlot, new DecorMenuItem(Material.GRAY_STAINED_GLASS_PANE));
