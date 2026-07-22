@@ -1,7 +1,7 @@
 main: com.mrjoshuasperry.deathchest.Main
 name: DeathChest
 version: ${project.version}
-description: Never lose your items again! Spawns a temporary chest containing all of your items when you die.
+description: Never lose your items again! Your items float in a ring at your death spot; left-click to grab a stack, sneak-left-click to grab everything.
 authors:
   - mrsperry
 api-version: "26.1.2"

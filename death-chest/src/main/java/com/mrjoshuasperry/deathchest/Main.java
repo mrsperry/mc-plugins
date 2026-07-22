@@ -5,40 +5,60 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mrjoshuasperry.deathchest.listeners.BlockListener;
-import com.mrjoshuasperry.deathchest.listeners.EntityListener;
-import com.mrjoshuasperry.deathchest.listeners.InventoryListener;
+import com.mrjoshuasperry.deathchest.listeners.DeathPileListener;
 import com.mrjoshuasperry.deathchest.listeners.PlayerListener;
 
 public class Main extends JavaPlugin {
-    private final NamespacedKey deathChestKey = new NamespacedKey(this, "death-chest");
-    private final NamespacedKey deathChestItemsKey = new NamespacedKey(this, "death-chest-items");
-    private final NamespacedKey deathChestPlayerKey = new NamespacedKey(this, "death-chest-player");
+    // Marks an Interaction as a clickable pile hitbox and points it at its item.
+    private final NamespacedKey pileMemberKey = new NamespacedKey(this, "pile-member");
+    private final NamespacedKey pileDisplayIdKey = new NamespacedKey(this, "pile-display-id");
+    // Shared by every entity in one death; groups them for pickup and cleanup.
+    private final NamespacedKey pileGroupKey = new NamespacedKey(this, "pile-group");
+    // On the ItemDisplay: points back at its hitbox, and the orbit blob that lets a
+    // pile be rebuilt from the entity after a restart.
+    private final NamespacedKey pileInteractionIdKey = new NamespacedKey(this, "pile-interaction-id");
+    private final NamespacedKey pileOrbitKey = new NamespacedKey(this, "pile-orbit");
+
+    private DeathPileManager pileManager;
 
     @Override
     public void onEnable() {
+        this.pileManager = new DeathPileManager(this);
+
         Listener[] listeners = {
-                new BlockListener(this),
-                new EntityListener(this),
-                new InventoryListener(this),
-                new PlayerListener(this)
+                new PlayerListener(this),
+                new DeathPileListener(this)
         };
 
         PluginManager manager = this.getServer().getPluginManager();
         for (Listener listener : listeners) {
             manager.registerEvents(listener, this);
         }
+
+        this.pileManager.start();
     }
 
-    public NamespacedKey getDeathChestKey() {
-        return this.deathChestKey;
+    public DeathPileManager getPileManager() {
+        return this.pileManager;
     }
 
-    public NamespacedKey getDeathChestItemsKey() {
-        return this.deathChestItemsKey;
+    public NamespacedKey getPileMemberKey() {
+        return this.pileMemberKey;
     }
 
-    public NamespacedKey getDeathChestPlayerKey() {
-        return this.deathChestPlayerKey;
+    public NamespacedKey getPileDisplayIdKey() {
+        return this.pileDisplayIdKey;
+    }
+
+    public NamespacedKey getPileGroupKey() {
+        return this.pileGroupKey;
+    }
+
+    public NamespacedKey getPileInteractionIdKey() {
+        return this.pileInteractionIdKey;
+    }
+
+    public NamespacedKey getPileOrbitKey() {
+        return this.pileOrbitKey;
     }
 }

@@ -80,21 +80,75 @@ mobheads:
   #
   # Sourced from Mojang's MHF_* head accounts where they exist, and from the
   # Minecraft-Heads database (https://minecraft-heads.com) for everything newer
+  #
+  # An entry is either a single hash (one skin for every variant, as below) or a
+  # map with a `default` plus per-variant overrides. Variants a mob can have:
+  #   cow / pig / chicken:  temperate, warm, cold
+  #   sheep:                white, orange, magenta, light_blue, yellow, lime,
+  #                         pink, gray, light_gray, cyan, purple, blue, brown,
+  #                         green, red, black
+  #   mooshroom:            red, brown
+  #   wolf:                 pale, ashen, black, chestnut, rusty, snowy, spotted,
+  #                         striped, woods
+  #   cat:                  tabby, black, red, siamese, british_shorthair,
+  #                         calico, persian, ragdoll, white, jellie, all_black
+  #   fox:                  red, snow
+  #   rabbit:               brown, white, black, black_and_white, gold,
+  #                         salt_and_pepper, the_killer_bunny
+  #   parrot:               red, blue, green, cyan, gray
+  #   llama:                creamy, white, brown, gray
+  #   axolotl:              lucy, wild, gold, cyan, blue
+  #   frog:                 temperate, warm, cold
+  #   horse:                white, creamy, chestnut, brown, black, gray,
+  #                         dark_brown
+  #   copper_golem:         exposed, weathered, oxidized (unaffected = default)
+  # A mob whose variant isn't listed falls back to `default`.
   textures:
     allay: e5527727709f08bb5f91aac850fe6f944c5bc348a080b3b563d449c72b81bf86
     armadillo: c1eb6df4736ae24dd12a3d00f91e6e3aa7ade6bbefb0978afef2f0f92461018f
-    axolotl: f80680986a2d5826f326fb1cdc9cef92b2f37d01ed08f04141a8e65385ee97b6
+    axolotl:
+      default: f80680986a2d5826f326fb1cdc9cef92b2f37d01ed08f04141a8e65385ee97b6
+      lucy: 7b910fbc216f724d29655155b2a3858a80f234a0cfed609e22fc670683ab777a
+      wild: b4ac4aa37ba2458551ad2a0a9ed44b3f764dd43cd0c5e9f59a8193c295d74af3
+      gold: 405bea436985d1b759979c45f56b016486da10943dbf9480d38ea72141f10a81
+      cyan: 1a8502f8080fae0517ee1d58479d159a037ab9c46af9d711e2a5e860ee7b6375
+      blue: eef630657e4a279b0b7ea0f67905920af365f9c84ca9f34a32b53343ff629910
     bat: f8c32b88443a29b55f167ff54af425c147afa5febf630f1a5d408908d1df5b7f
     bee: 722cc5ed03e6bdce81675fa44f740bb9aff0c1a662f185c31b05371c94fb7029
     blaze: d06e342f90ec538aaa1552b224f264a040840902e126d91ece6139aa5b3c7cc3
     bogged: a3b9003ba2d05562c75119b8a62185c67130e9282f7acbac4bc2824c21eb95d9
     breeze: a275728af7e6a29c88125b675a39d88ae9919bb61fdc200337fed6ab0c49d65c
     camel: 74b8a333dfa92e7e5a95ad4ae2d84b1bafa33dc28c054925277f60e79dafc8c4
-    cat: 88eb2b52adcf8bfe846191e74940be098fe5799ee03d94eefb7056620c9975a2
+    cat:
+      default: 88eb2b52adcf8bfe846191e74940be098fe5799ee03d94eefb7056620c9975a2
+      tabby: de28d30db3f8c3fe50ca4f26f3075e36f003ae8028135a8cd692f24c9a98ae1b
+      black: 4fd10c8e75f67398c47587d25fc146f311c053cc5d0aeab8790bce36ee88f5f8
+      red: 2113dbd3c6a078a17b4edb78ce07d836c38dace5027d4b0a83fd60e7ca7a0fcb
+      siamese: d5b3f8ca4b3a555ccb3d194449808b4c9d783327197800d4d65974cc685af2ea
+      british_shorthair: 5389e0d5d3e81f84b570e2978244b3a73e5a22bcdb6874b44ef5d0f66ca24eec
+      calico: 340097271bb680fe981e859e8ba93fea28b813b1042bd277ea3329bec493eef3
+      persian: ff40c746260ef91c96b27159795e87191ae7ce3d5f767bf8c74faad9689af25d
+      ragdoll: dc7a45d25889e3fdf7797cb258e26d4e94f5bc13eef00795dafef2e83e0ab511
+      white: 21d15ac9558e98b89aca89d3819503f1c5256c2197dd3c34df5aac4d72e7fbed
+      jellie: a0db41376ca57df10fcb1539e86654eecfd36d3fe75e8176885e93185df280a5
+      all_black: 22c1e81ff03e82a3e71e0cd5fbec607e11361089aa47f290d46c8a2c07460d92
     cave_spider: 77b07063a6874fa3e22548e02062bd733c25885929809624180aebb851557f6a
-    chicken: 916b8e98389c541bb36453850bcbd1f7bc5a57da62dcc505060409737ec5b72a
+    chicken:
+      default: 916b8e98389c541bb36453850bcbd1f7bc5a57da62dcc505060409737ec5b72a
+      warm: 58c231bf464f9a6c6786a22a4d119ea5e5057624c5a391470d35fa2b6ffa5183
+      cold: 69b26cc2036bd95467ca7bd9f82ebc3f8c2198d84e899834ef0643371c485881
     cod: 4feeff4b7fcfce68b0f74df0db0ad0c01f7301d0c6d893699b402bd50bb376b0
-    cow: d0e4e6fbf5f3dcf94422a1f319448f152369d179dbfbcdf00e5bfe8495fa977
+    copper_golem:
+      # Oxidation stage; an unaffected golem uses the default
+      default: d998651718b318a2ca6a4a21ed201f0c65a14d0fcde7dd044bad33116cd5e026
+      exposed: ad8cf824534a3e63cb2278c3a6ec5b3b17d7c8e178ac67d793e63d0eea9b048c
+      weathered: ff401456e0b4da388e6f21a8683608501ecb4988af76dc4c4ace5c92fe34e9f1
+      oxidized: d1e2791f850af92271763f32e3d440573952135c73083715665d7adcff9b06c9
+    cow:
+      # Used for a temperate cow and as the fallback for any unlisted variant
+      default: d0e4e6fbf5f3dcf94422a1f319448f152369d179dbfbcdf00e5bfe8495fa977
+      warm: 37eeb49335e03fe7911295075d6ae1e8a9b091fc6c4896fd2ccec8359c10b006
+      cold: e33221484d39f0d4ecdffa729567ce77fa8ce05b091db76dd5b079a20f7bf339
     creaking: 27e9adb9dddcc7f1fc088a4d181de91a40177b774da405ac524b8346e8b9cd46
     dolphin: fa598af8c48573ad794fd7e25818a355a9793c2a4c791cb3a29a15206a8cbdc3
     donkey: f57ceea4e2a7bc996f0708f1af949f78dcd9cf3ea6b6f123347ddfc3a2259bb5
@@ -103,34 +157,91 @@ mobheads:
     enderman: 1b09a3752510e914b0bdc9096b392bb359f7a8e8a9566a02e7f66faff8d6f89e
     endermite: 5a1a0831aa03afb4212adcbb24e5dfaa7f476a1173fce259ef75a85855
     evoker: 3433322e2ccbd9c55ef41d96f38dbc666c803045b24391ac9391dccad7cd
-    fox: ebda576ebf8557b7a5d1d312284a058daa3a6d01573db74281018d5b1fb85032
-    frog: bf54d65db4515b2781442f914fd22e4a89fac8ebd60f4262a6a0e223dfb20ecd
+    fox:
+      default: ebda576ebf8557b7a5d1d312284a058daa3a6d01573db74281018d5b1fb85032
+      red: 7f88bda8aa0f94344929710bd7e7d668ade320bbdfb3526d0c19a6ef519702c9
+      snow: 41436377eb4c4b4e39fb0e1ed8899fb61ee1814a9169b8d08729ef01dc85d1ba
+    frog:
+      default: bf54d65db4515b2781442f914fd22e4a89fac8ebd60f4262a6a0e223dfb20ecd
+      temperate: d0edcb898356fd400c205c6134e098610bafbbc50417729a155ce77d7bca98d4
+      warm: 1e9312b5b2bab9ad51ea4b6a407d6d390bb5043408757b976a7556898ac43de0
+      cold: 27bcccc125a4110434a85c40ada039d050f14ef7db34a3444067310f8ce69606
     ghast: 4a4e42eb15a08813a6a6f61f10aa288019fa0fae106a2953ddb46f77ee2d77f
     glow_squid: e51ec3996fbcba0eb74c55a36a924ac0c0b15a75c8d82cd3e0e375b97e2b5fb5
     goat: c0ed6ac59243b457f01eb80f8c711017bec6ccc6fde300cd9213b52ab7c7f0c6
     guardian: 18d2a7fea7f2e0d916c7c6d7914937bb8dd3fbfd7f9483a4a3912f5a0fc63d3
     happy_ghast: a1a36cb93d01675c4622dd5c8d872110911ec12c372e89afa8ba03862867f6fb
     hoglin: 7ad7b5aeb220c079e319cd70ac8800e80774a9313c22f38e77afb89999e6ec87
-    horse: 246fcc9d88764b7219f6ed45ecd7af73c409d2daddc9ddf63911fac15da66ccb
+    horse:
+      default: 7bb4b288991efb8ca0743beccef31258b31d39f24951efb1c9c18a417ba48f9
+      white: 9f4bdd59d4f8f1d5782e0fee4bd64aed100627f188a91489ba37eeadededd827
+      creamy: a6dae0ade0e0dafb6dbc7786ce4241242b6b6df527a0f7af0a42184c93fd646b
+      chestnut: a996399fff9cbcfb7ba677dd0c2d104229d1cc2307a6f075a882da4694ef80ae
+      brown: 9717d71025f7a62c90a333c51663ffeb385a9a0d92af68083c5b045c0524b23f
+      black: 3efb0b9857d7c8d295f6df97b605f40b9d07ebe128a6783d1fa3e1bc6e44117
+      gray: 8f0d955889b0378d4933c956398567e770103ae9eff0f702d0d53d52e7f6a83b
+      dark_brown: 156b7bc1a4836eb428ea8925eceb5e01dfbd30c7deff6c9482689823203cfd2f
     husk: 61f2267a299f4e854673ad3486a75ee197e41fd79af31f95c6c95e49037019f4
     iron_golem: 1c6cd7202c34e78f3073090349f7d973b288af5e5b7334dd249010b3f27078f9
-    llama: 488ba77743dcc1390217901a4104cfc04e73d3b46e6bcee49d2077fed9afe062
+    llama:
+      default: 488ba77743dcc1390217901a4104cfc04e73d3b46e6bcee49d2077fed9afe062
+      creamy: bae25ddc2d2539c565dff2aa5006033f14cc06379fe28b0731c7bdc65ba0e016
+      white: de703ab031ed66622f12957ef59a8b5c8a269cebd18f9326248b68c3bbe20163
+      brown: 7f832466dcc7d5e7702cdee4cd555dbd39637d20adf9367fb03cfd6888baaae7
+      gray: 6d2ffce9a174fe1c084e2d82052182d94f95ed436b75ff7ea7a4e94d94c72d8a
     magma_cube: d90d61e8ce9511a0a2b5ea2742cb1ef36131380ed4129e1b163ce8ff000de8ea
-    mooshroom: 123cfc5582454fcf9906f841fda2cc6ae896cf455821c4ada1998de70877cc86
+    mooshroom:
+      default: 123cfc5582454fcf9906f841fda2cc6ae896cf455821c4ada1998de70877cc86
+      red: d0bc61b9757a7b83e03cd2507a2157913c2cf016e7c096a4d6cf1fe1b8db
+      brown: b6d5fc7031acc95beeb52875f15408e979a0a9c391b6db7ecee7e400072de5c4
     mule: a0486a742e7dda0bae61ce2f55fa13527f1c3b334c57c034bb4cf132fb5f5f
     ocelot: 118b6b79783368dfe0042985110da366f9c788b45097a3ea6d0d9a753e9f42c6
     panda: d188c980aacfa94cf33088512b1b9517ba826b154d4cafc262aff6977be8a
-    parrot: 22123b2c4cc2ad244ecaabca0b9b88213d54261b557ec5f25110f328f6bbd6c
+    parrot:
+      default: 2b94f236c4a642eb2bcdc3589b9c3c4a0b5bd5df9cd5d68f37f8c83f8e3f1
+      red: a4ba8d66fecb1992e94b8687d6ab4a5320ab7594ac194a2615ed4df818edbc3
+      blue: d5d3ab8aa0db25f55a4b6b52c3907de3494c20e24474f6b816b6a42716912f29
+      green: ab9a36c5589f3a2e59c1caa9b3b88fada76732bdb4a7926388a8c088bbbcb
+      cyan: f5ca3b511a8f563eaa35f47366c2199e75c5acb85e6d4b79101d5882247bc219
+      gray: 3d6f4a21e0d62af824f8708ac63410f1a01bbb41d7f4a702d9469c6113222
     phantom: b1109d9c6786c747c87fc36c9a271d51ff201603c38d2615ac4803908680e988
-    pig: a562a37b871f964bfc3e1311ea672aaa03984a5dc472154a34dc25af157e382b
+    pig:
+      default: a562a37b871f964bfc3e1311ea672aaa03984a5dc472154a34dc25af157e382b
+      warm: 7beba1a2d56e84f8e51fed6659f2cb7c14fed43859af584737897bf70c039475
+      cold: ba18d4043cd6c903866788914fd534315281af9f259e34837e3e175e545c2ede
     piglin_brute: 3e300e9027349c4907497438bac29e3a4c87a848c50b34c21242727b57f4e1cf
     pillager: 4aee6bb37cbfc92b0d86db5ada4790c64ff4468d68b84942fde04405e8ef5333
     polar_bear: d9224ce0309ef67c7cdc9550ebb174f7a80a64c050586119a1e3633f20d39d5e
     pufferfish: fca298093963ca18f9b6c264196817919068bd4928f3fef1f4583cdfa7a06758
-    rabbit: ffecc6b5e6ea5ced74c46e7627be3f0826327fba26386c6cc7863372e9bc
+    rabbit:
+      default: ffecc6b5e6ea5ced74c46e7627be3f0826327fba26386c6cc7863372e9bc
+      brown: 5a6600680f4f5b132154e3413e29c93cf96ff2f2224ab87bee50959e0b0ee929
+      white: af267894188ef3bb88f129640ff354390754dbca7808db996a1de53c95df610d
+      black: 82bcd42e50acf1bed8c34ca6f0e0e4fa4a14a2f92cce23f1a6cd784d793c2be0
+      black_and_white: b6d8e400135acc897e8ce0c6fa46a1862a37977ed0b6fdb0b3d6a676abb92a59
+      gold: 262f649eefe90d53720c47bdaa8275fc7be8ced820a453ddccd857080c6d05bb
+      salt_and_pepper: ccf30a936055e43af2223b38436a5e1ad47cd10517a19884df17aed579ca14bc
+      the_killer_bunny: ac90e23abab12ff57a1533fe3e0f1db2d45088b50c417161628d9b9808ddafa3
     ravager: 5c73e16fa2926899cf18434360e2144f84ef1eb981f996148912148dd87e0b2a
     salmon: 8aeb21a25e46806ce8537fbd6668281cf176ceafe95af90e94a5fd84924878
-    sheep: 7ca38ccf417e99ca9d47eeb15a8a30edb1507aa52b678c220c717c474aa6fe3e
+    sheep:
+      default: 7ca38ccf417e99ca9d47eeb15a8a30edb1507aa52b678c220c717c474aa6fe3e
+      white: f31f9ccc6b3e32ecf13b8a11ac29cd33d18c95fc73db8a66c5d657ccb8be70
+      orange: f098397a270b4c3d2b1e574b8cfd3cc4ea3409066cefe31ea993633c9d576
+      magenta: 1836565c7897d49a71bc18986d1ea6561321a0bbf711d41a56ce3bb2c217e7a
+      light_blue: 9a624f5966bedd6e67f654b59e9249b2ecf307d903339bc199923977f4c8c
+      yellow: 26a4112df1e4bce2a5e28417f3aaff79cd66e885c3724554102cef8eb8
+      lime: 92a2448f58a491332434e85c45d786d874397e830a3a7894e6d92699c42b30
+      pink: 2ac74a2b9b91452e56fa1dda5db81077856e49f27c6e2de1e841e5c95a6fc5ab
+      gray: 4287eb501391f275389f166ec9febea75ec4ae951b88b38cae87df7e24f4c
+      light_gray: ce1ac683993be35512e1be31d1f4f98e583edb1658a9e21192c9b23b5cccdc3
+      cyan: 46f6c7e7fd514ce0acc68593229e40fcc4352b841646e4f0ebcccb0ce23d16
+      purple: ae52867afef38bb14a26d1426c8c0f116ad34761acd92e7aae2c819a0d55b85
+      blue: d9ec22818d1fbfc8167fbe36728b28240e34e16469a2929d03fdf511bf2ca1
+      brown: a55ad6e5db5692d87f51511f4e09b39ff9ccb3de7b4819a7378fce8553b8
+      green: a017215c7f8db82040aa2c47298b66541c2eb5f7f93040a5d23d88f0687d4b34
+      red: 839af477eb627815f723a5662556ec9dfcbab5d494d338bd214232f23e446
+      black: 32652083f28ed1b61f9b965df1abf010f234681c21435951c67d88364749822
     shulker: f2c642cfe33814767d692d27599c8bef4f5a306fc210d4b50a580b7040f02b18
     silverfish: 33397111bf3f2a59374c186fa8b7556c6e50423b116e252a89f6b4225b3980e4
     skeleton_horse: abc63ba27357898cf2e64da94802c74efc17ffd24064b5327fbc59694bc5e3dc
@@ -152,7 +263,17 @@ mobheads:
     warden: cf6481c7c435c34f21dff1043a4c7034c445a383a5435fa1f2a503a348afd62f
     witch: baf818b04d6ae98a69ad8d9463d8d0379921d3eb79222e1c6272f65372d80775
     wither: cdf74e323ed41436965f5c57ddf2815d5332fe999e68fbb9d6cf5c8bd4139f
-    wolf: 9fc1232ba3c9e95fc8295e9978d165cf528cea4a2b1846fa32403caaea53820c
+    wolf:
+      default: 9fc1232ba3c9e95fc8295e9978d165cf528cea4a2b1846fa32403caaea53820c
+      pale: 64bb00afbbe27872efddd6a51680c23258d8e7d73e770fdd0ebc3d342ec1418
+      ashen: d39754f0cff419578ce94b5c88666d26d0275ff2cc713b6e3461b935baac844f
+      black: f6976503340eb030ab77f300a2efa12f2179df2ca9ca0d292d983c50ed933309
+      chestnut: 762ad8c70badb7874a635920b2f934f5151eff743b8e51e8ba7baf3a3f31a256
+      rusty: 670eecea78fcc87f80e8125733423c96a88bb60408c7025dd54998d629bee514
+      snowy: 50b8e8a15dff16be494c687f13793ee35ac992a2cacff25f327bd240416851f2
+      spotted: 643e34c3063d1a53016b62daa5bb15b7229e9c0b7725ea4e895cbabc5fa78400
+      striped: b3f2de525328e0a7162b40fba2a5bc6aa4deebbdd6996114691ce1d7ef537ccf
+      woods: 1f72bb899869b76e1a2b0d513736b8d6bdc5138f374a8577e1c5c76b72fd4218
     zoglin: e67e18602e03035ad68967ce090235d8996663fb9ea47578d3a7ebbc42a5ccf9
     zombie_horse: 10a3fb6773bd53487d881cc6f155031057ea4168fc70e8f2e34fa790ead047e
     zombie_villager: 5de1fbe711a6812e53fd56280a8f7d9c3a5c9506678fdef8893418b0efac590a
