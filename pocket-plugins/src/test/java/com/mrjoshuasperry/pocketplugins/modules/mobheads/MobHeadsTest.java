@@ -41,4 +41,14 @@ class MobHeadsTest {
   void multiWordHeadNameCapitalizesEachWord() {
     assertEquals("Zombie Villager Head", MobHeads.headName("zombie_villager"));
   }
+
+  @Test
+  void variantPrefixBecomesPartOfTheName() {
+    assertEquals("Warm Cow Head", MobHeads.headName("warm_cow"));
+  }
+
+  @Test
+  void multiWordVariantAndSpeciesEachCapitalize() {
+    assertEquals("Light Blue Sheep Head", MobHeads.headName("light_blue_sheep"));
+  }
 }

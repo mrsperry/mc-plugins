@@ -1,25 +1,41 @@
 package com.mrjoshuasperry.pocketplugins.modules.mobheads;
 
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 
+import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.Cat;
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.CopperGolem;
+import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fox;
+import org.bukkit.entity.Frog;
+import org.bukkit.entity.Llama;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.MushroomCow;
+import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Rabbit;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -28,6 +44,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 import net.kyori.adventure.text.Component;
@@ -55,7 +72,7 @@ public class MobHeads extends Module {
   private final boolean lootingAffectsChance;
 
   private final Set<EntityType> excludedEntities;
-  private final Map<EntityType, String> textures;
+  private final Map<EntityType, VariantTextures> textures;
 
   public MobHeads(ConfigurationSection readableConfig, ConfigurationSection writableConfig) {
     super(readableConfig, writableConfig);
@@ -84,8 +101,8 @@ public class MobHeads extends Module {
     return excluded;
   }
 
-  private Map<EntityType, String> readTextures(ConfigurationSection config) {
-    Map<EntityType, String> parsed = new EnumMap<>(EntityType.class);
+  private Map<EntityType, VariantTextures> readTextures(ConfigurationSection config) {
+    Map<EntityType, VariantTextures> parsed = new EnumMap<>(EntityType.class);
 
     ConfigurationSection section = config.getConfigurationSection("textures");
     if (section == null) {
@@ -94,14 +111,58 @@ public class MobHeads extends Module {
 
     for (String name : section.getKeys(false)) {
       EntityType type = this.parseEntityType(name);
-      String texture = section.getString(name);
+      if (type == null) {
+        continue;
+      }
 
-      if (type != null && texture != null && !texture.isBlank()) {
-        parsed.put(type, texture);
+      VariantTextures variants = readVariantTextures(section, name);
+      if (variants != null) {
+        parsed.put(type, variants);
       }
     }
 
     return parsed;
+  }
+
+  /**
+   * A texture entry is either a scalar hash (one skin for every variant) or a
+   * section with a {@code default} hash plus per-variant overrides keyed by the
+   * variant name, e.g. {@code warm}/{@code cold} for a cow or {@code light_blue}
+   * for a sheep. Unlisted variants fall back to {@code default}.
+   */
+  private static VariantTextures readVariantTextures(ConfigurationSection parent, String name) {
+    ConfigurationSection nested = parent.getConfigurationSection(name);
+    if (nested == null) {
+      String texture = parent.getString(name);
+      return isBlank(texture) ? null : new VariantTextures(texture, Map.of());
+    }
+
+    String defaultTexture = nested.getString("default");
+    if (isBlank(defaultTexture)) {
+      defaultTexture = null;
+    }
+
+    Map<String, String> byVariant = new HashMap<>();
+    for (String variant : nested.getKeys(false)) {
+      if (variant.equals("default")) {
+        continue;
+      }
+
+      String texture = nested.getString(variant);
+      if (!isBlank(texture)) {
+        byVariant.put(variant.toLowerCase(Locale.ROOT), texture);
+      }
+    }
+
+    if (defaultTexture == null && byVariant.isEmpty()) {
+      return null;
+    }
+
+    return new VariantTextures(defaultTexture, byVariant);
+  }
+
+  private static boolean isBlank(String value) {
+    return value == null || value.isBlank();
   }
 
   private EntityType parseEntityType(String name) {
@@ -196,17 +257,63 @@ public class MobHeads extends Module {
       return this.createPlayerHead(player);
     }
 
-    Material vanilla = VANILLA_HEADS.get(entity.getType());
+    EntityType type = entity.getType();
+    Material vanilla = VANILLA_HEADS.get(type);
     if (vanilla != null) {
       return ItemStack.of(vanilla);
     }
 
-    String texture = this.textures.get(entity.getType());
+    VariantTextures variants = this.textures.get(type);
+    if (variants == null) {
+      return null;
+    }
+
+    String variant = variantKey(entity).orElse(null);
+    String texture = variants.resolve(variant);
     if (texture == null) {
       return null;
     }
 
-    return this.createTexturedHead(entity.getType(), texture);
+    // Name after the variant only when it has its own skin, so a fallback head
+    // stays "Cow Head" rather than mislabelling a temperate cow as, say, warm.
+    String label = variants.hasVariant(variant)
+        ? variant + "_" + type.key().value()
+        : type.key().value();
+
+    return this.createTexturedHead(label, texture);
+  }
+
+  /**
+   * The variant identifier for mobs that carry one, matching the keys used under
+   * a texture entry. Registry-backed variants (cow, pig, chicken, frog, wolf,
+   * cat) use their registry key; the rest use their enum name lowercased.
+   */
+  private static Optional<String> variantKey(LivingEntity entity) {
+    return switch (entity) {
+      case Cow cow -> Optional.of(keyOf(cow.getVariant()));
+      case Pig pig -> Optional.of(keyOf(pig.getVariant()));
+      case Chicken chicken -> Optional.of(keyOf(chicken.getVariant()));
+      case Frog frog -> Optional.of(keyOf(frog.getVariant()));
+      case Wolf wolf -> Optional.of(keyOf(wolf.getVariant()));
+      case Cat cat -> Optional.of(keyOf(cat.getCatType()));
+      case CopperGolem golem -> Optional.of(enumKey(golem.getWeatheringState()));
+      case MushroomCow mooshroom -> Optional.of(enumKey(mooshroom.getVariant()));
+      case Axolotl axolotl -> Optional.of(enumKey(axolotl.getVariant()));
+      case Sheep sheep -> Optional.ofNullable(sheep.getColor()).map(MobHeads::enumKey);
+      case Fox fox -> Optional.of(enumKey(fox.getFoxType()));
+      case Rabbit rabbit -> Optional.of(enumKey(rabbit.getRabbitType()));
+      case Parrot parrot -> Optional.of(enumKey(parrot.getVariant()));
+      case Llama llama -> Optional.of(enumKey(llama.getColor()));
+      default -> Optional.empty();
+    };
+  }
+
+  private static String keyOf(Keyed keyed) {
+    return keyed.key().value();
+  }
+
+  private static String enumKey(Enum<?> value) {
+    return value.name().toLowerCase(Locale.ROOT);
   }
 
   private ItemStack createPlayerHead(Player player) {
@@ -215,23 +322,24 @@ public class MobHeads extends Module {
     return head;
   }
 
-  private ItemStack createTexturedHead(EntityType type, String texture) {
-    // Derive the texture from to create a consistent ID
+  private ItemStack createTexturedHead(String label, String texture) {
+    // Derive the texture into a consistent ID so the same skin reuses one profile
     UUID id = UUID.nameUUIDFromBytes(texture.getBytes(StandardCharsets.UTF_8));
     PlayerProfile profile = this.getPlugin().getServer().createProfile(id, null);
 
-    try {
-      profile.getTextures().setSkin(URI.create(TEXTURE_URL + texture).toURL());
-    } catch (MalformedURLException | IllegalArgumentException ex) {
-      this.getPlugin().getLogger().log(Level.WARNING,
-          "Invalid head texture configured for " + type.key().value(), ex);
-      return null;
-    }
+    // PlayerTextures.setSkin(url) silently no-ops on a nameless/incomplete profile,
+    // leaving the head with a default skin. Encode the textures property directly,
+    // which is the form the client actually reads, and it applies unconditionally.
+    String texturesJson = "{\"textures\":{\"SKIN\":{\"url\":\"" + TEXTURE_URL + texture + "\"}}}";
+    String encoded = Base64.getEncoder().encodeToString(texturesJson.getBytes(StandardCharsets.UTF_8));
+    profile.setProperty(new ProfileProperty("textures", encoded));
 
     ItemStack head = ItemStack.of(Material.PLAYER_HEAD);
     head.editMeta(SkullMeta.class, meta -> {
       meta.setPlayerProfile(profile);
-      meta.itemName(Component.text(headName(type.key().value()), NamedTextColor.WHITE)
+      // A player head derives its name ("%s's Head") from the profile, which overrides
+      // item_name; custom_name wins over that, so set the label there instead.
+      meta.displayName(Component.text(headName(label), NamedTextColor.WHITE)
           .decoration(TextDecoration.ITALIC, false));
     });
 
@@ -252,5 +360,26 @@ public class MobHeads extends Module {
     }
 
     return name.append("Head").toString();
+  }
+
+  /**
+   * The texture hash(es) for one mob: a {@code default} used when a mob has no
+   * variant or an unlisted one, plus optional per-variant overrides.
+   */
+  private record VariantTextures(String defaultTexture, Map<String, String> byVariant) {
+    String resolve(String variant) {
+      if (variant != null) {
+        String texture = this.byVariant.get(variant);
+        if (texture != null) {
+          return texture;
+        }
+      }
+
+      return this.defaultTexture;
+    }
+
+    boolean hasVariant(String variant) {
+      return variant != null && this.byVariant.containsKey(variant);
+    }
   }
 }

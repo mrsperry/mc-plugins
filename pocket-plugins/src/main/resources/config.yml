@@ -80,6 +80,26 @@ mobheads:
   #
   # Sourced from Mojang's MHF_* head accounts where they exist, and from the
   # Minecraft-Heads database (https://minecraft-heads.com) for everything newer
+  #
+  # An entry is either a single hash (one skin for every variant, as below) or a
+  # map with a `default` plus per-variant overrides. Variants a mob can have:
+  #   cow / pig / chicken:  temperate, warm, cold
+  #   sheep:                white, orange, magenta, light_blue, yellow, lime,
+  #                         pink, gray, light_gray, cyan, purple, blue, brown,
+  #                         green, red, black
+  #   mooshroom:            red, brown
+  #   wolf:                 pale, ashen, black, chestnut, rusty, snowy, spotted,
+  #                         striped, woods
+  #   cat:                  tabby, black, red, siamese, british_shorthair,
+  #                         calico, persian, ragdoll, white, jellie, all_black
+  #   fox:                  red, snow
+  #   rabbit:               brown, white, black, black_and_white, gold,
+  #                         salt_and_pepper, the_killer_bunny
+  #   parrot:               red, blue, green, cyan, gray
+  #   llama:                creamy, white, brown, gray
+  #   axolotl:              lucy, wild, gold, cyan, blue
+  #   frog:                 temperate, warm, cold
+  # A mob whose variant isn't listed falls back to `default`; cow shows the form.
   textures:
     allay: e5527727709f08bb5f91aac850fe6f944c5bc348a080b3b563d449c72b81bf86
     armadillo: c1eb6df4736ae24dd12a3d00f91e6e3aa7ade6bbefb0978afef2f0f92461018f
@@ -92,9 +112,22 @@ mobheads:
     camel: 74b8a333dfa92e7e5a95ad4ae2d84b1bafa33dc28c054925277f60e79dafc8c4
     cat: 88eb2b52adcf8bfe846191e74940be098fe5799ee03d94eefb7056620c9975a2
     cave_spider: 77b07063a6874fa3e22548e02062bd733c25885929809624180aebb851557f6a
-    chicken: 916b8e98389c541bb36453850bcbd1f7bc5a57da62dcc505060409737ec5b72a
+    chicken:
+      default: 916b8e98389c541bb36453850bcbd1f7bc5a57da62dcc505060409737ec5b72a
+      warm: 58c231bf464f9a6c6786a22a4d119ea5e5057624c5a391470d35fa2b6ffa5183
+      cold: 69b26cc2036bd95467ca7bd9f82ebc3f8c2198d84e899834ef0643371c485881
     cod: 4feeff4b7fcfce68b0f74df0db0ad0c01f7301d0c6d893699b402bd50bb376b0
-    cow: d0e4e6fbf5f3dcf94422a1f319448f152369d179dbfbcdf00e5bfe8495fa977
+    copper_golem:
+      # Oxidation stage; an unaffected golem uses the default
+      default: d998651718b318a2ca6a4a21ed201f0c65a14d0fcde7dd044bad33116cd5e026
+      exposed: ad8cf824534a3e63cb2278c3a6ec5b3b17d7c8e178ac67d793e63d0eea9b048c
+      weathered: ff401456e0b4da388e6f21a8683608501ecb4988af76dc4c4ace5c92fe34e9f1
+      oxidized: d1e2791f850af92271763f32e3d440573952135c73083715665d7adcff9b06c9
+    cow:
+      # Used for a temperate cow and as the fallback for any unlisted variant
+      default: d0e4e6fbf5f3dcf94422a1f319448f152369d179dbfbcdf00e5bfe8495fa977
+      warm: 37eeb49335e03fe7911295075d6ae1e8a9b091fc6c4896fd2ccec8359c10b006
+      cold: e33221484d39f0d4ecdffa729567ce77fa8ce05b091db76dd5b079a20f7bf339
     creaking: 27e9adb9dddcc7f1fc088a4d181de91a40177b774da405ac524b8346e8b9cd46
     dolphin: fa598af8c48573ad794fd7e25818a355a9793c2a4c791cb3a29a15206a8cbdc3
     donkey: f57ceea4e2a7bc996f0708f1af949f78dcd9cf3ea6b6f123347ddfc3a2259bb5
@@ -111,7 +144,7 @@ mobheads:
     guardian: 18d2a7fea7f2e0d916c7c6d7914937bb8dd3fbfd7f9483a4a3912f5a0fc63d3
     happy_ghast: a1a36cb93d01675c4622dd5c8d872110911ec12c372e89afa8ba03862867f6fb
     hoglin: 7ad7b5aeb220c079e319cd70ac8800e80774a9313c22f38e77afb89999e6ec87
-    horse: 246fcc9d88764b7219f6ed45ecd7af73c409d2daddc9ddf63911fac15da66ccb
+    horse: 7bb4b288991efb8ca0743beccef31258b31d39f24951efb1c9c18a417ba48f9
     husk: 61f2267a299f4e854673ad3486a75ee197e41fd79af31f95c6c95e49037019f4
     iron_golem: 1c6cd7202c34e78f3073090349f7d973b288af5e5b7334dd249010b3f27078f9
     llama: 488ba77743dcc1390217901a4104cfc04e73d3b46e6bcee49d2077fed9afe062
@@ -120,9 +153,12 @@ mobheads:
     mule: a0486a742e7dda0bae61ce2f55fa13527f1c3b334c57c034bb4cf132fb5f5f
     ocelot: 118b6b79783368dfe0042985110da366f9c788b45097a3ea6d0d9a753e9f42c6
     panda: d188c980aacfa94cf33088512b1b9517ba826b154d4cafc262aff6977be8a
-    parrot: 22123b2c4cc2ad244ecaabca0b9b88213d54261b557ec5f25110f328f6bbd6c
+    parrot: 2b94f236c4a642eb2bcdc3589b9c3c4a0b5bd5df9cd5d68f37f8c83f8e3f1
     phantom: b1109d9c6786c747c87fc36c9a271d51ff201603c38d2615ac4803908680e988
-    pig: a562a37b871f964bfc3e1311ea672aaa03984a5dc472154a34dc25af157e382b
+    pig:
+      default: a562a37b871f964bfc3e1311ea672aaa03984a5dc472154a34dc25af157e382b
+      warm: 7beba1a2d56e84f8e51fed6659f2cb7c14fed43859af584737897bf70c039475
+      cold: ba18d4043cd6c903866788914fd534315281af9f259e34837e3e175e545c2ede
     piglin_brute: 3e300e9027349c4907497438bac29e3a4c87a848c50b34c21242727b57f4e1cf
     pillager: 4aee6bb37cbfc92b0d86db5ada4790c64ff4468d68b84942fde04405e8ef5333
     polar_bear: d9224ce0309ef67c7cdc9550ebb174f7a80a64c050586119a1e3633f20d39d5e
