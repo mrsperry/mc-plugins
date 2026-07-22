@@ -4,6 +4,7 @@ import java.util.function.BiConsumer;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import com.mrjoshuasperry.mcutils.menu.Menu;
@@ -41,6 +42,16 @@ public abstract class MenuItem {
         if (this.onClick != null) {
             this.onClick.accept(player, menu);
         }
+    }
+
+    /**
+     * Handles a click, with the {@link ClickType} available for items that treat
+     * left/right/shift clicks differently. The default ignores it and runs the
+     * plain {@link #onClick(Player, Menu)}, so items that do not care are
+     * unaffected.
+     */
+    public void onClick(Player player, Menu menu, ClickType click) {
+        this.onClick(player, menu);
     }
 
     /**

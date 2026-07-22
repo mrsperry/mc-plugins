@@ -15,15 +15,20 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.mrjoshuasperry.mcutils.menu.MenuManager;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 public class PocketPlugins extends JavaPlugin {
     private Random random = new Random();
     private List<Module> modules;
+    private MenuManager menuManager;
 
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
+        // Registers the menu click/tick infrastructure once for every module that
+        // opens a Menu; without it, menu inventories are just lootable chests.
+        this.menuManager = new MenuManager(this);
         this.modules = this.loadModules();
     }
 
@@ -36,6 +41,8 @@ public class PocketPlugins extends JavaPlugin {
                 this.getLogger().log(Level.SEVERE, "Failed to disable module", ex);
             }
         }
+
+        this.menuManager.shutdown();
     }
 
     private List<Module> loadModules() {
