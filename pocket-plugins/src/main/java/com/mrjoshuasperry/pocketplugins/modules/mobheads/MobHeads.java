@@ -27,6 +27,7 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fox;
 import org.bukkit.entity.Frog;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.MushroomCow;
@@ -301,6 +302,7 @@ public class MobHeads extends Module {
       case Axolotl axolotl -> Optional.of(enumKey(axolotl.getVariant()));
       case Sheep sheep -> Optional.ofNullable(sheep.getColor()).map(MobHeads::enumKey);
       case Fox fox -> Optional.of(enumKey(fox.getFoxType()));
+      case Horse horse -> Optional.of(enumKey(horse.getColor()));
       case Rabbit rabbit -> Optional.of(enumKey(rabbit.getRabbitType()));
       case Parrot parrot -> Optional.of(enumKey(parrot.getVariant()));
       case Llama llama -> Optional.of(enumKey(llama.getColor()));
