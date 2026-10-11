@@ -46,9 +46,14 @@ public class MenuListener implements Listener {
             return;
         }
 
-        // A drag can span both inventories; cancel it outright rather than trying
-        // to work out which of the raw slots belong to the menu.
-        event.setCancelled(true);
+        // Raw slots below the top inventory's size belong to the menu. Cancel only
+        // a drag that touches one, so a drag confined to the player's own inventory
+        // still works.
+        int menuSize = event.getInventory().getSize();
+        boolean touchesMenu = event.getRawSlots().stream().anyMatch(slot -> slot < menuSize);
+        if (touchesMenu) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
