@@ -26,6 +26,9 @@ in-game check on the dev server — say so rather than implying they're verified
 
 ## Rules
 
+- **Never touch any running server except the dev server** (`_server/`, port 3005). Other servers on
+  this machine are live: don't stop, restart, connect to, send commands to or edit them, even to free
+  a port.
 - Anything the data-pack format can express (recipes, loot tables, advancements, tags) goes in
   `pack/`, not a plugin.
 - Prefer a Bukkit `Tag` or registry-derived predicate over a hand-written `Material`/`EntityType`
