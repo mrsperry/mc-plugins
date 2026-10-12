@@ -79,11 +79,21 @@
                         <configuration>
                             <skip>${skip.copy.plugin}</skip>
                             <target>
-                                <copy todir="${project.basedir}/../_dist">
-                                    <fileset dir="${project.build.directory}">
-                                        <include name="*.jar" />
-                                        <exclude name="original-*.jar" />
+                                <!-- Copying is additive, so clear this plugin's earlier
+                                     builds (older versions, stale classifier jars) first,
+                                     then copy only the jar this build produced. A fileset
+                                     rather than copy file= so the parent pom, which builds
+                                     no jar, matches nothing instead of failing. -->
+                                <delete>
+                                    <fileset dir="${project.basedir}/../_dist"
+                                        erroronmissingdir="false">
+                                        <filename regex="^${project.artifactId}-\d.*\.jar$" />
                                     </fileset>
+                                </delete>
+                                <copy todir="${project.basedir}/../_dist">
+                                    <fileset dir="${project.build.directory}"
+                                        includes="${project.build.finalName}.jar"
+                                        erroronmissingdir="false" />
                                 </copy>
                             </target>
                         </configuration>
@@ -97,11 +107,18 @@
                         <configuration>
                             <skip>${skip.copy.plugin}</skip>
                             <target>
-                                <copy todir="${project.basedir}/../_server/plugins">
-                                    <fileset dir="${project.build.directory}">
-                                        <include name="*.jar" />
-                                        <exclude name="original-*.jar" />
+                                <!-- Same as above: Paper loads every jar it finds, so a
+                                     leftover older version would load alongside this one. -->
+                                <delete>
+                                    <fileset dir="${project.basedir}/../_server/plugins"
+                                        erroronmissingdir="false">
+                                        <filename regex="^${project.artifactId}-\d.*\.jar$" />
                                     </fileset>
+                                </delete>
+                                <copy todir="${project.basedir}/../_server/plugins">
+                                    <fileset dir="${project.build.directory}"
+                                        includes="${project.build.finalName}.jar"
+                                        erroronmissingdir="false" />
                                 </copy>
                             </target>
                         </configuration>
