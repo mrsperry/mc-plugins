@@ -59,7 +59,7 @@ which prints thousands of lines, so send the output to a log and read only what 
 ```sh
 git add <paths>
 git commit -m "<message>" > "$TMPDIR/commit.log" 2>&1; echo "exit=$?"
-grep -E "BUILD|Tests run:.*Fail|ERROR" "$TMPDIR/commit.log" | head -30
+grep -E "BUILD|Tests run:.*(Failures|Errors): [1-9]|\[ERROR\]" "$TMPDIR/commit.log" | head -30
 ```
 
 Never pass `--no-verify`. If the hook fails, nothing was committed. Fix the cause and commit again,
