@@ -8,3 +8,6 @@ _server/
 
 # Distributable plugin jars
 _dist
+
+# Claude Code: personal settings stay local; .claude/skills/ is shared
+.claude/settings.local.json
