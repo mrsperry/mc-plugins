@@ -20,17 +20,21 @@ have drifted apart and the upgrade is really two upgrades.
 
 ## 2. Resolve the target version
 
-Paper's fill API is the source of truth:
+`python .claude/skills/upgrade-dependencies/check_updates.py` does all of this step and prints the
+result. By hand, Paper's fill API is the source of truth:
 
 ```sh
 # All version families
 curl -s https://fill.papermc.io/v3/projects/paper | jq .versions
 
-# Latest build for a family — check the "channel" field
-curl -s https://fill.papermc.io/v3/projects/paper/versions/<VERSION>/builds/latest | jq '{id, channel, url: .downloads."server:default".url}'
+# Newest STABLE build for a version (empty if it has none). Don't use /builds/latest —
+# it ignores the channel and happily returns ALPHA builds.
+curl -s "https://fill.papermc.io/v3/projects/paper/versions/<VERSION>/builds?channel=STABLE" | jq '.[0] | {id, url: .downloads."server:default".url}'
 ```
 
-Take a version only when `channel` is `STABLE`. `BETA`/`ALPHA` families are not upgrade targets.
+Take a version only when it has a `STABLE` build. `BETA`/`ALPHA` families are not upgrade targets.
+Also check `mockbukkit-v<VERSION>` exists on Maven Central — a line often goes stable before
+MockBukkit catches up, and without it the tests can't run.
 
 **Then confirm a matching `paper-api` exists before committing to it** — the server jar ships ahead
 of the API artifact, and the coordinate scheme differs by line:
@@ -49,7 +53,7 @@ upgrade the server jar only, or wait.
 ## 3. Swap the server jar
 
 ```sh
-URL=$(curl -s https://fill.papermc.io/v3/projects/paper/versions/<VERSION>/builds/latest | jq -r '.downloads."server:default".url')
+URL=$(curl -s "https://fill.papermc.io/v3/projects/paper/versions/<VERSION>/builds?channel=STABLE" | jq -r '.[0].downloads."server:default".url')
 curl -L -o paper.jar "$URL"
 sha256sum paper.jar   # compare to .downloads."server:default".checksums.sha256
 cp paper.jar _server/paper.jar
@@ -65,15 +69,17 @@ Back up `_server/world*` before first boot on a new version — world format mig
 |---|---|
 | `pom.xml` | `<paper.version>` — the single source for the `paper-api` version |
 | `pom.xml` | `<mockbukkit.version>` |
-| `pom.xml` **and all 8 child poms** | `mockbukkit-v<line>` **artifactId** — see below |
-| `*/src/main/resources/plugin.yml` (7 files) | `api-version` |
-| `CLAUDE.md` | "Version posture" and the MockBukkit note |
+| `pom.xml` **and every child pom** | `mockbukkit-v<line>` **artifactId** — see below |
+| `*/src/main/resources/plugin.yml` (every plugin) | `api-version` |
+| `pack/src/main/{datapack,resourcepack}/pack.mcmeta` | `min_format`/`max_format` — `pack_version.data_major`/`resource_major` from `unzip -p _server/versions/<VERSION>/paper-<VERSION>.jar version.json` (exists after first boot) |
+| `CLAUDE.md` | The Paper/Java versions in the opening line |
 | `repo.md`, `.github/workflows/tests.yml` (comment) | version references |
 
 **The MockBukkit artifactId is the trap.** It encodes the Paper line (`mockbukkit-v1.21` →
-`mockbukkit-v26.1.2`), so it is not covered by the version property. The child poms declare it
-*versionless*, relying on dependencyManagement — so changing it only in the parent makes all eight
-modules fail to resolve at POM-read time, before compiling. Change it everywhere at once:
+`mockbukkit-v26.1.2` → `mockbukkit-v26.2` — inconsistently with or without the patch number, so
+check what actually exists), so it is not covered by the version property. The child poms declare it
+*versionless*, relying on dependencyManagement — so changing it only in the parent makes every
+module fail to resolve at POM-read time, before compiling. Change it everywhere at once:
 
 ```sh
 grep -rln "mockbukkit-v" --include=pom.xml . | grep -v .archive | xargs sed -i 's|mockbukkit-v<OLD>|mockbukkit-v<NEW>|'
@@ -189,8 +195,8 @@ touched by the audit. Don't report an upgrade as verified on a green `mvn test` 
 
 ## 8. Commit
 
-Single imperative line, sentence case, no body — e.g. `Upgrade to Paper 26.1.2`. Separate the
-mechanical bump from any audit fixes so a revert is clean.
+Use the `commit` skill — e.g. `Upgrade to Paper 26.1.2`. A Paper upgrade is a revision bump for
+every plugin. Separate the mechanical bump from any audit fixes so a revert is clean.
 
 ---
 
