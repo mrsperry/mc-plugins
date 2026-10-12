@@ -44,6 +44,16 @@ dyeshears:
   # Dye change is out of 100
   dye-chance: 50
 
+extendedbeacons:
+  # A beacon reaches base-range + range-per-layer blocks for each complete layer
+  # of its pyramid, outward and downward; upward always runs to the build limit.
+  # The defaults match vanilla (10 + 10 per layer), but layers past vanilla's four
+  # keep adding range. Ranges are in blocks.
+  base-range: 10
+  range-per-layer: 10
+  # Most pyramid layers counted; 0 means no limit
+  max-layers: 0
+
 featherplucker:
   # Cooldown is in seconds
   cooldown: 300
