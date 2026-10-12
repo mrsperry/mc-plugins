@@ -23,9 +23,10 @@ import net.kyori.adventure.text.Component;
  * A chest-style inventory whose slots are backed by {@link MenuItem}s.
  *
  * <p>
- * Menus are click-guarded: {@link MenuListener} cancels every interaction with
- * a menu inventory unless {@link #onClick} says otherwise, so items can never be
- * dragged out, shift-clicked in, or picked up.
+ * Menus are click-guarded: {@link MenuListener} routes interactions through
+ * {@link #onClick}, so the menu's own slots can never be dragged out,
+ * shift-clicked into, or picked up. The player's own inventory stays fully
+ * usable — only moves that would cross into the menu are blocked.
  *
  * <p>
  * <b>Construct one menu per player.</b> {@link MenuItem}s carry mutable state
@@ -106,23 +107,35 @@ public class Menu implements InventoryHolder {
      * <p>
      * Returns whether the event should be cancelled. The default implementation
      * dispatches clicks on this menu's own slots to the corresponding
-     * {@link MenuItem} and cancels everything — including clicks in the player's
-     * own inventory, which would otherwise let a shift-click push items in.
-     * Override to allow interaction with specific slots.
+     * {@link MenuItem} and always guards them, but leaves the player's own
+     * inventory fully usable — only blocking the actions that would reach across
+     * into the menu (a shift-click move or a double-click collect). Override to
+     * change how the menu's own slots behave.
      *
      * @param event the click
      * @return true if the click should be cancelled
      */
     public boolean onClick(InventoryClickEvent event) {
-        // A click in the player's own inventory while a menu is open reports the
-        // menu as the top inventory, so compare against the clicked inventory
-        // rather than trusting the raw slot.
-        if (Objects.equals(event.getClickedInventory(), this.inventory)
-                && event.getWhoClicked() instanceof Player player) {
-            this.clickedSlot(player, event.getSlot(), event.getClick());
+        if (!(event.getWhoClicked() instanceof Player player)) {
+            return true;
         }
 
-        return true;
+        // A click in the player's own inventory reports the menu as the top
+        // inventory, so compare against the clicked inventory rather than the raw
+        // slot. A click on the menu's own slots is dispatched to that slot's item
+        // and always cancelled, so nothing is taken unless the item chooses to act.
+        if (Objects.equals(event.getClickedInventory(), this.inventory)) {
+            this.clickedSlot(player, event.getSlot(), event.getClick());
+            return true;
+        }
+
+        // Otherwise the click is in the player's own inventory (or outside), which
+        // is theirs to use freely — cancel only the actions that would move items
+        // across into the menu.
+        return switch (event.getAction()) {
+            case MOVE_TO_OTHER_INVENTORY, COLLECT_TO_CURSOR -> true;
+            default -> false;
+        };
     }
 
     /** Called when a player opens this menu. */
