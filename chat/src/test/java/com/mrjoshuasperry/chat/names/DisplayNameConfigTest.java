@@ -9,8 +9,6 @@ import java.util.List;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
 
-import com.mrjoshuasperry.mcutils.TextColors;
-
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
@@ -81,14 +79,15 @@ class DisplayNameConfigTest {
   }
 
   @Test
-  void aSavedColorTooDarkForChatLoadsLightened() {
+  void aColorTooDarkToReadLoadsAsChosen() {
     DisplayNameConfig original = new DisplayNameConfig();
-    original.setNameColors(new ArrayList<>(List.of(TextColor.color(0x123456))));
+    original.setNameColors(new ArrayList<>(List.of(NamedTextColor.BLACK, TextColor.color(0x123456))));
 
     MemoryConfiguration config = new MemoryConfiguration();
     original.saveToConfig(config);
-    TextColor reloaded = DisplayNameConfig.loadFromConfig(config).getNameColors().get(0);
+    List<TextColor> reloaded = DisplayNameConfig.loadFromConfig(config).getNameColors();
 
-    assertTrue(TextColors.contrastAgainstBlack(reloaded) >= TextColors.MIN_CHAT_CONTRAST);
+    assertEquals(NamedTextColor.BLACK.value(), reloaded.get(0).value());
+    assertEquals(0x123456, reloaded.get(1).value());
   }
 }

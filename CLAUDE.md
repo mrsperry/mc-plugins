@@ -38,9 +38,9 @@ in-game check on the dev server — say so rather than implying they're verified
   list. `RegistryDriftTest` guards the lists that remain.
 - Adventure components for player-facing text (no `ChatColor` or `§`), PDC + `NamespacedKey` for
   item/entity state, no NMS, plugin logger over `printStackTrace()`.
-- Text in chat, item names and lore must be legible on their dark background. Run any color that
-  comes from config or a player through `TextColors.legible` (`parseTextColor` already does), and
-  don't hard-code dark colors there (`black`, `dark_blue`, `dark_gray`, ...). Inventory titles are
-  the exception: they sit on a light background, so dark gray is right for them.
+- Colors you pick for chat, item names and lore must be legible on their dark background
+  (`TextColors.MIN_CHAT_CONTRAST`), so no `black`, `dark_blue`, `dark_gray`, ... Inventory titles
+  are the exception: they sit on a light background, so dark gray is right for them. This rule is
+  for code, not players: never change a color a player or server owner chose for text.
 - Folia is not a goal. Keep the Bukkit scheduler; plain `HashMap` shared state is correct here.
 - Latest **stable** versions only — no betas, milestones or RCs for Paper, dependencies or plugins.
