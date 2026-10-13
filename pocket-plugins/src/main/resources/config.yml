@@ -311,6 +311,7 @@ villagermakeovers:
       - wooded_badlands
       - eroded_badlands
       - dripstone_caves
+      - sulfur_caves
     jungle:
       - jungle
       - sparse_jungle

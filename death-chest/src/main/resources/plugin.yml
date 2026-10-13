@@ -4,4 +4,4 @@ version: ${project.version}
 description: Never lose your items again! Your items float in a ring at your death spot; left-click to grab a stack, sneak-left-click to grab everything.
 authors:
   - mrsperry
-api-version: "26.1.2"
+api-version: "26.2"

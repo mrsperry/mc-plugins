@@ -41,7 +41,7 @@ loading it automatically").
 
 ## Pack formats
 
-Pinned to Paper 26.1.2: data pack **101**, resource pack **84**. These are the calendar-versioned
+Pinned to Paper 26.3: data pack **121**, resource pack **97**. These are the calendar-versioned
 numbers and they move with `paper.version` — see `UPGRADING.md`.
 
 Since 25w31a, `pack_format` is replaced by `min_format` / `max_format` (and `supported_formats` is

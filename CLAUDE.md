@@ -1,7 +1,7 @@
 # CLAUDE.md
 
-Maven monorepo of Paper plugins, each building its own jar. Paper 26.1.2, Java 25. The git root is
-`mc-plugins/`.
+Maven monorepo of Paper plugins, each building its own jar. Java 25. The dev server runs Paper 26.3;
+plugins build against the 26.2 API, the newest line MockBukkit supports. The git root is `mc-plugins/`.
 
 | Path | What |
 |---|---|
