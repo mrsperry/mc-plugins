@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionType;
 
+import com.mrjoshuasperry.mcutils.audit.Audit;
 import com.mrjoshuasperry.mcutils.builders.ItemBuilder;
 import com.mrjoshuasperry.mcutils.builders.PotionBuilder;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
@@ -56,6 +57,8 @@ public class InventoryInspector extends Module {
         final GameMode mode = player.getGameMode();
         if (mode == GameMode.CREATIVE || mode == GameMode.SPECTATOR) {
             player.openInventory(this.createInventory(clicked));
+            Audit.event(this.getPlugin(), "inventory-inspected").with("player", player).with("target", clicked)
+                    .at(player.getLocation()).record();
         }
     }
 
@@ -115,6 +118,9 @@ public class InventoryInspector extends Module {
         final InventoryAction action = event.getAction();
         if (clicked && action != InventoryAction.CLONE_STACK) {
             event.setCancelled(true);
+        } else if (clicked && event.getWhoClicked() instanceof Player player) {
+            Audit.event(this.getPlugin(), "inspected-item-cloned").with("player", player)
+                    .with("item", event.getCurrentItem()).record();
         }
 
         if (regular) {

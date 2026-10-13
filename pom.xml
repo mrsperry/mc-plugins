@@ -29,7 +29,16 @@
                      resolves against whatever is already in the local repo rather
                      than the version built alongside these plugins. -->
                 <artifactId>mc-utils</artifactId>
-                <version>1.0.33</version>
+                <version>1.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mrjoshuasperry</groupId>
+                <!-- Keep in step with audit-log/pom.xml's own version, for the same
+                     reason as mc-utils above. mc-utils compiles against it; the
+                     server's AuditLog plugin supplies it at runtime. -->
+                <artifactId>audit-log</artifactId>
+                <version>1.0.0</version>
+                <scope>provided</scope>
             </dependency>
             <!-- Test-only. JUnit 5 via its BOM so the jupiter/platform artifacts stay
                  in lockstep; modules declare junit-jupiter without a version. -->
@@ -195,6 +204,7 @@
         <profile>
             <id>survival</id>
             <modules>
+                <module>audit-log</module>
                 <module>chat</module>
                 <module>mc-utils</module>
                 <module>pocket-plugins</module>
@@ -205,6 +215,7 @@
         <profile>
             <id>creative</id>
             <modules>
+                <module>audit-log</module>
                 <module>chat</module>
                 <module>mc-utils</module>
                 <module>world-clusters</module>
@@ -217,6 +228,7 @@
         <profile>
             <id>all</id>
             <modules>
+                <module>audit-log</module>
                 <module>mc-utils</module>
                 <module>chat</module>
                 <module>pocket-plugins</module>

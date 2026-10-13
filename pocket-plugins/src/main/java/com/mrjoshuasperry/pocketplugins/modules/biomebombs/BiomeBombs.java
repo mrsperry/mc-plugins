@@ -22,6 +22,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import com.mojang.brigadier.Command;
+import com.mrjoshuasperry.mcutils.audit.Audit;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 import io.papermc.paper.command.brigadier.Commands;
@@ -155,10 +156,14 @@ public class BiomeBombs extends Module {
     BiomeBombProjectile projectile = new BiomeBombProjectile(this.explosionRange, type, Color.fromARGB(color),
         item.clone());
 
+    ItemStack thrown = item.clone();
+    thrown.setAmount(1);
     int amount = item.getAmount();
     item.setAmount(amount - 1);
 
     projectile.launchProjectile(event.getPlayer());
+    Audit.event(this.getPlugin(), "biome-bomb-thrown").with("player", event.getPlayer())
+        .at(event.getPlayer().getLocation()).with("biome", type).with("bomb", thrown).record();
   }
 
 }

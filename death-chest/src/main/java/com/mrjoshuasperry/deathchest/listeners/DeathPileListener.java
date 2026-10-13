@@ -5,9 +5,12 @@ import java.util.UUID;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Interaction;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -15,6 +18,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import com.mrjoshuasperry.deathchest.DeathPileManager;
 import com.mrjoshuasperry.deathchest.Main;
+import com.mrjoshuasperry.mcutils.audit.Audit;
 
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 
@@ -53,6 +57,33 @@ public class DeathPileListener implements Listener {
         } else {
             manager.grabOne(player, box);
         }
+    }
+
+    /**
+     * A stack removed by anything but this plugin (a /kill, say) is gone for good, so
+     * it goes on record. Chunk unloads are left out: the stack is only put away.
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntityRemove(EntityRemoveEvent event) {
+        if (!(event.getEntity() instanceof ItemDisplay display) || event.getCause() == EntityRemoveEvent.Cause.PLUGIN
+                || event.getCause() == EntityRemoveEvent.Cause.UNLOAD) {
+            return;
+        }
+
+        PersistentDataContainer container = display.getPersistentDataContainer();
+        String groupValue = container.get(plugin.getPileGroupKey(), PersistentDataType.STRING);
+        // Only stacks point at a hitbox; the head has a role instead
+        if (groupValue == null || container.has(plugin.getPileRoleKey())
+                || !container.has(plugin.getPileInteractionIdKey())) {
+            return;
+        }
+
+        Audit.event(plugin, "pile-item-destroyed")
+                .with("owner", plugin.getPileManager().ownerOf(UUID.fromString(groupValue)))
+                .at(display.getLocation())
+                .with("item", display.getItemStack())
+                .with("cause", event.getCause())
+                .record();
     }
 
     @EventHandler

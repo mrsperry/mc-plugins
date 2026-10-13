@@ -22,6 +22,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import com.mrjoshuasperry.mcutils.audit.Audit;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 public class BedrockBreaker extends Module {
@@ -86,9 +87,12 @@ public class BedrockBreaker extends Module {
     }
 
     GameMode gameMode = player.getGameMode();
-    if (gameMode == GameMode.SURVIVAL || gameMode == GameMode.ADVENTURE) {
+    boolean spent = gameMode == GameMode.SURVIVAL || gameMode == GameMode.ADVENTURE;
+    if (spent) {
       item.setAmount(item.getAmount() - 1);
     }
+    Audit.event(this.getPlugin(), "bedrock-breaking").with("player", player).at(bedrock.getLocation())
+        .with("beacon", beacon.getLocation()).with("ingot-spent", spent).record();
 
     event.setCancelled(true);
     this.bedrockToRemove.add(bedrock.getLocation());

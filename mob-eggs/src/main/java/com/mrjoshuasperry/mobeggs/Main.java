@@ -7,6 +7,7 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -15,12 +16,16 @@ import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.mrjoshuasperry.mcutils.audit.Audit;
 
 public class Main extends JavaPlugin implements Listener {
     // Can't group all mobs that have eggs any other way
@@ -31,6 +36,7 @@ public class Main extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        Audit.warnIfMissing(this);
         this.saveDefaultConfig();
 
         this.random = new Random();
@@ -62,10 +68,10 @@ public class Main extends JavaPlugin implements Listener {
             return;
         }
 
-        this.capture((LivingEntity) hit);
+        this.capture((LivingEntity) hit, egg);
     }
 
-    private void capture(LivingEntity entity) {
+    private void capture(LivingEntity entity, Egg thrown) {
         ItemStack egg = MobCapture.createEgg(entity, this.markerKey);
         if (egg == null) {
             this.spawnChicken(entity.getLocation());
@@ -78,7 +84,20 @@ public class Main extends JavaPlugin implements Listener {
             entity.getWorld().dropItemNaturally(entity.getLocation(), new ItemStack(Material.LEAD));
         }
 
-        entity.getWorld().dropItemNaturally(entity.getLocation().add(0, 1, 0), egg);
+        Player thrower = thrown.getShooter() instanceof Player player ? player : null;
+        OfflinePlayer owner = entity instanceof Tameable tameable && tameable.getOwner() instanceof OfflinePlayer tamer
+                ? tamer
+                : null;
+        // The mob now exists only as this egg, so it goes on record before the mob is removed
+        Audit.event(this, "mob-captured").with("by", thrower).with("owner", owner).with("entity", entity)
+                .at(entity.getLocation()).with("egg", egg).record();
+
+        // Marked as the thrower's, so the audit log notices if the egg then despawns or burns
+        entity.getWorld().dropItemNaturally(entity.getLocation().add(0, 1, 0), egg, item -> {
+            if (thrower != null) {
+                item.setThrower(thrower.getUniqueId());
+            }
+        });
         entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_CHICKEN_EGG, 1, 0);
         entity.remove();
     }

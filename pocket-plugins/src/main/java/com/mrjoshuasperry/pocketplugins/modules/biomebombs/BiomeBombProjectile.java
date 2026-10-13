@@ -15,6 +15,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import com.mrjoshuasperry.mcutils.LocationUtils;
+import com.mrjoshuasperry.mcutils.audit.Audit;
 import com.mrjoshuasperry.mcutils.projectile.BaseProjectile;
 import com.mrjoshuasperry.mcutils.projectile.ProjectileUtils;
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
@@ -31,6 +32,7 @@ public class BiomeBombProjectile {
   private final int explosionRange;
   private final ItemStack projectileItem;
   private BaseProjectile projectile;
+  private Player owner;
 
   public BiomeBombProjectile(int explosionRange, String type, Color color, ItemStack projectileItem) {
     this.projectile = new BaseProjectile(PocketPlugins.getInstance(), 0.1f, -1, 1f);
@@ -52,6 +54,7 @@ public class BiomeBombProjectile {
   }
 
   public void launchProjectile(Player owner) {
+    this.owner = owner;
     ArmorStand armorStand = ProjectileUtils.spawnArmorStand(owner.getEyeLocation(), projectileItem, false);
 
     this.projectile.addMetaData(AS_META_KEY, armorStand);
@@ -113,5 +116,8 @@ public class BiomeBombProjectile {
         }
       }
     }
+
+    Audit.event(PocketPlugins.getInstance(), "biome-bomb-landed").with("player", this.owner).at(origin)
+        .with("biome", biome).with("radius", this.explosionRange).record();
   }
 }

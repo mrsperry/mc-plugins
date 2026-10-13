@@ -5,8 +5,10 @@ import java.util.List;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 
+import com.mrjoshuasperry.mcutils.audit.Audit;
 import com.mrjoshuasperry.worldclusters.cluster.Cluster;
 import com.mrjoshuasperry.worldclusters.cluster.ClusterRegistry;
 import com.mrjoshuasperry.worldclusters.perms.ClusterPermissions;
@@ -20,11 +22,14 @@ import com.mrjoshuasperry.worldclusters.perms.ClusterPermissions;
  * can never exchange items or XP.
  */
 public class BoundaryService {
+    private final Plugin plugin;
     private final ClusterRegistry registry;
     private final ProfileStore store;
     private final ClusterPermissions permissions;
 
-    public BoundaryService(ClusterRegistry registry, ProfileStore store, ClusterPermissions permissions) {
+    public BoundaryService(Plugin plugin, ClusterRegistry registry, ProfileStore store,
+            ClusterPermissions permissions) {
+        this.plugin = plugin;
         this.registry = registry;
         this.store = store;
         this.permissions = permissions;
@@ -50,6 +55,9 @@ public class BoundaryService {
         }
         this.store.put(player.getUniqueId(), fromCluster, outgoing);
 
+        // Until the profile file is written below, the outgoing items exist only in memory
+        recordState(Audit.event(this.plugin, "cluster-left"), player)
+                .with("cluster", fromCluster).with("to", toCluster).record();
         this.wipe(player);
 
         PlayerProfile incoming = this.store.get(player.getUniqueId(), toCluster);
@@ -64,7 +72,20 @@ public class BoundaryService {
         // the new current cluster are in place.
         this.store.flush(player.getUniqueId());
 
+        recordState(Audit.event(this.plugin, "cluster-entered"), player)
+                .with("cluster", toCluster).with("from", fromCluster).record();
         this.permissions.apply(player);
+    }
+
+    /** Everything a crossing swaps out that a player would miss: items, ender chest and XP. */
+    private static Audit recordState(Audit audit, Player player) {
+        return audit.with("player", player)
+                .at(player.getLocation())
+                .with("level", player.getLevel())
+                .with("exp", player.getExp())
+                .with("inventory", player.getInventory().getContents())
+                .with("ender-chest", player.getEnderChest().getContents())
+                .with("cursor", player.getItemOnCursor());
     }
 
     /**

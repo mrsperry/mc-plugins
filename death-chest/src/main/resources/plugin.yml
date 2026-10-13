@@ -5,3 +5,5 @@ description: Never lose your items again! Your items float in a ring at your dea
 authors:
   - mrsperry
 api-version: "26.2"
+softdepend:
+  - AuditLog

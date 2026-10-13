@@ -8,8 +8,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -18,6 +22,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import com.mrjoshuasperry.mcutils.audit.Audit;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 /** @author TimPCunningham */
@@ -54,6 +59,8 @@ public class CraftingKeeper extends Module {
 
                 if (manager.isSaved(loc)) {
                     event.getInventory().setContents(manager.getSavedInventory(loc));
+                    Audit.event(this.getPlugin(), "crafting-grid-restored").with("player", asPlayer(event.getPlayer()))
+                            .at(loc).with("items", manager.getSavedInventory(loc)).record();
                 }
             }
         }
@@ -70,6 +77,9 @@ public class CraftingKeeper extends Module {
 
                 if (!isEmpty(inventory)) {
                     manager.saveInventory(loc, inventory.getContents());
+                    // From here until the server stops, these items are held only in memory
+                    Audit.event(this.getPlugin(), "crafting-grid-stored").with("player", asPlayer(event.getPlayer()))
+                            .at(loc).with("items", inventory.getContents()).record();
                     event.getInventory().clear();
                 } else if (manager.isSaved(loc)) { // Empty and saved, need to remove now
                     manager.removeSaved(loc);
@@ -89,6 +99,21 @@ public class CraftingKeeper extends Module {
             }
 
         }
+    }
+
+    /** Nothing drops a stored grid when its table goes, so the record is all that's left of it. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockBreak(BlockBreakEvent event) {
+        Location loc = event.getBlock().getLocation();
+        CraftingKeeperManager manager = CraftingKeeperManager.getInstance();
+        if (event.getBlock().getType() == Material.CRAFTING_TABLE && manager.isSaved(loc)) {
+            Audit.event(this.getPlugin(), "crafting-table-broken").with("player", event.getPlayer()).at(loc)
+                    .with("items", manager.getSavedInventory(loc)).record();
+        }
+    }
+
+    private static Player asPlayer(HumanEntity entity) {
+        return entity instanceof Player player ? player : null;
     }
 
     private boolean isEmpty(Inventory inv) {

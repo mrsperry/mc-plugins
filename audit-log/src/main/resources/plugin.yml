@@ -1,0 +1,7 @@
+main: com.mrjoshuasperry.auditlog.AuditLog
+name: AuditLog
+version: ${project.version}
+description: Keeps a daily log per player of everything that could cost them their items, for rolling back by hand.
+authors:
+  - mrsperry
+api-version: "26.2"

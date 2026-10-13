@@ -2,10 +2,13 @@ package com.mrjoshuasperry.pocketplugins.modules.woodpile;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -14,6 +17,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.mrjoshuasperry.mcutils.audit.Audit;
 import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
@@ -36,6 +40,7 @@ public class WoodPile extends Module {
             @Override
             public void run() {
                 if (age > lifespan) {
+                    recordConversion(woodPile, event);
                     woodPile.convertFuel();
                     this.cancel();
                     woodPiles.remove(woodPile);
@@ -54,6 +59,18 @@ public class WoodPile extends Module {
                 age += 2;
             }
         };
+    }
+
+    private void recordConversion(WoodPileConstruct woodPile, BlockPlaceEvent event) {
+        List<Map<String, Object>> blocks = woodPile.getFuel().stream().map((Block block) -> {
+            Map<String, Object> entry = new LinkedHashMap<>();
+            entry.put("location", block.getLocation());
+            entry.put("was", block.getType());
+            return entry;
+        }).toList();
+
+        Audit.event(this.getPlugin(), "wood-pile-converted").with("player", event.getPlayer())
+                .at(event.getBlock().getLocation()).with("blocks", blocks).record();
     }
 
     @EventHandler
