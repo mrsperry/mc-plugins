@@ -3,7 +3,6 @@ package com.mrjoshuasperry.pocketplugins.modules.croptweaks;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -18,12 +17,12 @@ import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 
 import com.mrjoshuasperry.mcutils.types.CropTypes;
 import com.mrjoshuasperry.mcutils.types.ToolTypes;
@@ -69,7 +68,7 @@ public class CropTweaks extends Module {
 
     boolean isCreative = event.getPlayer().getGameMode() == GameMode.CREATIVE;
 
-    tryHarvestWithHoe(block, item, isCreative);
+    tryHarvestWithHoe(event.getPlayer(), event.getHand(), block, item);
 
     if (this.canBlazePowderNetherWart) {
       tryBlazePowderNetherWart(block, item, isCreative);
@@ -83,7 +82,7 @@ public class CropTweaks extends Module {
     }
   }
 
-  private void tryHarvestWithHoe(Block block, ItemStack tool, boolean isCreative) {
+  private void tryHarvestWithHoe(Player player, EquipmentSlot hand, Block block, ItemStack tool) {
     Material cropType = block.getType();
     if (!CropTypes.getHarvestableTypes().contains(cropType)) {
       return;
@@ -135,16 +134,14 @@ public class CropTweaks extends Module {
 
     Location location = block.getLocation();
     World world = location.getWorld();
-    Random random = PocketPlugins.getInstance().getRandom();
 
-    // TODO: move this natural damage logic to mc-utils
-    if (!isCreative) {
-      Damageable meta = (Damageable) tool.getItemMeta();
-      if (random.nextFloat() < 1.0f / (tool.getEnchantmentLevel(Enchantment.UNBREAKING) + 1)) {
-        meta.setDamage(meta.getDamage() + 1);
-        tool.setItemMeta(meta);
-      }
+    // Vanilla's own tool wear: Unbreaking applies and a worn-out hoe breaks. Paper's docs
+    // promise it checks the game mode too, but creative hoes still wore down
+    if (player.getGameMode() != GameMode.CREATIVE) {
+      player.damageItemStack(hand, 1);
     }
+    // A hoe on a crop does nothing as far as the client knows, so it won't swing on its own
+    player.swingHand(hand);
 
     if (amountToDrop > 0) {
       world.dropItemNaturally(location, new ItemStack(cropToDrop, amountToDrop));
