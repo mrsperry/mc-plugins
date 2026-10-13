@@ -87,8 +87,8 @@ def mockbukkit_line(family, version):
     return None, None
 
 
-def resolve_line(families, metadata, wanted):
-    """Newest (family, version) that has a stable server, paper-api and MockBukkit."""
+def release_candidates(families, wanted):
+    """The newest release version of each family (or only the wanted one), newest first."""
     candidates = []
     for family, versions in families.items():
         if wanted and family != wanted and wanted not in versions:
@@ -98,10 +98,23 @@ def resolve_line(families, metadata, wanted):
                 continue
             candidates.append((family, version))
             break
-    candidates.sort(key=lambda pair: version_key(pair[1]), reverse=True)
+    return sorted(candidates, key=lambda pair: version_key(pair[1]), reverse=True)
 
+
+def newest_server_line(families, wanted):
+    """Newest version with a STABLE server build: what the dev server should run."""
+    for _, version in release_candidates(families, wanted):
+        builds = stable_builds(version)
+        if builds:
+            return version, builds[0]
+    return None, None
+
+
+def resolve_line(families, metadata, wanted):
+    """Newest (family, version) that has a stable server, paper-api and MockBukkit:
+    what the plugins should build and test against."""
     skipped = []
-    for family, version in candidates:
+    for family, version in release_candidates(families, wanted):
         builds = stable_builds(version)
         api = paper_api_stable(version, metadata)
         artifact, mockbukkit = mockbukkit_line(family, version)
@@ -195,33 +208,42 @@ def main():
                for entry in json.loads(get(f"{FILL}/versions"))["versions"]}
     metadata = get(PAPER_API_METADATA)
 
-    family, version, build, api, artifact, mockbukkit, skipped = resolve_line(families, metadata, wanted)
+    server_version, server_build = newest_server_line(families, wanted)
+    _, version, _, api, artifact, mockbukkit, skipped = resolve_line(families, metadata, wanted)
     print()
-    for line in skipped:
-        print(f"Skipped {line}")
-    if not version:
-        print("No usable Paper line found.")
+    if not server_version:
+        print("No Paper line has a STABLE build.")
         sys.exit(1)
 
-    download = build["downloads"]["server:default"]
-    info = support.get(version, {})
-    print(f"Target line {version}  (support: {info.get('support', {}).get('status', '?')}, "
+    # The dev server runs the newest stable line; the plugins build against the
+    # newest line MockBukkit also covers, which can trail it.
+    download = server_build["downloads"]["server:default"]
+    info = support.get(server_version, {})
+    print(f"Server line {server_version}  (support: {info.get('support', {}).get('status', '?')}, "
           f"Java {info.get('java', {}).get('version', {}).get('minimum', '?')}+)")
-    print(f"  server jar          build {build['id']}  {download['name']}")
+    print(f"  server jar          build {server_build['id']}  {download['name']}")
     print(f"                      {download['url']}")
     print(f"                      sha256 {download['checksums']['sha256']}")
-    print(f"  paper.version       {api}")
-    print(f"  mockbukkit          {artifact}:{mockbukkit}")
 
+    if version == server_version:
+        print(f"Build line {version}  (same as the server)")
+    else:
+        print(f"Build line {version or 'none'}  (behind the server: {'; '.join(skipped)})")
+    if version:
+        print(f"  paper.version       {api}")
+        print(f"  mockbukkit          {artifact}:{mockbukkit}")
+
+    # Third-party plugins run on the server, so match them to the server line.
+    print(f"Plugins for {server_version}")
     for name, slug in PLUGINS.items():
         releases = json.loads(get(MODRINTH.format(slug), {
-            "loaders": '["paper"]', "game_versions": json.dumps([version]),
+            "loaders": '["paper"]', "game_versions": json.dumps([server_version]),
             "include_changelog": "false"}))
         # Some snapshots are mis-tagged as releases, so check the version number too.
         releases = [r for r in releases if r["version_type"] == "release"
                     and "snapshot" not in r["version_number"].lower()]
         if not releases:
-            print(f"  {name:<19} no release for {version}")
+            print(f"  {name:<19} no release for {server_version}")
             continue
         latest = max(releases, key=lambda r: r["date_published"])
         jar = next(f for f in latest["files"] if f["primary"])
