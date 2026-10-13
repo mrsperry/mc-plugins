@@ -17,7 +17,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "pocket:wash/stained_glass_1"
+        "recipes": "pocket:wash/stained_glass_1"
       }
     }
   },

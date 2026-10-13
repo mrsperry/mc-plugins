@@ -17,7 +17,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "pocket:wash/terracotta_1"
+        "recipes": "pocket:wash/terracotta_1"
       }
     }
   },
