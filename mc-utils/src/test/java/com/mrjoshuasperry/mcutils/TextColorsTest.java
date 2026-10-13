@@ -1,6 +1,7 @@
 package com.mrjoshuasperry.mcutils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 
 class TextColorsTest {
   private static TextComponent child(Component parent, int index) {
@@ -30,12 +32,12 @@ class TextColorsTest {
 
   @Test
   void sequencePreservesSpacesWithoutConsumingAColor() {
-    TextComponent result = TextColors.sequence("a b", List.of(NamedTextColor.RED, NamedTextColor.BLUE));
+    TextComponent result = TextColors.sequence("a b", List.of(NamedTextColor.RED, NamedTextColor.GREEN));
 
     assertEquals(3, result.children().size());
     assertSame(NamedTextColor.RED, child(result, 0).color());
     assertEquals(" ", child(result, 1).content());
-    assertSame(NamedTextColor.BLUE, child(result, 2).color());
+    assertSame(NamedTextColor.GREEN, child(result, 2).color());
   }
 
   @Test
@@ -48,10 +50,10 @@ class TextColorsTest {
 
   @Test
   void gradientAnchorsAtItsColorStops() {
-    TextComponent result = TextColors.gradient("ab", List.of(NamedTextColor.RED, NamedTextColor.BLUE));
+    TextComponent result = TextColors.gradient("ab", List.of(NamedTextColor.RED, NamedTextColor.AQUA));
 
     assertSame(NamedTextColor.RED, child(result, 0).color());
-    assertSame(NamedTextColor.BLUE, child(result, 1).color());
+    assertSame(NamedTextColor.AQUA, child(result, 1).color());
   }
 
   @Test
@@ -87,5 +89,52 @@ class TextColorsTest {
     assertNull(TextColors.parseTextColor(null));
     assertSame(NamedTextColor.WHITE, TextColors.parseTextColor(null, NamedTextColor.WHITE));
     assertSame(NamedTextColor.WHITE, TextColors.parseTextColor("not-a-color", NamedTextColor.WHITE));
+  }
+
+  private static void assertLegible(TextColor color) {
+    assertTrue(TextColors.contrastAgainstBlack(color) >= TextColors.MIN_CHAT_CONTRAST,
+        color.asHexString() + " is too dark to read in chat");
+  }
+
+  @Test
+  void legibleLeavesReadableColorsAlone() {
+    for (NamedTextColor color : List.of(NamedTextColor.WHITE, NamedTextColor.GRAY, NamedTextColor.GOLD,
+        NamedTextColor.RED, NamedTextColor.GREEN, NamedTextColor.AQUA)) {
+      assertSame(color, TextColors.legible(color));
+    }
+  }
+
+  @Test
+  void legibleLightensANearBlackColorWithoutWashingItOut() {
+    TextColor deepDark = TextColor.color(1, 15, 48);
+    TextColor result = TextColors.legible(deepDark);
+
+    assertLegible(result);
+    assertNotEquals(NamedTextColor.WHITE.value(), result.value());
+    // Lightened toward white, so it keeps its blue tint
+    assertTrue(result.blue() > result.red());
+  }
+
+  @Test
+  void legibleLightensVanillasDarkColors() {
+    for (NamedTextColor color : List.of(NamedTextColor.BLACK, NamedTextColor.DARK_BLUE, NamedTextColor.DARK_GRAY,
+        NamedTextColor.DARK_RED, NamedTextColor.BLUE)) {
+      assertLegible(TextColors.legible(color));
+    }
+  }
+
+  @Test
+  void parsedColorsAreAlwaysLegible() {
+    assertLegible(TextColors.parseTextColor("black"));
+    assertLegible(TextColors.parseTextColor("#010f30"));
+    assertLegible(TextColors.parseTextColor("not-a-color", NamedTextColor.DARK_BLUE));
+  }
+
+  @Test
+  void sequenceMakesEveryCharacterLegible() {
+    TextComponent result = TextColors.sequence("ab", List.of(NamedTextColor.DARK_BLUE, NamedTextColor.BLACK));
+
+    assertLegible(child(result, 0).color());
+    assertLegible(child(result, 1).color());
   }
 }

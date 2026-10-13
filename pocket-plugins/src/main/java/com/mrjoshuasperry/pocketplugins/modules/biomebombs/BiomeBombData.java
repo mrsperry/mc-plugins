@@ -4,6 +4,8 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
+import com.mrjoshuasperry.mcutils.TextColors;
+
 import net.kyori.adventure.text.format.TextColor;
 
 public class BiomeBombData {
@@ -64,7 +66,8 @@ public class BiomeBombData {
     return color;
   }
 
+  /** For chat and the bomb's name: lightened if the biome's color is too dark to read there. */
   public TextColor getTextColor() {
-    return TextColor.color(getColor().getRed(), getColor().getGreen(), getColor().getBlue());
+    return TextColors.legible(TextColor.color(getColor().getRed(), getColor().getGreen(), getColor().getBlue()));
   }
 }

@@ -9,6 +9,8 @@ import java.util.List;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
 
+import com.mrjoshuasperry.mcutils.TextColors;
+
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
@@ -67,7 +69,7 @@ class DisplayNameConfigTest {
     // Regression: saveToConfig used to write raw TextColor objects that
     // loadFromConfig (reading string lists) could not read back, losing all colours.
     DisplayNameConfig original = new DisplayNameConfig();
-    original.setNameColors(new ArrayList<>(List.of(NamedTextColor.RED, TextColor.color(0x123456))));
+    original.setNameColors(new ArrayList<>(List.of(NamedTextColor.RED, TextColor.color(0xABCDEF))));
 
     MemoryConfiguration config = new MemoryConfiguration();
     original.saveToConfig(config);
@@ -75,6 +77,18 @@ class DisplayNameConfigTest {
 
     assertEquals(2, reloaded.getNameColors().size());
     assertEquals(NamedTextColor.RED.value(), reloaded.getNameColors().get(0).value());
-    assertEquals(0x123456, reloaded.getNameColors().get(1).value());
+    assertEquals(0xABCDEF, reloaded.getNameColors().get(1).value());
+  }
+
+  @Test
+  void aSavedColorTooDarkForChatLoadsLightened() {
+    DisplayNameConfig original = new DisplayNameConfig();
+    original.setNameColors(new ArrayList<>(List.of(TextColor.color(0x123456))));
+
+    MemoryConfiguration config = new MemoryConfiguration();
+    original.saveToConfig(config);
+    TextColor reloaded = DisplayNameConfig.loadFromConfig(config).getNameColors().get(0);
+
+    assertTrue(TextColors.contrastAgainstBlack(reloaded) >= TextColors.MIN_CHAT_CONTRAST);
   }
 }
