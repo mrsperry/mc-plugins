@@ -19,7 +19,7 @@ Every module can be turned off on its own — see [Configuration](#configuration
 | CobbleGenerator | Replaces vanilla lava + water cobble with a weighted roll over configurable materials |
 | CommandMacros | Config-defined command macros, op-gated |
 | ConcreteMixer | Concrete powder dropped into a filled water cauldron hardens |
-| CraftingKeeper | Crafting tables retain their grid contents on close, saved per location |
+| CraftingKeeper | Crafting tables keep their grid contents when closed and hand them to whoever opens them next; breaking the table drops them |
 | Creeperworks | Creeper explosions spawn a creeper-shaped firework |
 | CropTweaks | Right-click a mature crop with a hoe to harvest and replant; blaze powder acts as bonemeal on nether wart |
 | Dispensery | Dispensers place configured blocks (anvil by default), fill or empty cauldrons from buckets, and carve a pumpkin in front into a carved pumpkin with dispensed shears |

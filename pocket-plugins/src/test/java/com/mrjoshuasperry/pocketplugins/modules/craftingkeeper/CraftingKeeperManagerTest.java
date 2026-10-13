@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.MemoryConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +19,13 @@ import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
 
 class CraftingKeeperManagerTest {
+  private ServerMock server;
   private World world;
   private CraftingKeeperManager manager;
 
   @BeforeEach
   void setUp() {
-    ServerMock server = MockBukkit.mock();
+    server = MockBukkit.mock();
     world = server.addSimpleWorld("test");
     manager = CraftingKeeperManager.getInstance();
     // The manager is a process-wide singleton, so state leaks between tests. Loading
@@ -68,6 +70,63 @@ class CraftingKeeperManagerTest {
 
     manager.removeSaved(location);
     assertFalse(manager.isSaved(location));
+  }
+
+  @Test
+  void takingAGridLeavesNothingBehindForTheNextPlayer() {
+    Location location = new Location(world, 4, 5, 6);
+    manager.saveInventory(location, new ItemStack[] { new ItemStack(Material.DIAMOND) });
+
+    ItemStack[] taken = manager.take(location);
+
+    assertEquals(Material.DIAMOND, taken[0].getType());
+    assertNull(manager.take(location), "a second opener must not get a copy");
+  }
+
+  @Test
+  void aGridInAWorldThatIsNotLoadedIsKept() {
+    MemoryConfiguration root = new MemoryConfiguration();
+    root.set("0.world", "unloaded_world");
+    root.set("0.x", 1);
+    root.set("0.y", 2);
+    root.set("0.z", 3);
+    root.set("0.size", 1);
+    root.set("0.contents.0", new ItemStack(Material.EMERALD, 3));
+    manager.load(root);
+
+    MemoryConfiguration saved = new MemoryConfiguration();
+    manager.save(saved);
+
+    assertEquals("unloaded_world", saved.getString("0.world"));
+    assertEquals(3, saved.getItemStack("0.contents.0").getAmount());
+  }
+
+  @Test
+  void filesFromBeforeTheWorldNameFormatStillLoad() {
+    MemoryConfiguration root = new MemoryConfiguration();
+    root.set("0.location", new Location(world, 7, 8, 9));
+    root.set("0.size", 1);
+    root.set("0.contents.0", new ItemStack(Material.GOLD_INGOT));
+    manager.load(root);
+
+    assertEquals(Material.GOLD_INGOT, manager.getSavedInventory(new Location(world, 7, 8, 9))[0].getType());
+  }
+
+  @Test
+  void aWorkbenchIsTheClickedTableOnlyWhileThePlayerIsStillAtIt() {
+    Location table = new Location(world, 0, 64, 0);
+    table.getBlock().setType(Material.CRAFTING_TABLE);
+    Player player = server.addPlayer();
+
+    player.teleport(new Location(world, 2, 64, 0));
+    assertTrue(CraftingKeeper.isTableFor(table, player));
+
+    player.teleport(new Location(world, 50, 64, 0));
+    assertFalse(CraftingKeeper.isTableFor(table, player), "a stale click on a far table doesn't count");
+
+    player.teleport(new Location(world, 2, 64, 0));
+    table.getBlock().setType(Material.AIR);
+    assertFalse(CraftingKeeper.isTableFor(table, player), "nor does one that has since gone");
   }
 
   @Test
