@@ -124,17 +124,13 @@ class TextColorsTest {
   }
 
   @Test
-  void parsedColorsAreAlwaysLegible() {
-    assertLegible(TextColors.parseTextColor("black"));
-    assertLegible(TextColors.parseTextColor("#010f30"));
-    assertLegible(TextColors.parseTextColor("not-a-color", NamedTextColor.DARK_BLUE));
-  }
+  void colorsTooDarkToReadAreKeptAsChosen() {
+    // Legibility is a rule for colors the code picks; players may choose any color
+    assertSame(NamedTextColor.BLACK, TextColors.parseTextColor("black"));
+    assertEquals(0x010f30, TextColors.parseTextColor("#010f30").value());
 
-  @Test
-  void sequenceMakesEveryCharacterLegible() {
     TextComponent result = TextColors.sequence("ab", List.of(NamedTextColor.DARK_BLUE, NamedTextColor.BLACK));
-
-    assertLegible(child(result, 0).color());
-    assertLegible(child(result, 1).color());
+    assertSame(NamedTextColor.DARK_BLUE, child(result, 0).color());
+    assertSame(NamedTextColor.BLACK, child(result, 1).color());
   }
 }

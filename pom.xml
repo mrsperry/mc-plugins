@@ -29,7 +29,7 @@
                      resolves against whatever is already in the local repo rather
                      than the version built alongside these plugins. -->
                 <artifactId>mc-utils</artifactId>
-                <version>1.0.32</version>
+                <version>1.0.33</version>
             </dependency>
             <!-- Test-only. JUnit 5 via its BOM so the jupiter/platform artifacts stay
                  in lockstep; modules declare junit-jupiter without a version. -->
