@@ -153,11 +153,12 @@ public class BiomeBombs extends Module {
     if (type == null || color == null)
       return;
 
-    BiomeBombProjectile projectile = new BiomeBombProjectile(this.explosionRange, type, Color.fromARGB(color),
-        item.clone());
-
+    // Only the one bomb thrown rides the projectile; a copy of the whole stack used to
     ItemStack thrown = item.clone();
     thrown.setAmount(1);
+    BiomeBombProjectile projectile = new BiomeBombProjectile(this.explosionRange, type, Color.fromARGB(color),
+        thrown);
+
     int amount = item.getAmount();
     item.setAmount(amount - 1);
 
