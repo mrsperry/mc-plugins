@@ -23,14 +23,11 @@ import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import io.papermc.paper.registry.TypedKey;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 
 public class BiomeBombProjectile {
   private final String AS_META_KEY = "biome_bomb_as";
   private final String TYPE_META_KEY = "biome_bomb_type";
   private final String COLOR_META_KEY = "biome_bomb_color";
-  private final String OWNER_META_KEY = "biome_bomb_owner";
   private final int explosionRange;
   private final ItemStack projectileItem;
   private BaseProjectile projectile;
@@ -58,7 +55,6 @@ public class BiomeBombProjectile {
     ArmorStand armorStand = ProjectileUtils.spawnArmorStand(owner.getEyeLocation(), projectileItem, false);
 
     this.projectile.addMetaData(AS_META_KEY, armorStand);
-    this.projectile.addMetaData(OWNER_META_KEY, owner);
     this.projectile.applyForce(owner.getLocation().clone().getDirection().normalize());
     this.projectile.launch(owner.getEyeLocation());
   }
@@ -66,15 +62,11 @@ public class BiomeBombProjectile {
   private void onBlockCollision(BaseProjectile projectile, Block block, RayTraceResult rayTrace, Location hitLocation) {
     ArmorStand armorStand = (ArmorStand) projectile.getMetaData(AS_META_KEY);
     World world = projectile.getPosition().getWorld();
-    Player player = (Player) this.projectile.getMetaData(OWNER_META_KEY);
 
     world.playSound(hitLocation, Sound.BLOCK_BELL_RESONATE, 2f, 1f);
     world.playSound(hitLocation, Sound.ITEM_TOTEM_USE, 0.5f, 2f);
     spawnCollisionParticles(projectile);
     transformBiome(projectile);
-
-    player.sendMessage(
-        Component.text("Biome updated! You may have to relog to see the changes").color(NamedTextColor.GRAY));
 
     armorStand.remove();
     projectile.queueCancel();
