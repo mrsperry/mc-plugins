@@ -18,6 +18,8 @@ public class Main extends JavaPlugin {
     // pile be rebuilt from the entity after a restart.
     private final NamespacedKey pileInteractionIdKey = new NamespacedKey(this, "pile-interaction-id");
     private final NamespacedKey pileOrbitKey = new NamespacedKey(this, "pile-orbit");
+    // Marks a pile's owner head or name tag, which sit at the center rather than orbit.
+    private final NamespacedKey pileRoleKey = new NamespacedKey(this, "pile-role");
 
     private DeathPileManager pileManager;
 
@@ -60,5 +62,9 @@ public class Main extends JavaPlugin {
 
     public NamespacedKey getPileOrbitKey() {
         return this.pileOrbitKey;
+    }
+
+    public NamespacedKey getPileRoleKey() {
+        return this.pileRoleKey;
     }
 }

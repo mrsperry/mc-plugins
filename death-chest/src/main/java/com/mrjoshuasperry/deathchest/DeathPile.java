@@ -32,6 +32,11 @@ public final class DeathPile {
     public record Slot(double radius, double height, double theta0) {
     }
 
+    /** Where the owner's head floats: the middle of the sphere, inside the rings. */
+    public static final Slot HEAD_SLOT = new Slot(0, CENTER_HEIGHT, 0);
+    /** Where the name tag floats: just clear of the highest ring a pile can have. */
+    public static final Slot LABEL_SLOT = new Slot(0, CENTER_HEIGHT + VERTICAL_RADIUS + 0.45, 0);
+
     /** An orbit blob decoded back into its center and slot. */
     public record Orbit(double centerX, double centerY, double centerZ, Slot slot) {
     }
@@ -83,6 +88,19 @@ public final class DeathPile {
     public static Vector position(Slot slot, double phase) {
         double angle = slot.theta0() + phase;
         return new Vector(slot.radius() * Math.cos(angle), slot.height(), slot.radius() * Math.sin(angle));
+    }
+
+    /**
+     * A point inside the pile for a sparkle to start from, picked by three numbers in
+     * [0, 1): how far around, how far out from the middle, and how far up through the
+     * rings. The square root spreads sparkles evenly over the area instead of bunching
+     * them in the middle.
+     */
+    public static Vector sparkleOffset(double around, double out, double up) {
+        double angle = 2.0 * Math.PI * around;
+        double radius = EQUATOR_RADIUS * Math.sqrt(out);
+        double height = CENTER_HEIGHT + (2.0 * up - 1.0) * VERTICAL_RADIUS;
+        return new Vector(radius * Math.cos(angle), height, radius * Math.sin(angle));
     }
 
     /**
