@@ -4,4 +4,4 @@ version: ${project.version}
 description: Launches fireworks when you level up.
 authors:
   - mrsperry
-api-version: "26.1.2"
+api-version: "26.2"

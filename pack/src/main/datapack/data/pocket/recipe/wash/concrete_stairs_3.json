@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "pocket_wash_concrete_stairs",
+  "ingredients": [
+    "minecraft:water_bucket",
+    "#pocket:washable/concrete_stairs",
+    "#pocket:washable/concrete_stairs",
+    "#pocket:washable/concrete_stairs"
+  ],
+  "result": {
+    "id": "minecraft:white_concrete_stairs",
+    "count": 3
+  }
+}

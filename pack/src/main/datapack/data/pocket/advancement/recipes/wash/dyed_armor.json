@@ -17,7 +17,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "pocket:wash/leather_helmet"
+        "recipes": "pocket:wash/leather_helmet"
       }
     }
   },

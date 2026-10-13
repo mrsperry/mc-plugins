@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "pocket_wash_concrete_slab",
+  "ingredients": [
+    "minecraft:water_bucket",
+    "#pocket:washable/concrete_slab"
+  ],
+  "result": {
+    "id": "minecraft:white_concrete_slab",
+    "count": 1
+  }
+}

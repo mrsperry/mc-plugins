@@ -12,56 +12,74 @@ Latest **stable** only. No alpha, beta, pre, RC, milestone or snapshot builds, f
 From the repo root:
 
 ```sh
-python .claude/skills/upgrade-dependencies/check_updates.py          # newest usable line
+python .claude/skills/upgrade-dependencies/check_updates.py          # newest lines
 python .claude/skills/upgrade-dependencies/check_updates.py 26.1.2   # stay on a line
 ```
 
 It's read-only and reports:
 
-- **Current state:** `paper.version`, MockBukkit, what the dev server runs, and the third-party jars.
-- **The target Paper line.** That's the newest line with all three of:
-  - a STABLE server build on Fill
-  - a `-stable` paper-api coordinate
-  - a MockBukkit artifact
-
-  Lines that fail are listed with the reason. A new Paper line often goes stable before MockBukkit
-  catches up, and without MockBukkit the tests can't run.
-- **The line's details:** the server jar's URL and sha256, the `paper.version` coordinate, the
-  MockBukkit artifact and version, and the Java the line needs.
-- **Plugins:** FAWE and VoxelSniper's newest Modrinth release for that line, with URL and sha512.
+- **Current state:** `paper.version`, MockBukkit, and the third-party jars.
+- **The server line:** the newest Paper line with a STABLE build, and its jar's URL and sha256. The
+  dev server always moves to this line, even when MockBukkit hasn't caught up.
+- **The build line:** the newest line that also has a `-stable` paper-api coordinate and a MockBukkit
+  artifact. This is what `paper.version` and MockBukkit point at, because the tests can't start
+  without a matching MockBukkit. It often trails the server line by a release for a while after a
+  new line ships.
+- **Plugins:** FAWE and VoxelSniper's newest Modrinth release for the server line, with URL and
+  sha512.
 - **Build tooling:** every pinned Maven plugin and dependency, and the GitHub Actions, each with its
   latest stable version.
 
-**Show the user the report and agree what to take before changing anything.** A Paper line bump is
-the big one: world upgrades are one-way. Plugin, tooling and same-line Paper build bumps are
-routine.
+**Show the user the report before changing anything.** A Paper line bump is the big one: world
+upgrades are one-way. Plugin, tooling and same-line Paper build bumps are routine.
 
 ## 2. Paper
 
 Follow `UPGRADING.md`, using the values the checker reported. In short:
 
 1. **Branch.** Start from a clean tree on a feature branch (see the `commit` skill).
-2. **Server jar.**
+2. **Server jar** (server line).
    ```sh
    curl -fL -o paper.jar "<url>" && echo "<sha256>  paper.jar" | sha256sum -c
    cp paper.jar _server/paper.jar
+   (cd _server && java -Dpaperclip.patchonly=true -jar paper.jar)   # unpacks without booting
    ```
    Back up `_server/world*` before the first boot on a new line.
-3. **Poms.**
+3. **Poms** (build line).
    - Set `<paper.version>` and `<mockbukkit.version>` in the root `pom.xml`.
    - On a line change, also change the MockBukkit **artifactId** in the root pom **and every
      child pom**. The children declare it versionless, so missing one fails at POM-read time. The
      naming isn't consistent (`mockbukkit-v26.1.2` vs `mockbukkit-v26.2`), so use exactly what the
      checker printed.
-4. **`api-version`.** Update it in every `plugin.yml`, reading the value from the API jar as
-   `UPGRADING.md` step 4 shows.
-5. **Pack formats.** Update `pack/src/main/{datapack,resourcepack}/pack.mcmeta`: `min_format` and
-   `max_format` take `pack_version.data_major` and `resource_major` from
-   `unzip -p _server/versions/<ver>/paper-<ver>.jar version.json`. That jar exists after the first
-   boot.
+   - Don't try to build against the server line with an older MockBukkit. It compiles, but
+     MockBukkit can't initialise the newer registries and every server-backed test errors.
+   - When the build line trails the server line, say so in the comment above `<paper.version>` and
+     in CLAUDE.md's opening line.
+4. **`api-version`** (build line). Update it in every `plugin.yml`, reading `currentApiVersion` from
+   the build line's API jar as `UPGRADING.md` step 4 shows. It's a minimum, so it loads on newer
+   servers.
+5. **Pack formats** (server line, since the server reads the pack). Update
+   `pack/src/main/{datapack,resourcepack}/pack.mcmeta`: `min_format` and `max_format` take
+   `pack_version.data_major` and `resource_major` from
+   `unzip -p _server/versions/<ver>/paper-<ver>.jar version.json`.
+   A new line can also change the data formats themselves (26.3 renamed `recipe_unlocked`'s
+   `recipe` condition to `recipes`). Nothing but a server boot validates the pack, and a pack that
+   fails to parse stops the server from starting, so always boot. Compare against vanilla's own
+   files in the server jar (`data/minecraft/advancement/recipes/...`) when something won't parse.
 6. **Java.** If the line needs a newer Java than the poms compile for, follow `UPGRADING.md` step 4.
 7. **The step 6 audit.** On a line change, run the registry and config audit in `UPGRADING.md`
    step 6. That's where the real bugs turn up.
+   - The drift tests (`RegistryDriftTest`, `OutfitDriftTest`) only see the **build** line. When the
+     server is ahead, diff the server line's additions by hand: list the `static final` constants of
+     `EntityType`, `Biome` and `Material` with `javap` in both API jars and `comm` them.
+   - A config entry for content only the server line has (e.g. a new biome in
+     `villagermakeovers.outfits`) can't go in the shipped `config.yml` yet, because the drift tests
+     reject names their registry doesn't know. Put it in the dev server's copy instead, and tell the
+     user it's needed on their other servers.
+8. **Existing servers keep their old `config.yml`.** Paper never overwrites it, so new list entries
+   in the shipped config don't reach a server that already has one. Add them to
+   `_server/plugins/<Plugin>/config.yml` by hand, and tell the user which ones their other servers
+   need.
 
 ## 3. Third-party plugins on the dev server
 

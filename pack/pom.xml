@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>pack</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <!-- No sources and no jar: this module only zips the two pack trees. -->
     <packaging>pom</packaging>
 
@@ -31,7 +31,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.7.1</version>
+                <version>3.8.0</version>
                 <configuration>
                     <!-- Yields pocket-datapack.zip / pocket-resourcepack.zip, so the
                          zip name matches the pack namespace rather than the module. -->

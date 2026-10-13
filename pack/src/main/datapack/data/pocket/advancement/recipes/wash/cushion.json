@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_water_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:water_bucket"
+          },
+          {
+            "items": "#pocket:washable/cushion"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipes": "pocket:wash/cushion_1"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_water_bucket",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pocket:wash/cushion_1",
+      "pocket:wash/cushion_2",
+      "pocket:wash/cushion_3",
+      "pocket:wash/cushion_4",
+      "pocket:wash/cushion_5",
+      "pocket:wash/cushion_6",
+      "pocket:wash/cushion_7",
+      "pocket:wash/cushion_8"
+    ]
+  }
+}

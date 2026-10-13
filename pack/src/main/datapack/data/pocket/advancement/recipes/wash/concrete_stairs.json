@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_water_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:water_bucket"
+          },
+          {
+            "items": "#pocket:washable/concrete_stairs"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipes": "pocket:wash/concrete_stairs_1"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_water_bucket",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pocket:wash/concrete_stairs_1",
+      "pocket:wash/concrete_stairs_2",
+      "pocket:wash/concrete_stairs_3",
+      "pocket:wash/concrete_stairs_4",
+      "pocket:wash/concrete_stairs_5",
+      "pocket:wash/concrete_stairs_6",
+      "pocket:wash/concrete_stairs_7",
+      "pocket:wash/concrete_stairs_8"
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 # CLAUDE.md
 
-Maven monorepo of Paper plugins, each building its own jar. Paper 26.1.2, Java 25. The git root is
-`mc-plugins/`.
+Maven monorepo of Paper plugins, each building its own jar. Java 25. The dev server runs Paper 26.3;
+plugins build against the 26.2 API, the newest line MockBukkit supports. The git root is `mc-plugins/`.
 
 | Path | What |
 |---|---|
@@ -20,6 +20,9 @@ Modules are declared only inside profiles, so a bare `mvn -pl <module>` fails. A
 mvn -P all test               # every module — also what the pre-commit hook runs
 mvn install -P survival       # also copies jars into _dist/ and _server/plugins/
 ```
+
+Stop the dev server before `mvn install`: Windows locks the jars a running server has loaded, so the
+install fails when it tries to replace them.
 
 Tests are JUnit + MockBukkit over pure logic and config round-trips. Gameplay changes still need an
 in-game check on the dev server — say so rather than implying they're verified.

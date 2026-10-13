@@ -77,20 +77,22 @@ A data pack recipe doesn't show up in the recipe book without one. Put it at the
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_paper": {
+    "has_leather": {
       "trigger": "minecraft:inventory_changed",
-      "conditions": { "items": [ { "items": "minecraft:paper" } ] }
+      "conditions": { "items": [ { "items": "minecraft:leather" } ] }
     },
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
-      "conditions": { "recipe": "pocket:name_tag" }
+      "conditions": { "recipes": "pocket:saddle" }
     }
   },
-  "requirements": [ [ "has_paper", "has_the_recipe" ] ],
-  "rewards": { "recipes": [ "pocket:name_tag" ] }
+  "requirements": [ [ "has_leather", "has_the_recipe" ] ],
+  "rewards": { "recipes": [ "pocket:saddle" ] }
 }
 ```
 
+- The `recipe_unlocked` condition key is `recipes` since 26.3. The old `recipe` key fails to parse,
+  and a data pack that fails to parse stops the server from starting.
 - The `inventory_changed` criterion fires on the recipe's key ingredient. It can be a `#tag`.
 - Both criteria sit in **one** inner `requirements` array, so either one unlocks the recipe.
 - Leave out any `display` block. That keeps the advancement hidden and suppresses the toast.

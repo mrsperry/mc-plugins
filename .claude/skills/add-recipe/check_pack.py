@@ -31,6 +31,11 @@ def main():
         advancement = load(path, problems)
         if advancement:
             unlocked.update(advancement.get("rewards", {}).get("recipes", []))
+            # 26.3 renamed this condition key; the old one stops the server from starting
+            for name, criterion in advancement.get("criteria", {}).items():
+                if (criterion.get("trigger") == "minecraft:recipe_unlocked"
+                        and "recipes" not in criterion.get("conditions", {})):
+                    problems.append(f"{path}: criterion '{name}' needs a 'recipes' condition, not 'recipe'")
 
     for path in sorted((ROOT / "tags").rglob("*.json")):
         load(path, problems)

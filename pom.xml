@@ -42,12 +42,12 @@
             </dependency>
             <!-- MockBukkit for the Paper line we target — the artifactId encodes the
                  version, so it moves with paper.version, not just the version number.
-                 Unlike the 1.21 artifact, mockbukkit-v26.1.2 declares no transitive
+                 Unlike the 1.21 artifact, mockbukkit-v26.2 declares no transitive
                  paper-api at all; the provided-scope paper-api above is what lands on
                  the test classpath. Bump alongside the paper-api version. -->
             <dependency>
                 <groupId>org.mockbukkit.mockbukkit</groupId>
-                <artifactId>mockbukkit-v26.1.2</artifactId>
+                <artifactId>mockbukkit-v26.2</artifactId>
                 <version>${mockbukkit.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -149,7 +149,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.15.0</version>
+                <version>3.16.0</version>
                 <configuration>
                     <release>25</release>
                 </configuration>
@@ -240,11 +240,14 @@
         <mcutils.shadedPattern>com.mrjoshuasperry.mcutils</mcutils.shadedPattern>
         <!-- Paper's calendar-versioned line pins a specific build rather than resolving a
              rolling {MC}-R0.1-SNAPSHOT. Take the highest -stable build in the target
-             family; see UPGRADING.md for how to resolve it. -->
-        <paper.version>26.1.2.build.74-stable</paper.version>
+             family; see UPGRADING.md for how to resolve it.
+             This can trail the dev server's Paper: it must stay on a line MockBukkit
+             publishes, or the tests can't start. The server runs 26.3; there is no
+             mockbukkit-v26.3 yet, so the API stays on 26.2 until there is. -->
+        <paper.version>26.2.build.133-stable</paper.version>
         <!-- Test toolchain. See the managed test dependencies for the version posture. -->
-        <junit.version>6.1.2</junit.version>
-        <mockbukkit.version>4.114.0</mockbukkit.version>
-        <maven.surefire.version>3.5.2</maven.surefire.version>
+        <junit.version>6.1.3</junit.version>
+        <mockbukkit.version>4.117.0</mockbukkit.version>
+        <maven.surefire.version>3.6.0</maven.surefire.version>
     </properties>
 </project>
