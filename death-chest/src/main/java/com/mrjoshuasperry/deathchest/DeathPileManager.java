@@ -143,10 +143,10 @@ public class DeathPileManager {
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, UPDATE_INTERVAL, UPDATE_INTERVAL);
     }
 
-    /** Spawns a pile for the player's inventory at their death spot. No-op if empty-handed. */
-    public void spawn(Player player) {
+    /** Spawns a pile of the given stacks at the player's death spot. No-op if there are none. */
+    public void spawn(Player player, List<ItemStack> items) {
         List<ItemStack> stacks = new ArrayList<>();
-        for (ItemStack item : player.getInventory().getContents()) {
+        for (ItemStack item : items) {
             if (item != null && !item.getType().isAir()) {
                 stacks.add(item);
             }
@@ -173,7 +173,6 @@ public class DeathPileManager {
         group.labelId = spawnLabel(world, center, player, groupId);
 
         groups.put(groupId, group);
-        // Read now, before vanilla empties the inventory these stacks came from
         Audit.event(plugin, "pile-created").with("owner", player).at(center).with("items", stacks).record();
         player.sendMessage(Component.text(
                 "Your items are floating at (" + center.getBlockX() + ", " + center.getBlockY() + ", "
