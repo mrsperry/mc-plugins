@@ -88,14 +88,15 @@ bucket is a crafting remainder, so it comes back empty — washing is free.
 
 Two mechanisms, because colour is stored two different ways:
 
-- **Colour in the item id** (stained glass, terracotta, concrete, wool, carpet, candles, beds) —
+- **Colour in the item id** (stained glass, terracotta, concrete, wool, carpet, candles, beds, and
+  since 26.3 concrete and wool slabs and stairs, and cushions) —
   plain `crafting_shapeless`, water bucket plus 1–8 dyed blocks, yielding that many undyed ones.
   Shapeless recipes match an exact multiset, so each batch size needs its own file; a shared
   `group` collapses all eight into one cycling recipe book entry. The candidate items come from
   `tags/item/washable/<family>.json`, which deliberately excludes the base item so washing is never
-  a no-op, and mixed colours in one batch are fine. Concrete, wool, carpet and beds have no
-  uncoloured variant, so they wash to white. Beds stack to 1, so they are 1:1 only. Glazed
-  terracotta has no base form at all and is not washable.
+  a no-op, and mixed colours in one batch are fine. Concrete, wool, carpet, beds, the slabs and
+  stairs, and cushions have no uncoloured variant, so they wash to white. Beds stack to 1, so they
+  are 1:1 only. Glazed terracotta has no base form at all and is not washable.
 - **Colour in a component** (leather armor, leather horse armor, wolf armor) — `crafting_transmute`,
   which copies every component off the input and then drops `minecraft:dyed_color` via the
   `"!minecraft:dyed_color": {}` removal patch on `result.components`. Enchantments, trim, damage and

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "pocket_wash_wool_slab",
+  "ingredients": [
+    "minecraft:water_bucket",
+    "#pocket:washable/wool_slab",
+    "#pocket:washable/wool_slab",
+    "#pocket:washable/wool_slab",
+    "#pocket:washable/wool_slab",
+    "#pocket:washable/wool_slab"
+  ],
+  "result": {
+    "id": "minecraft:white_wool_slab",
+    "count": 5
+  }
+}

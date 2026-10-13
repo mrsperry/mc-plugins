@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "pocket_wash_cushion",
+  "ingredients": [
+    "minecraft:water_bucket",
+    "#pocket:washable/cushion",
+    "#pocket:washable/cushion",
+    "#pocket:washable/cushion",
+    "#pocket:washable/cushion",
+    "#pocket:washable/cushion",
+    "#pocket:washable/cushion",
+    "#pocket:washable/cushion",
+    "#pocket:washable/cushion"
+  ],
+  "result": {
+    "id": "minecraft:white_cushion",
+    "count": 8
+  }
+}
