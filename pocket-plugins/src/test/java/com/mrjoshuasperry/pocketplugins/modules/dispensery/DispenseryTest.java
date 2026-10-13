@@ -1,11 +1,14 @@
 package com.mrjoshuasperry.pocketplugins.modules.dispensery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,28 @@ class DispenseryTest {
   @AfterEach
   void tearDown() {
     MockBukkit.unmock();
+  }
+
+  @Test
+  void theDispensedToolIsFoundEvenBehindAPlainOneOfTheSameType() {
+    ItemStack enchanted = new ItemStack(Material.SHEARS);
+    enchanted.addUnsafeEnchantment(Enchantment.UNBREAKING, 3);
+    ItemStack[] contents = { null, new ItemStack(Material.SHEARS), enchanted.clone() };
+
+    assertEquals(2, Dispensery.indexOfSimilar(contents, enchanted));
+    assertEquals(1, Dispensery.indexOfSimilar(contents, new ItemStack(Material.SHEARS)));
+  }
+
+  @Test
+  void usingOneOfAStackKeepsItsData() {
+    ItemStack stack = new ItemStack(Material.STONE, 5);
+    stack.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
+
+    ItemStack rest = Dispensery.withOneFewer(stack);
+
+    assertEquals(4, rest.getAmount());
+    assertEquals(1, rest.getEnchantmentLevel(Enchantment.UNBREAKING));
+    assertNull(Dispensery.withOneFewer(new ItemStack(Material.STONE, 1)), "the last one leaves the slot empty");
   }
 
   @Test

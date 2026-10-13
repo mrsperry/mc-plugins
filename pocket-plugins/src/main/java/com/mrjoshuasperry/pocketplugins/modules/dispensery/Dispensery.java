@@ -3,7 +3,7 @@ package com.mrjoshuasperry.pocketplugins.modules.dispensery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -40,42 +40,57 @@ public class Dispensery extends Module {
     }
   }
 
-  protected void runDispenserOperation(Block block, Material materialToFind,
-      Function<ItemStack, ItemStack> onMaterialFound) {
+  /**
+   * Changes the stack that was dispensed, a tick later once the cancelled dispense
+   * has settled. It's found by matching the dispensed item exactly, so a renamed or
+   * enchanted stack is never mistaken for a plain one of the same type.
+   */
+  protected void runDispenserOperation(Block block, ItemStack dispensed, UnaryOperator<ItemStack> onFound) {
     Bukkit.getScheduler().runTaskLater(this.getPlugin(), () -> {
-      Dispenser dispenser = (Dispenser) block.getState();
+      // The dispenser may have been broken in the meantime
+      if (!(block.getState() instanceof Dispenser dispenser)) {
+        return;
+      }
+
       Inventory inventory = dispenser.getSnapshotInventory();
-      int index = inventory.first(materialToFind);
+      int index = indexOfSimilar(inventory.getContents(), dispensed);
 
       if (index != -1) {
-        inventory.setItem(index, onMaterialFound.apply(inventory.getItem(index)));
+        inventory.setItem(index, onFound.apply(inventory.getItem(index)));
         dispenser.update();
       }
     }, 0);
   }
 
-  protected void removeItemInDispenser(Block block, Material material) {
-    this.runDispenserOperation(block, material,
-        (ItemStack item) -> {
-          int amount = item.getAmount() - 1;
-          if (amount == 0) {
-            return new ItemStack(Material.AIR);
-          }
-
-          return new ItemStack(item.getType(), item.getAmount() - 1);
-        });
+  /** The first slot holding the same item as {@code dispensed}, whatever its count, or -1. */
+  static int indexOfSimilar(ItemStack[] contents, ItemStack dispensed) {
+    for (int index = 0; index < contents.length; index++) {
+      if (contents[index] != null && contents[index].isSimilar(dispensed)) {
+        return index;
+      }
+    }
+    return -1;
   }
 
-  protected void updateItemInDispenser(Block block, Material oldType, Material newType) {
-    this.runDispenserOperation(block, oldType, (ItemStack item) -> new ItemStack(newType, item.getAmount()));
+  /** One fewer of the stack, keeping its name, enchantments and other data. */
+  static ItemStack withOneFewer(ItemStack item) {
+    return item.getAmount() <= 1 ? null : item.subtract();
+  }
+
+  protected void removeItemInDispenser(Block block, ItemStack dispensed) {
+    this.runDispenserOperation(block, dispensed, Dispensery::withOneFewer);
+  }
+
+  protected void updateItemInDispenser(Block block, ItemStack dispensed, Material newType) {
+    this.runDispenserOperation(block, dispensed, (ItemStack item) -> item.withType(newType));
   }
 
   /**
-   * Applies a point of durability to the first tool of the given type, honoring
+   * Applies a point of durability to the tool that was dispensed, honoring
    * Unbreaking, and clears the slot with a break sound when it wears out.
    */
-  protected void damageToolInDispenser(Block block, Material toolType) {
-    this.runDispenserOperation(block, toolType, (ItemStack item) -> {
+  protected void damageToolInDispenser(Block block, ItemStack dispensed) {
+    this.runDispenserOperation(block, dispensed, (ItemStack item) -> {
       if (!(item.getItemMeta() instanceof Damageable meta)) {
         return item;
       }
@@ -170,7 +185,7 @@ public class Dispensery extends Module {
       relative.getWorld().playSound(relative.getLocation(), relative.getBlockSoundGroup().getPlaceSound(), 1, 1);
 
       event.setCancelled(true);
-      this.removeItemInDispenser(block, itemType);
+      this.removeItemInDispenser(block, item);
       return;
     }
 
@@ -185,7 +200,7 @@ public class Dispensery extends Module {
       relative.getWorld().playSound(relative.getLocation(), Sound.BLOCK_PUMPKIN_CARVE, 1, 1);
 
       event.setCancelled(true);
-      this.damageToolInDispenser(block, Material.SHEARS);
+      this.damageToolInDispenser(block, item);
       return;
     }
 
@@ -195,6 +210,13 @@ public class Dispensery extends Module {
 
     switch (itemType) {
       case WATER_BUCKET, LAVA_BUCKET, POWDER_SNOW_BUCKET -> {
+        // Only an empty cauldron takes a bucket, as for a player; filling a full one
+        // would pour away what was in it, so the bucket stays put
+        if (relativeType != Material.CAULDRON) {
+          event.setCancelled(true);
+          return;
+        }
+
         relative.getWorld().playSound(relative.getLocation(), getFillSoundForBucket(itemType), 1, 1);
         relative.setType(getCauldronTypeForBucket(itemType));
 
@@ -205,7 +227,7 @@ public class Dispensery extends Module {
         }
 
         event.setCancelled(true);
-        this.updateItemInDispenser(block, itemType, Material.BUCKET);
+        this.updateItemInDispenser(block, item, Material.BUCKET);
       }
       case BUCKET -> {
         if (this.isFilledCauldron(relative)) {
@@ -213,7 +235,7 @@ public class Dispensery extends Module {
           relative.setType(Material.CAULDRON);
 
           event.setCancelled(true);
-          this.updateItemInDispenser(block, itemType, getBucketTypeForCauldron(relativeType));
+          this.updateItemInDispenser(block, item, getBucketTypeForCauldron(relativeType));
         }
       }
       default -> {
