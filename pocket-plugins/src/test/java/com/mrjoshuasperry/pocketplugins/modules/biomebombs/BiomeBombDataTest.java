@@ -2,12 +2,15 @@ package com.mrjoshuasperry.pocketplugins.modules.biomebombs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
+
+import com.mrjoshuasperry.mcutils.TextColors;
 
 class BiomeBombDataTest {
   private static ConfigurationSection validSection() {
@@ -33,8 +36,15 @@ class BiomeBombDataTest {
     assertEquals("birch forest", data.getBiomeName());
     assertEquals(Material.DIRT, data.getCatalyst());
     assertEquals(Color.fromRGB(10, 20, 30), data.getColor());
-    assertEquals(10, data.getTextColor().red());
-    assertEquals(30, data.getTextColor().blue());
+  }
+
+  @Test
+  void aColorTooDarkForChatIsLightenedForTextOnly() {
+    BiomeBombData data = new BiomeBombData(validSection());
+
+    // The particles and firework keep the configured color; only the name is lightened
+    assertEquals(Color.fromRGB(10, 20, 30), data.getColor());
+    assertTrue(TextColors.contrastAgainstBlack(data.getTextColor()) >= TextColors.MIN_CHAT_CONTRAST);
   }
 
   @Test

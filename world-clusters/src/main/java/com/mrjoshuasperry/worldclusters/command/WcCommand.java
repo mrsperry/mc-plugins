@@ -116,7 +116,7 @@ public class WcCommand {
         for (Cluster cluster : this.registry.getClusters()) {
             sender.sendMessage(Component.text(cluster.getId(), NamedTextColor.AQUA)
                     .append(Component.text(" (" + cluster.getDefaultGameMode().name().toLowerCase() + ")",
-                            NamedTextColor.DARK_GRAY)));
+                            NamedTextColor.GRAY)));
 
             for (String worldName : cluster.getWorlds()) {
                 ManagedWorld world = this.registry.getManagedWorld(worldName);

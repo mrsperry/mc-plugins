@@ -13,6 +13,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
 public class TextColors {
+  /**
+   * Lowest contrast ratio against black that chat text may have. Chat and tooltips sit
+   * on a dark background, so anything darker (a near-black biome color, or even
+   * vanilla's {@code blue}) is hard to read. 4.5 is the WCAG AA threshold for text.
+   */
+  public static final double MIN_CHAT_CONTRAST = 4.5;
+
   private static final List<TextColor> rainbowColors = Lists.newArrayList(
       NamedTextColor.RED,
       NamedTextColor.GOLD,
@@ -33,7 +40,8 @@ public class TextColors {
       if (part.equals(" ")) {
         builder.append(Component.space());
       } else {
-        builder.append(Component.text(part, colors.get(index)));
+        // Checked per character: a gradient between two legible stops can still dip
+        builder.append(Component.text(part, TextColors.legible(colors.get(index))));
         index = (index + 1) % colors.size();
       }
     }
@@ -75,9 +83,13 @@ public class TextColors {
     return TextColors.parseTextColor(colorString, null);
   }
 
+  /**
+   * Parses a hex ({@code #rrggbb}) or named color for chat. Colors come from config
+   * and players, so the result is always run through {@link #legible}.
+   */
   public static TextColor parseTextColor(String colorString, TextColor defaultColor) {
     if (colorString == null) {
-      return defaultColor;
+      return TextColors.legible(defaultColor);
     }
 
     if (colorString.startsWith("#")) {
@@ -85,13 +97,46 @@ public class TextColors {
 
       if (color == null) {
         Bukkit.getLogger().warning("Invalid hex color: " + colorString);
-        return defaultColor;
+        return TextColors.legible(defaultColor);
       }
 
-      return color;
+      return TextColors.legible(color);
     }
 
     TextColor namedColor = NamedTextColor.NAMES.value(colorString);
-    return namedColor == null ? defaultColor : namedColor;
+    return TextColors.legible(namedColor == null ? defaultColor : namedColor);
+  }
+
+  /**
+   * Returns the color unchanged if it is legible on chat's dark background, or
+   * lightened toward white just enough that it is. Use it on any color that comes
+   * from config or a player before it reaches chat, an item name or lore.
+   */
+  public static TextColor legible(TextColor color) {
+    if (color == null || TextColors.contrastAgainstBlack(color) >= MIN_CHAT_CONTRAST) {
+      return color;
+    }
+
+    for (int step = 1; step < 20; step++) {
+      TextColor lighter = TextColor.lerp(step / 20f, color, NamedTextColor.WHITE);
+      if (TextColors.contrastAgainstBlack(lighter) >= MIN_CHAT_CONTRAST) {
+        return lighter;
+      }
+    }
+
+    return NamedTextColor.WHITE;
+  }
+
+  /** The WCAG contrast ratio of a color against black, from 1 (black) to 21 (white). */
+  public static double contrastAgainstBlack(TextColor color) {
+    double luminance = 0.2126 * TextColors.linear(color.red())
+        + 0.7152 * TextColors.linear(color.green())
+        + 0.0722 * TextColors.linear(color.blue());
+    return (luminance + 0.05) / 0.05;
+  }
+
+  private static double linear(int channel) {
+    double value = channel / 255.0;
+    return value <= 0.04045 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
   }
 }
