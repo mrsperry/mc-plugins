@@ -11,7 +11,7 @@ Every module can be turned off on its own — see [Configuration](#configuration
 | Module | Behavior |
 |---|---|
 | ArmorStandPoser | Sneak + right-click an armor stand: a stick adds arms, sugar makes it small |
-| ArmorSwapper | Sneak + right-click an armor stand to swap all four armor pieces with it |
+| ArmorSwapper | Sneak + right-click an armor stand to swap all four armor pieces with it. Invisible and marker stands and locked slots are left alone |
 | AutoBreeding | Animals pathfind toward nearby dropped breeding items and enter love mode |
 | BedrockBreaker | Sneak + right-click a powered beacon with a netherite ingot to destroy the bedrock column above it |
 | BeePlanter | Bees pick up dropped seeds and plant them on free farmland |

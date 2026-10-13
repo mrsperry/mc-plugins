@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
@@ -23,11 +24,12 @@ public class ArmorSwapper extends Module {
     super(readableConfig, writableConfig);
   }
 
-  @EventHandler
+  // Ignoring cancelled clicks keeps stands in claimed land out of reach
+  @EventHandler(ignoreCancelled = true)
   public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
     Entity target = event.getRightClicked();
 
-    if (!(target instanceof ArmorStand armorStand)) {
+    if (!(target instanceof ArmorStand armorStand) || !isSwappable(armorStand)) {
       return;
     }
 
@@ -39,6 +41,11 @@ public class ArmorSwapper extends Module {
 
     event.setCancelled(true);
 
+    // The click arrives once for each hand; swapping on both would swap it all straight back
+    if (event.getHand() != EquipmentSlot.HAND) {
+      return;
+    }
+
     List<EquipmentSlot> slots = List.of(
         EquipmentSlot.HEAD,
         EquipmentSlot.CHEST,
@@ -48,6 +55,10 @@ public class ArmorSwapper extends Module {
     Map<String, ItemStack> given = new LinkedHashMap<>();
     Map<String, ItemStack> taken = new LinkedHashMap<>();
     for (EquipmentSlot slot : slots) {
+      if (!canSwapSlot(armorStand, slot)) {
+        continue;
+      }
+
       String name = slot.name().toLowerCase(Locale.ROOT);
       given.put(name, player.getInventory().getItem(slot).clone());
       taken.put(name, armorStand.getItem(slot).clone());
@@ -60,6 +71,28 @@ public class ArmorSwapper extends Module {
       Audit.event(this.getPlugin(), "armor-swapped").with("player", player).with("stand", armorStand)
           .at(armorStand.getLocation()).with("given", given).with("taken", taken).record();
     }
+  }
+
+  /**
+   * Invisible and marker stands are scenery, often another plugin's (a biome bomb in
+   * flight rides one), rather than somewhere a player keeps armor.
+   */
+  static boolean isSwappable(ArmorStand armorStand) {
+    return armorStand.isVisible() && !armorStand.isMarker();
+  }
+
+  /** A slot locked in any way is left alone, just as vanilla leaves it. */
+  static boolean canSwapSlot(ArmorStand armorStand, EquipmentSlot slot) {
+    return noLock((ArmorStand.LockType lock) -> armorStand.hasEquipmentLock(slot, lock));
+  }
+
+  static boolean noLock(Predicate<ArmorStand.LockType> isLocked) {
+    for (ArmorStand.LockType lock : ArmorStand.LockType.values()) {
+      if (isLocked.test(lock)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   protected void swapItem(Player player, ArmorStand armorStand, EquipmentSlot slot) {
