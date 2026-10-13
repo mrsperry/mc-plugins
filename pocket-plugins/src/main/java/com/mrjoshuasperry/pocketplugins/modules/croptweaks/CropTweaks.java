@@ -135,8 +135,11 @@ public class CropTweaks extends Module {
     Location location = block.getLocation();
     World world = location.getWorld();
 
-    // Vanilla's own tool wear: Unbreaking, no wear in creative, and a worn-out hoe breaks
-    player.damageItemStack(hand, 1);
+    // Vanilla's own tool wear: Unbreaking applies and a worn-out hoe breaks. Paper's docs
+    // promise it checks the game mode too, but creative hoes still wore down
+    if (player.getGameMode() != GameMode.CREATIVE) {
+      player.damageItemStack(hand, 1);
+    }
     // A hoe on a crop does nothing as far as the client knows, so it won't swing on its own
     player.swingHand(hand);
 
