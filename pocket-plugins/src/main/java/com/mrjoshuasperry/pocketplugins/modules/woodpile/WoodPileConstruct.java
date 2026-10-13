@@ -2,6 +2,7 @@ package com.mrjoshuasperry.pocketplugins.modules.woodpile;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -90,6 +91,10 @@ public class WoodPileConstruct {
         }
 
         return true;
+    }
+
+    public List<Block> getFuel() {
+        return Collections.unmodifiableList(this.fuel);
     }
 
     public int getFuelSize() {

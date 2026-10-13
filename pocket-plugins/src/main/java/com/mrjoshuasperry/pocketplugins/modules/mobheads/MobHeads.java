@@ -50,9 +50,11 @@ import org.bukkit.inventory.meta.SkullMeta;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import com.mojang.brigadier.Command;
+import com.mrjoshuasperry.mcutils.audit.Audit;
 import com.mrjoshuasperry.mcutils.menu.Menu;
 import com.mrjoshuasperry.mcutils.menu.PaginatedMenu;
 import com.mrjoshuasperry.mcutils.menu.items.MenuItem;
+import com.mrjoshuasperry.pocketplugins.PocketPlugins;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 import io.papermc.paper.command.brigadier.Commands;
@@ -397,6 +399,8 @@ public class MobHeads extends Module {
 
       ItemStack given = this.getItem().clone();
       given.setAmount(click.isShiftClick() ? given.getMaxStackSize() : 1);
+      Audit.event(PocketPlugins.getInstance(), "mob-head-taken").with("player", player).with("item", given.clone())
+          .record();
       player.getInventory().addItem(given);
     }
   }

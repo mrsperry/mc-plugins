@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mrjoshuasperry.deathchest.listeners.DeathPileListener;
 import com.mrjoshuasperry.deathchest.listeners.PlayerListener;
+import com.mrjoshuasperry.mcutils.audit.Audit;
 
 public class Main extends JavaPlugin {
     // Marks an Interaction as a clickable pile hitbox and points it at its item.
@@ -20,11 +21,15 @@ public class Main extends JavaPlugin {
     private final NamespacedKey pileOrbitKey = new NamespacedKey(this, "pile-orbit");
     // Marks a pile's owner head or name tag, which sit at the center rather than orbit.
     private final NamespacedKey pileRoleKey = new NamespacedKey(this, "pile-role");
+    // Who died, so pickups can be logged against them. Piles older than this key
+    // fall back to the owner's head.
+    private final NamespacedKey pileOwnerKey = new NamespacedKey(this, "pile-owner");
 
     private DeathPileManager pileManager;
 
     @Override
     public void onEnable() {
+        Audit.warnIfMissing(this);
         this.pileManager = new DeathPileManager(this);
 
         Listener[] listeners = {
@@ -66,5 +71,9 @@ public class Main extends JavaPlugin {
 
     public NamespacedKey getPileRoleKey() {
         return this.pileRoleKey;
+    }
+
+    public NamespacedKey getPileOwnerKey() {
+        return this.pileOwnerKey;
     }
 }

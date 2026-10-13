@@ -5,3 +5,5 @@ description: Groups worlds into clusters with a hard player-state boundary betwe
 authors:
   - mrsperry
 api-version: "26.2"
+softdepend:
+  - AuditLog

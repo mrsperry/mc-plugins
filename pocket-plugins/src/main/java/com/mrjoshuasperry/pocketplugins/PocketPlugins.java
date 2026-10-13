@@ -15,6 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.mrjoshuasperry.mcutils.audit.Audit;
 import com.mrjoshuasperry.mcutils.menu.MenuManager;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
@@ -25,6 +26,7 @@ public class PocketPlugins extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Audit.warnIfMissing(this);
         this.saveDefaultConfig();
         // Registers the menu click/tick infrastructure once for every module that
         // opens a Menu; without it, menu inventories are just lootable chests.

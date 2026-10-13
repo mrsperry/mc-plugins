@@ -7,7 +7,7 @@ plugins build against the 26.2 API, the newest line MockBukkit supports. The git
 |---|---|
 | `mc-utils` | Shared library, shaded into the plugins that use it |
 | `pocket-plugins` | Gameplay modules behind an internal module system — rules in `pocket-plugins/Contributing.md` |
-| `auto-stack`, `chat`, `compressed-mobs`, `death-chest`, `level-up`, `mob-eggs`, `world-clusters` | Standalone plugins |
+| `audit-log`, `auto-stack`, `chat`, `compressed-mobs`, `death-chest`, `level-up`, `mob-eggs`, `world-clusters` | Standalone plugins |
 | `pack` | Companion data pack + resource pack. Zips only, no jar |
 | `.archive/` | Retired plugins. Not built |
 | `_server/`, `_dist/` | Dev server and build output. Gitignored |
@@ -36,6 +36,9 @@ in-game check on the dev server — say so rather than implying they're verified
   `pack/`, not a plugin.
 - Prefer a Bukkit `Tag` or registry-derived predicate over a hand-written `Material`/`EntityType`
   list. `RegistryDriftTest` guards the lists that remain.
+- Anything that moves, stores, destroys or hands out a player's items (or a tamed mob, or the world
+  in bulk) records it with mc-utils' `Audit`, and its plugin declares `softdepend: [AuditLog]`. See
+  `audit-log/README.md`.
 - Adventure components for player-facing text (no `ChatColor` or `§`), PDC + `NamespacedKey` for
   item/entity state, no NMS, plugin logger over `printStackTrace()`.
 - Colors you pick for chat, item names and lore must be legible on their dark background

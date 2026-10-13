@@ -28,7 +28,8 @@ Every commit bumps the version of each thing it ships. Edit `<version>` in that 
 | What changed | What to bump |
 |---|---|
 | A plugin (`pocket-plugins`, `chat`, `death-chest`, ...) | That module's pom |
-| `mc-utils` | `mc-utils/pom.xml` **and** the pinned `mc-utils` version in the root `pom.xml` (they must match). Also bump every plugin that bundles it, as a revision: `auto-stack`, `chat`, `pocket-plugins`, `world-clusters` |
+| `mc-utils` | `mc-utils/pom.xml` **and** the pinned `mc-utils` version in the root `pom.xml` (they must match). Also bump every plugin that bundles it, as a revision: `auto-stack`, `chat`, `death-chest`, `mob-eggs`, `pocket-plugins`, `world-clusters` |
+| `audit-log` | `audit-log/pom.xml` **and** the pinned `audit-log` version in the root `pom.xml` (they must match) |
 | `pack` | `pack/pom.xml` |
 | Nothing that ships: docs, `.claude/`, CI, build plumbing | Nothing. Say so in the PR rather than inventing a bump |
 

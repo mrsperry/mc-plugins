@@ -1,0 +1,39 @@
+# Logs are written to logs/<date>/players/<name>.jsonl, one JSON object per line.
+# Events that involve no player go to logs/<date>/server.jsonl
+
+# Days of logs to keep. Older days are deleted when the server starts
+retention-days: 7
+
+# The events this plugin records itself. Records from other plugins, such as
+# DeathChest's piles, are always kept
+events:
+  # Joining and leaving, with where the player was
+  joins: true
+  # Adds the full inventory, ender chest and XP to every join and leave record
+  inventory-snapshots: true
+  # Player deaths: the inventory they died with, what dropped, and who killed them
+  deaths: true
+  # Deaths of tamed or named mobs, with their owner and whoever killed them
+  kills: true
+  # The commands listed under audited-commands, run by a player or the console
+  commands: true
+  # Items a player dropped that then despawned, burned or fell out of the world
+  lost-items: true
+  # Switching between survival, creative, adventure and spectator
+  game-modes: true
+
+# Commands that can change a player or their items. Names only, without the slash;
+# namespaced forms such as minecraft:give count too
+audited-commands:
+  - give
+  - clear
+  - item
+  - loot
+  - data
+  - enchant
+  - kill
+  - xp
+  - experience
+  - gamemode
+  - defaultgamemode
+  - gamerule

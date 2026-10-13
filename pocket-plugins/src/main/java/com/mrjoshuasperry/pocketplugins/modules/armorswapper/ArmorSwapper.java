@@ -1,6 +1,9 @@
 package com.mrjoshuasperry.pocketplugins.modules.armorswapper;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
@@ -11,6 +14,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import com.mrjoshuasperry.mcutils.audit.Audit;
 import com.mrjoshuasperry.pocketplugins.utils.Module;
 
 /** @author mrsperry */
@@ -41,8 +45,20 @@ public class ArmorSwapper extends Module {
         EquipmentSlot.LEGS,
         EquipmentSlot.FEET);
 
+    Map<String, ItemStack> given = new LinkedHashMap<>();
+    Map<String, ItemStack> taken = new LinkedHashMap<>();
     for (EquipmentSlot slot : slots) {
+      String name = slot.name().toLowerCase(Locale.ROOT);
+      given.put(name, player.getInventory().getItem(slot).clone());
+      taken.put(name, armorStand.getItem(slot).clone());
       this.swapItem(player, armorStand, slot);
+    }
+
+    boolean anything = given.values().stream().anyMatch(item -> !item.isEmpty())
+        || taken.values().stream().anyMatch(item -> !item.isEmpty());
+    if (anything) {
+      Audit.event(this.getPlugin(), "armor-swapped").with("player", player).with("stand", armorStand)
+          .at(armorStand.getLocation()).with("given", given).with("taken", taken).record();
     }
   }
 

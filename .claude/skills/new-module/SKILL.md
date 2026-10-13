@@ -72,6 +72,7 @@ public class LightningRods extends Module {
 | Randomness | `getPlugin().getRandom()`, the shared plugin instance |
 | Player text | Adventure components. No `ChatColor`, no `§` |
 | Logging | `getPlugin().getLogger()`, never `printStackTrace()` |
+| Moving, storing, destroying or handing out players' items | `Audit.event(getPlugin(), "...")` from mc-utils, recorded before the items change. See `audit-log/README.md` |
 | Content lists | A Bukkit `Tag` or a registry predicate, never a hand-written `Material`/`EntityType` list |
 
 ## 4. Make everything configurable

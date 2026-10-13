@@ -5,3 +5,5 @@ description: Throw eggs at mobs, get mob eggs!
 authors:
   - mrsperry
 api-version: "26.2"
+softdepend:
+  - AuditLog

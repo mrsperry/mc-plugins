@@ -3,6 +3,7 @@ package com.mrjoshuasperry.worldclusters;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.mrjoshuasperry.mcutils.audit.Audit;
 import com.mrjoshuasperry.mcutils.confirm.ConfirmationManager;
 import com.mrjoshuasperry.mcutils.menu.MenuManager;
 import com.mrjoshuasperry.worldclusters.cluster.ClusterRegistry;
@@ -45,6 +46,7 @@ public class WorldClusters extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Audit.warnIfMissing(this);
         this.saveDefaultConfig();
 
         this.registry = new ClusterRegistry(this.getLogger());
@@ -52,7 +54,7 @@ public class WorldClusters extends JavaPlugin {
 
         this.store = new ProfileStore(this);
         this.permissions = new ClusterPermissions(this, this.registry);
-        this.boundary = new BoundaryService(this.registry, this.store, this.permissions);
+        this.boundary = new BoundaryService(this, this.registry, this.store, this.permissions);
         this.worlds = new WorldManager(this, this.registry);
         this.teleports = new TeleportService(this.registry, this.boundary);
 

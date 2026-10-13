@@ -6,6 +6,8 @@ authors:
   - mrsperry
   - TimPCunningham
 api-version: "26.2"
+softdepend:
+  - AuditLog
 permissions:
   pocketplugins.macros.op:
     description: Allows running and viewing command macros flagged op-only

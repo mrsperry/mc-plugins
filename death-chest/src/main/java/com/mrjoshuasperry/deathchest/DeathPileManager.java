@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -37,8 +38,10 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import com.mrjoshuasperry.deathchest.DeathPile.Orbit;
 import com.mrjoshuasperry.deathchest.DeathPile.Slot;
+import com.mrjoshuasperry.mcutils.audit.Audit;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -109,6 +112,7 @@ public class DeathPileManager {
     private static final class Group {
         private final Location center;
         private final Map<UUID, Member> members = new HashMap<>();
+        private UUID ownerId;
         private UUID headId;
         private UUID headHitboxId;
         private UUID labelId;
@@ -159,6 +163,7 @@ public class DeathPileManager {
 
         UUID groupId = UUID.randomUUID();
         Group group = new Group(center);
+        group.ownerId = player.getUniqueId();
         List<Slot> slots = DeathPile.layout(stacks.size());
         for (int index = 0; index < stacks.size(); index++) {
             spawnMember(world, center, stacks.get(index), slots.get(index), groupId, group);
@@ -168,6 +173,8 @@ public class DeathPileManager {
         group.labelId = spawnLabel(world, center, player, groupId);
 
         groups.put(groupId, group);
+        // Read now, before vanilla empties the inventory these stacks came from
+        Audit.event(plugin, "pile-created").with("owner", player).at(center).with("items", stacks).record();
         player.sendMessage(Component.text(
                 "Your items are floating at (" + center.getBlockX() + ", " + center.getBlockY() + ", "
                         + center.getBlockZ() + ")",
@@ -192,6 +199,7 @@ public class DeathPileManager {
             PersistentDataContainer container = entity.getPersistentDataContainer();
             container.set(plugin.getPileGroupKey(), PersistentDataType.STRING, groupId.toString());
             container.set(plugin.getPileOrbitKey(), PersistentDataType.BYTE_ARRAY, orbit);
+            container.set(plugin.getPileOwnerKey(), PersistentDataType.STRING, group.ownerId.toString());
         });
 
         Interaction box = world.spawn(hitboxLocation(itemLocation), Interaction.class, (Interaction entity) -> {
@@ -232,7 +240,7 @@ public class DeathPileManager {
         ItemDisplay display = world.spawn(location, ItemDisplay.class, (ItemDisplay entity) -> {
             entity.setItemStack(head);
             entity.setTransformation(headTransformation(0));
-            tag(entity, groupId, orbit, ROLE_HEAD);
+            tag(entity, groupId, owner, orbit, ROLE_HEAD);
         });
 
         // The head spins in place, so its hitbox never has to move
@@ -275,14 +283,15 @@ public class DeathPileManager {
             entity.text(owner.displayName());
             entity.setBillboard(Billboard.CENTER);
             entity.setVisibleByDefault(false);
-            tag(entity, groupId, orbit, ROLE_LABEL);
+            tag(entity, groupId, owner, orbit, ROLE_LABEL);
         });
         return display.getUniqueId();
     }
 
-    private void tag(Entity entity, UUID groupId, byte[] orbit, String role) {
+    private void tag(Entity entity, UUID groupId, Player owner, byte[] orbit, String role) {
         PersistentDataContainer container = entity.getPersistentDataContainer();
         container.set(plugin.getPileGroupKey(), PersistentDataType.STRING, groupId.toString());
+        container.set(plugin.getPileOwnerKey(), PersistentDataType.STRING, owner.getUniqueId().toString());
         container.set(plugin.getPileOrbitKey(), PersistentDataType.BYTE_ARRAY, orbit);
         container.set(plugin.getPileRoleKey(), PersistentDataType.STRING, role);
     }
@@ -329,6 +338,9 @@ public class DeathPileManager {
 
         Location center = new Location(display.getWorld(), orbit.centerX(), orbit.centerY(), orbit.centerZ());
         Group group = groups.computeIfAbsent(groupId, key -> new Group(center));
+        if (group.ownerId == null) {
+            group.ownerId = readOwner(display);
+        }
         if (ROLE_HEAD.equals(role)) {
             group.headId = display.getUniqueId();
             // Piles from before the head had a hitbox have none to point at
@@ -340,6 +352,26 @@ public class DeathPileManager {
         } else {
             group.members.put(display.getUniqueId(), new Member(UUID.fromString(interactionValue), orbit.slot()));
         }
+    }
+
+    /** The owner a display was tagged with or, for piles from before that tag, the face on their head. */
+    private UUID readOwner(Display display) {
+        String owner = display.getPersistentDataContainer().get(plugin.getPileOwnerKey(), PersistentDataType.STRING);
+        if (owner != null) {
+            return UUID.fromString(owner);
+        }
+
+        if (display instanceof ItemDisplay item && item.getItemStack().getItemMeta() instanceof SkullMeta skull) {
+            PlayerProfile profile = skull.getPlayerProfile();
+            return profile == null ? null : profile.getId();
+        }
+        return null;
+    }
+
+    /** Who died to leave this pile, or null when that isn't known (piles older than 1.1.0). */
+    public OfflinePlayer ownerOf(UUID groupId) {
+        Group group = groupId == null ? null : groups.get(groupId);
+        return group == null || group.ownerId == null ? null : Bukkit.getOfflinePlayer(group.ownerId);
     }
 
     /** Stops tracking a display (e.g. its chunk unloaded); the entities are left alone. */
@@ -364,18 +396,23 @@ public class DeathPileManager {
         String groupValue = container.get(plugin.getPileGroupKey(), PersistentDataType.STRING);
 
         UUID displayId = displayValue == null ? null : UUID.fromString(displayValue);
+        UUID groupId = groupValue == null ? null : UUID.fromString(groupValue);
         Location soundAt = box.getLocation();
 
         if (displayId != null && Bukkit.getEntity(displayId) instanceof ItemDisplay display) {
             soundAt = display.getLocation();
-            giveStack(player, display.getItemStack());
+            ItemStack stack = display.getItemStack();
+            // Handing it over can shrink the stack, so the record keeps a copy of it whole
+            Audit audit = Audit.event(plugin, "pile-item-taken").with("owner", ownerOf(groupId)).with("by", player)
+                    .at(soundAt).with("item", stack.clone());
+            audit.with("dropped", giveStack(player, stack)).record();
             display.remove();
         }
         box.remove();
         player.getWorld().playSound(soundAt, Sound.ENTITY_ITEM_PICKUP, 0.6f, 1.2f);
 
-        if (groupValue != null && displayId != null) {
-            removeFromGroup(UUID.fromString(groupValue), displayId, player);
+        if (groupId != null && displayId != null) {
+            removeFromGroup(groupId, displayId, player);
         }
     }
 
@@ -399,14 +436,19 @@ public class DeathPileManager {
 
     /** Shift-left-click pickup: sweep the whole pile into the player's inventory. */
     public void grabAll(Player player, UUID groupId) {
+        OfflinePlayer owner = ownerOf(groupId);
         Group group = groups.remove(groupId);
         if (group == null) {
             return;
         }
 
+        List<ItemStack> taken = new ArrayList<>();
+        List<ItemStack> dropped = new ArrayList<>();
         for (Map.Entry<UUID, Member> entry : group.members.entrySet()) {
             if (Bukkit.getEntity(entry.getKey()) instanceof ItemDisplay display) {
-                giveStack(player, display.getItemStack());
+                ItemStack stack = display.getItemStack();
+                taken.add(stack.clone());
+                dropped.addAll(giveStack(player, stack));
                 display.remove();
             }
             if (Bukkit.getEntity(entry.getValue().interactionId()) instanceof Interaction box) {
@@ -415,6 +457,8 @@ public class DeathPileManager {
         }
         removeHeadAndLabel(group);
 
+        Audit.event(plugin, "pile-taken").with("owner", owner).with("by", player).at(group.center)
+                .with("items", taken).with("dropped", dropped).record();
         player.getWorld().playSound(group.center, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
     }
 
@@ -441,14 +485,20 @@ public class DeathPileManager {
         }
     }
 
-    private void giveStack(Player player, ItemStack stack) {
+    /** Hands the stack over, dropping whatever doesn't fit at the player's feet. Returns what was dropped. */
+    private List<ItemStack> giveStack(Player player, ItemStack stack) {
         if (stack == null || stack.getType().isAir()) {
-            return;
+            return List.of();
         }
 
+        List<ItemStack> dropped = new ArrayList<>();
         for (ItemStack overflow : player.getInventory().addItem(stack).values()) {
-            player.getWorld().dropItemNaturally(player.getLocation(), overflow);
+            dropped.add(overflow.clone());
+            // Marked as theirs, so the audit log notices if it then despawns or burns
+            player.getWorld().dropItemNaturally(player.getLocation(), overflow,
+                    item -> item.setThrower(player.getUniqueId()));
         }
+        return dropped;
     }
 
     private void tick() {

@@ -34,7 +34,7 @@ class AutoStackTest {
     inventory.setItemInMainHand(new ItemStack(Material.DIRT, 1));
     inventory.setItem(20, new ItemStack(Material.DIRT, 30));
 
-    Main.restackHand(inventory, inventory.getItemInMainHand(), EquipmentSlot.HAND);
+    assertEquals(20, Main.restackHand(inventory, inventory.getItemInMainHand(), EquipmentSlot.HAND));
 
     assertEquals(Material.DIRT, inventory.getItemInMainHand().getType());
     assertEquals(30, inventory.getItemInMainHand().getAmount());
@@ -49,7 +49,7 @@ class AutoStackTest {
     inventory.setItemInMainHand(new ItemStack(Material.DIRT, 1));
     inventory.setItem(20, new ItemStack(Material.STONE, 30));
 
-    Main.restackHand(inventory, inventory.getItemInMainHand(), EquipmentSlot.HAND);
+    assertEquals(-1, Main.restackHand(inventory, inventory.getItemInMainHand(), EquipmentSlot.HAND));
 
     assertEquals(1, inventory.getItemInMainHand().getAmount());
     assertEquals(30, inventory.getItem(20).getAmount());
