@@ -9,6 +9,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.RayTraceResult;
@@ -29,13 +30,17 @@ public class BiomeBombProjectile {
   private final String AS_META_KEY = "biome_bomb_as";
   private final String TYPE_META_KEY = "biome_bomb_type";
   private final String COLOR_META_KEY = "biome_bomb_color";
+  /** Ticks before a bomb that never lands (one thrown into the void) is cleaned up. */
+  private static final int LIFESPAN = 30 * 20;
+  private static final EquipmentSlot[] STAND_SLOTS = { EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS,
+      EquipmentSlot.FEET, EquipmentSlot.HAND, EquipmentSlot.OFF_HAND };
   private final int explosionRange;
   private final ItemStack projectileItem;
   private BaseProjectile projectile;
   private Player owner;
 
   public BiomeBombProjectile(int explosionRange, String type, Color color, ItemStack projectileItem) {
-    this.projectile = new BaseProjectile(PocketPlugins.getInstance(), 0.1f, -1, 1f);
+    this.projectile = new BaseProjectile(PocketPlugins.getInstance(), 0.1f, LIFESPAN, 1f);
     this.explosionRange = explosionRange;
     this.projectileItem = projectileItem;
     initProjectile(type, color);
@@ -48,6 +53,7 @@ public class BiomeBombProjectile {
       ProjectileUtils.teleportAndTranslateArmorStand(as, proj.getPosition());
     });
     this.projectile.addProjectileHitBlockListener(this::onBlockCollision);
+    this.projectile.addProjectileDecayListener(proj -> ((ArmorStand) proj.getMetaData(AS_META_KEY)).remove());
 
     this.projectile.addMetaData(TYPE_META_KEY, type);
     this.projectile.addMetaData(COLOR_META_KEY, color);
@@ -56,6 +62,13 @@ public class BiomeBombProjectile {
   public void launchProjectile(Player owner) {
     this.owner = owner;
     ArmorStand armorStand = ProjectileUtils.spawnArmorStand(owner.getEyeLocation(), projectileItem, false);
+    // The stand is only scenery for the flight: it must not outlive a restart carrying
+    // the bomb, nor let anyone take the bomb off it or hang anything on it mid-air
+    armorStand.setPersistent(false);
+    for (EquipmentSlot slot : STAND_SLOTS) {
+      armorStand.addEquipmentLock(slot, ArmorStand.LockType.ADDING_OR_CHANGING);
+      armorStand.addEquipmentLock(slot, ArmorStand.LockType.REMOVING_OR_CHANGING);
+    }
 
     this.projectile.addMetaData(AS_META_KEY, armorStand);
     this.projectile.applyForce(owner.getLocation().clone().getDirection().normalize());
