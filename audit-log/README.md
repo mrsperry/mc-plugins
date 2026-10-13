@@ -39,7 +39,7 @@ Other plugins:
 
 | Plugin | Events |
 |---|---|
-| DeathChest | `pile-created`, `pile-item-taken`, `pile-taken` (including anything dropped for lack of room), `pile-item-destroyed` (a stack removed by anything else, e.g. `/kill`) |
+| DeathChest | `pile-created`, `items-vanished` (Curse of Vanishing items lost on a pile death), `pile-item-taken`, `pile-taken` (including anything dropped for lack of room), `pile-item-destroyed` (a stack removed by anything else, e.g. `/kill`) |
 | AutoStack | `hand-restacked` |
 | WorldClusters | `cluster-left` (what was stored before the wipe), `cluster-entered` (what was restored) |
 | MobEggs | `mob-captured` |
