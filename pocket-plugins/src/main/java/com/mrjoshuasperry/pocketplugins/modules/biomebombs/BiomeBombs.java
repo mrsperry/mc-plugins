@@ -8,8 +8,10 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -106,9 +108,27 @@ public class BiomeBombs extends Module {
     }
   }
 
+  /**
+   * Whether this click opens or works the block (a crafting table, chest, door)
+   * rather than using the held item. Sneaking uses the item instead, as in vanilla.
+   */
+  // Material#isInteractable is deprecated as not comprehensive, but there is no
+  // replacement, and a block it misjudges only means a bomb thrown or held back
+  @SuppressWarnings("deprecation")
+  private boolean usesClickedBlock(PlayerInteractEvent event) {
+    Block block = event.getClickedBlock();
+    return event.getAction() == Action.RIGHT_CLICK_BLOCK && block != null
+        && !event.getPlayer().isSneaking() && block.getType().isInteractable();
+  }
+
   @EventHandler
   public void biomeBombUse(PlayerInteractEvent event) {
     if (event.getHand() == EquipmentSlot.OFF_HAND || event.getItem() == null) {
+      return;
+    }
+
+    // Only a right click throws, and not one that uses the block it lands on
+    if (!event.getAction().isRightClick() || this.usesClickedBlock(event)) {
       return;
     }
 
