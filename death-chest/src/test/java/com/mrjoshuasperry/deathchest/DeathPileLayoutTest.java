@@ -107,4 +107,44 @@ class DeathPileLayoutTest {
     assertEquals(-20.5, decoded.centerZ(), EPSILON);
     assertEquals(slot, decoded.slot());
   }
+
+  @Test
+  void headStaysAtTheCenterOfTheRingsAtAnyPhase() {
+    for (double phase : new double[] { 0, 1.3, Math.PI }) {
+      Vector offset = DeathPile.position(DeathPile.HEAD_SLOT, phase);
+      assertEquals(0, offset.getX(), EPSILON);
+      assertEquals(DeathPile.CENTER_HEIGHT, offset.getY(), EPSILON);
+      assertEquals(0, offset.getZ(), EPSILON);
+    }
+  }
+
+  @Test
+  void nameTagFloatsAboveEveryRingOfALargePile() {
+    // An item display reaches about a quarter block above its slot
+    for (Slot slot : DeathPile.layout(200)) {
+      assertTrue(slot.height() + 0.25 < DeathPile.LABEL_SLOT.height(), "a ring would cover the name tag");
+    }
+  }
+
+  @Test
+  void sparklesStartInsideThePile() {
+    double[] samples = { 0, 0.25, 0.5, 0.75, 0.999 };
+    for (double around : samples) {
+      for (double out : samples) {
+        for (double up : samples) {
+          Vector offset = DeathPile.sparkleOffset(around, out, up);
+          assertTrue(Math.hypot(offset.getX(), offset.getZ()) <= DeathPile.EQUATOR_RADIUS + EPSILON);
+          assertTrue(offset.getY() >= DeathPile.CENTER_HEIGHT - DeathPile.VERTICAL_RADIUS - EPSILON);
+          assertTrue(offset.getY() <= DeathPile.CENTER_HEIGHT + DeathPile.VERTICAL_RADIUS + EPSILON);
+        }
+      }
+    }
+  }
+
+  @Test
+  void headAndNameTagSlotsRoundTripThroughTheOrbitBlob() throws IOException {
+    for (Slot slot : List.of(DeathPile.HEAD_SLOT, DeathPile.LABEL_SLOT)) {
+      assertEquals(slot, DeathPile.readOrbit(DeathPile.writeOrbit(0.5, 70, 0.5, slot)).slot());
+    }
+  }
 }

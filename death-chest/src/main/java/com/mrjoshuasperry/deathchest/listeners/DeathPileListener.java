@@ -2,9 +2,9 @@ package com.mrjoshuasperry.deathchest.listeners;
 
 import java.util.UUID;
 
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Interaction;
-import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,6 +45,11 @@ public class DeathPileListener implements Listener {
         String groupValue = container.get(plugin.getPileGroupKey(), PersistentDataType.STRING);
         if (player.isSneaking() && groupValue != null) {
             manager.grabAll(player, UUID.fromString(groupValue));
+        } else if (manager.isHeadHitbox(box)) {
+            // The head holds no stack of its own; it hands over one at random
+            if (groupValue != null) {
+                manager.grabRandom(player, UUID.fromString(groupValue));
+            }
         } else {
             manager.grabOne(player, box);
         }
@@ -53,7 +58,7 @@ public class DeathPileListener implements Listener {
     @EventHandler
     public void onEntitiesLoad(EntitiesLoadEvent event) {
         for (Entity entity : event.getEntities()) {
-            if (entity instanceof ItemDisplay display) {
+            if (entity instanceof Display display) {
                 plugin.getPileManager().adopt(display);
             }
         }
@@ -62,7 +67,7 @@ public class DeathPileListener implements Listener {
     @EventHandler
     public void onEntitiesUnload(EntitiesUnloadEvent event) {
         for (Entity entity : event.getEntities()) {
-            if (entity instanceof ItemDisplay display) {
+            if (entity instanceof Display display) {
                 plugin.getPileManager().forget(display.getUniqueId());
             }
         }

@@ -22,11 +22,16 @@ public class PlayerListener implements Listener {
         }
 
         Player player = event.getPlayer();
-        if (player.getGameMode() != GameMode.SURVIVAL) {
+        if (!leavesAPile(player.getGameMode())) {
             return;
         }
 
         event.getDrops().clear();
         this.plugin.getPileManager().spawn(player);
+    }
+
+    /** Survival and creative deaths leave a pile; adventure and spectator drop as vanilla. */
+    static boolean leavesAPile(GameMode mode) {
+        return mode == GameMode.SURVIVAL || mode == GameMode.CREATIVE;
     }
 }
