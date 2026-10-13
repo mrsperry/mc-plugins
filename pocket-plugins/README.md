@@ -32,6 +32,7 @@ Every module can be turned off on its own — see [Configuration](#configuration
 | LeadAttacher | Attach a lead to a fence without an entity on the other end |
 | MobGriefing | Stops sheep eating grass and endermen picking up blocks, keeping the sound and animation |
 | MobSizes | Randomizes mob scale; rideable mounts are sized by their health pool instead |
+| ShulkerPeek | Right-click the air holding a shulker box to open it without placing it. The box stays locked in its slot until closed |
 | SlimyBoots | Slime-crafted leather boots that negate fall damage and bounce you |
 | TimePlayed | Tracks per-player play time |
 | VillagerMakeovers | Villagers change into the biome outfit for wherever they are standing, instead of keeping their spawn outfit forever |

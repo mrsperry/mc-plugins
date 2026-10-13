@@ -289,6 +289,13 @@ mobsizes:
   # This will size ridable mounts based on their HP pool rather than randomly
   enable-mount-health-sizing: true
 
+shulkerpeek:
+  # Right-clicking the air with a shulker box opens it without placing it. When
+  # true, the player must also be sneaking
+  require-sneaking: false
+  # Play the shulker box's opening and closing sounds
+  sounds: true
+
 timeplayed:
   # How many seconds between writes to disk; play time is tracked every second
   # regardless, so this only bounds what a server crash can lose
