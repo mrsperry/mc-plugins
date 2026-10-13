@@ -43,7 +43,7 @@ Other plugins:
 | AutoStack | `hand-restacked` |
 | WorldClusters | `cluster-left` (what was stored before the wipe), `cluster-entered` (what was restored) |
 | MobEggs | `mob-captured` |
-| PocketPlugins | `crafting-grid-stored`, `crafting-grid-restored`, `crafting-table-broken`, `armor-swapped`, `biome-bomb-thrown`, `biome-bomb-landed`, `mob-head-taken`, `bedrock-breaking`, `wood-pile-converted`, `inventory-inspected`, `inspected-item-cloned` |
+| PocketPlugins | `crafting-grid-stored`, `crafting-grid-restored`, `crafting-grid-dropped`, `armor-swapped`, `biome-bomb-thrown`, `biome-bomb-landed`, `mob-head-taken`, `bedrock-breaking`, `wood-pile-converted`, `inventory-inspected`, `inspected-item-cloned` |
 
 ## Recording from a plugin
 
