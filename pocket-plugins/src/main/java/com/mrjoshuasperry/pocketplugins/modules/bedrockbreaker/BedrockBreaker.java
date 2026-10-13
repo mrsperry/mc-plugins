@@ -129,9 +129,10 @@ public class BedrockBreaker extends Module {
 
       if (location.getY() == targetY) {
         this.bedrockToRemove.remove(location);
-        location.getBlock().breakNaturally();
-        world.spawnParticle(Particle.EXPLOSION, location.clone().add(0.5, 0.5, 0.5), 5, 0.5, 0.5, 0.5);
-        world.playSound(location, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2, 0);
+        if (breakIfBedrock(location.getBlock())) {
+          world.spawnParticle(Particle.EXPLOSION, location.clone().add(0.5, 0.5, 0.5), 5, 0.5, 0.5, 0.5);
+          world.playSound(location, Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 2, 0);
+        }
         return;
       }
 
@@ -140,5 +141,18 @@ public class BedrockBreaker extends Module {
 
       this.runRemovalAnimation(location.clone().add(0, 1, 0), targetY);
     }, 1);
+  }
+
+  /**
+   * Breaks the target only if it's still bedrock: the flame takes a while to climb,
+   * and whatever has been put there since must not be broken in its place.
+   */
+  static boolean breakIfBedrock(Block block) {
+    if (block.getType() != Material.BEDROCK) {
+      return false;
+    }
+
+    block.breakNaturally();
+    return true;
   }
 }
