@@ -36,9 +36,7 @@ public final class MobCapture {
         PLAYER,
         BOSS,
         BLACKLISTED,
-        NO_SPAWN_EGG,
-        HAS_PASSENGERS,
-        RIDING
+        NO_SPAWN_EGG
     }
 
     private static final Set<EntityType> BOSSES = Set.of(EntityType.WITHER, EntityType.ENDER_DRAGON);
@@ -48,20 +46,21 @@ public final class MobCapture {
             return Denial.NO_SPAWN_EGG;
         }
 
-        Denial denial = denialForType(entity.getType(), blacklist);
-        if (denial != null) {
-            return denial;
-        }
+        return denialForType(entity.getType(), blacklist);
+    }
 
-        if (!entity.getPassengers().isEmpty()) {
-            return Denial.HAS_PASSENGERS;
+    /**
+     * Takes a mob out of whatever stack it's in, so its egg holds it alone: its
+     * riders get off, keeping any stack above them, and it gets off whatever it
+     * rides, which carries on. False if something kept it in place, such as a
+     * plugin cancelling the dismount.
+     */
+    public static boolean detach(Entity entity) {
+        for (Entity rider : List.copyOf(entity.getPassengers())) {
+            entity.removePassenger(rider);
         }
-
-        if (entity.getVehicle() != null) {
-            return Denial.RIDING;
-        }
-
-        return null;
+        entity.leaveVehicle();
+        return entity.getPassengers().isEmpty() && entity.getVehicle() == null;
     }
 
     static Denial denialForType(EntityType type, Set<EntityType> blacklist) {

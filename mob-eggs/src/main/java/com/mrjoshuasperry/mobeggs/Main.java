@@ -1,6 +1,7 @@
 package com.mrjoshuasperry.mobeggs;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -72,6 +73,12 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     private void capture(LivingEntity entity, Egg thrown) {
+        List<Entity> riders = List.copyOf(entity.getPassengers());
+        Entity vehicle = entity.getVehicle();
+        if (!MobCapture.detach(entity)) {
+            return;
+        }
+
         ItemStack egg = MobCapture.createEgg(entity, this.markerKey);
         if (egg == null) {
             this.spawnChicken(entity.getLocation());
@@ -90,7 +97,7 @@ public class Main extends JavaPlugin implements Listener {
                 : null;
         // The mob now exists only as this egg, so it goes on record before the mob is removed
         Audit.event(this, "mob-captured").with("by", thrower).with("owner", owner).with("entity", entity)
-                .at(entity.getLocation()).with("egg", egg).record();
+                .at(entity.getLocation()).with("riders", riders).with("vehicle", vehicle).with("egg", egg).record();
 
         // Marked as the thrower's, so the audit log notices if the egg then despawns or burns
         entity.getWorld().dropItemNaturally(entity.getLocation().add(0, 1, 0), egg, item -> {
