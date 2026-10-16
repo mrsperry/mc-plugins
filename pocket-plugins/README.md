@@ -26,6 +26,7 @@ Every module can be turned off on its own — see [Configuration](#configuration
 | DyeShears | Craftable shears (2 shears + diamond) with a chance to drop matching dye instead of wool |
 | EasyPaintings | Sneak + right-click a painting to cycle through art variants |
 | ExtendedBeacons | Beacon pyramids keep growing past four layers, each complete layer adding range (10 blocks by default, as in vanilla) |
+| ExtendedBlockPlacement | Lanterns hang from the underside of leaves, and fall off when the leaves are broken or decay |
 | FeatherPlucker | Hit a chicken non-lethally for a free feather, on a cooldown tracked per chicken |
 | IgneousGenerator | Water next to a magma block becomes andesite, diorite, or granite after a delay |
 | InventoryInspector | In creative or spectator, sneak + right-click a player for a read-only snapshot of their inventory |
