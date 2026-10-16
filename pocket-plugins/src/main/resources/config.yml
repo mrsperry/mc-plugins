@@ -54,6 +54,11 @@ extendedbeacons:
   # Most pyramid layers counted; 0 means no limit
   max-layers: 0
 
+extendedblockplacement:
+  # Lanterns can hang from the underside of leaves, and fall off once the leaves
+  # are broken or decay
+  lanterns-under-leaves: true
+
 featherplucker:
   # Cooldown is in seconds
   cooldown: 300
